@@ -1,5 +1,6 @@
 package com.ylz.ehui.utils;
 
+import android.app.Activity;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -49,11 +50,11 @@ public class AppUtils {
         }
     }
 
-    public static int getActionBarSize() {
+    public static int getActionBarSize(Activity activity) {
         TypedValue typedValue = new TypedValue();
         int[] textSizeAttr = new int[]{R.attr.actionBarSize};
         int indexOfAttrTextSize = 0;
-        TypedArray a =  Utils.getApp().obtainStyledAttributes(typedValue.data, textSizeAttr);
+        TypedArray a =  activity.obtainStyledAttributes(typedValue.data, textSizeAttr);
         int actionBarSize = a.getDimensionPixelSize(indexOfAttrTextSize, -1);
         a.recycle();
         return actionBarSize;
