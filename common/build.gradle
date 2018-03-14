@@ -50,8 +50,8 @@ dependencies {
     api "org.greenrobot:eventbus:3.0.0"
     api "com.google.code.gson:gson:2.8.0"
 
-    api "com.jakewharton:butterknife:8.8.0"
-    annotationProcessor "com.jakewharton:butterknife-compiler:8.8.0"
+    api "com.jakewharton:butterknife:8.8.1"
+    annotationProcessor "com.jakewharton:butterknife-compiler:8.8.1"
     api "com.squareup.retrofit2:adapter-rxjava2:2.3.0"
 
     api "io.reactivex.rxjava2:rxjava:2.1.1"
