@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.CookieJar;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -35,6 +36,7 @@ final public class RetrofitManager {
     private Map<String, OkHttpClient> clientMap;
     private Gson mGson;
     private String mBaseUrl;
+    private Converter.Factory customConverterFactory;
 
     private RetrofitManager() {
         providerMap = new HashMap<>();
@@ -55,6 +57,10 @@ final public class RetrofitManager {
         return Singleton.instance;
     }
 
+
+    public void setcustomConverterFactory(Converter.Factory factory) {
+        customConverterFactory = factory;
+    }
 
     public <S> S get(Class<S> service) {
         return getInstance().getRetrofit().create(service);
@@ -105,7 +111,7 @@ final public class RetrofitManager {
                 .baseUrl(mBaseUrl)
                 .client(getClient(mBaseUrl, provider))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create(getGson()));
+                .addConverterFactory(customConverterFactory == null ? GsonConverterFactory.create(getGson()) : customConverterFactory);
 
         Retrofit retrofit = builder.build();
         retrofitMap.put(mBaseUrl, retrofit);
