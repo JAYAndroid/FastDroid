@@ -1,5 +1,6 @@
 package com.ylz.ehui.ui.mvp.view;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.ViewGroup;
@@ -7,6 +8,7 @@ import android.view.Window;
 
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 import com.ylz.ehui.ui.manager.AppManager;
+import com.ylz.ehui.ui.manager.StatusBarManager;
 import com.ylz.ehui.ui.mvp.presenter.BasePresenter;
 import com.ylz.ehui.ui.proxy.LogicProxy;
 
@@ -43,6 +45,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends RxAppCompatA
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         checkResource();
+        StatusBarManager.setStatusBarColor(this, initStatusBarColor());
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(getLayoutResource());
@@ -98,5 +101,9 @@ public abstract class BaseActivity<T extends BasePresenter> extends RxAppCompatA
         }
 
         AppManager.getInstance().removeActivity(this);
+    }
+
+    protected int initStatusBarColor() {
+        return Color.parseColor("#196FFA");
     }
 }
