@@ -7,6 +7,7 @@ import com.ylz.ehui.http.manager.RetrofitManager;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
+import java.util.Map;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
@@ -51,7 +52,7 @@ public class BaseBusiness<T> {
         return observable.compose(this.<T>normalSchedulers());
     }
 
-    protected RequestBody json2Body(HashMap<String, String> params) {
+    protected RequestBody json2Body(Map<String, String> params) {
         return RequestBody.create(MediaType.parse("application/json"), mGson.toJson(params));
     }
 
