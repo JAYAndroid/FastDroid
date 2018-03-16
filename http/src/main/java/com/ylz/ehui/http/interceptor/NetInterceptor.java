@@ -2,7 +2,7 @@ package com.ylz.ehui.http.interceptor;
 
 import android.support.annotation.NonNull;
 
-import com.ylz.ehui.http.IRequestHandler;
+import com.ylz.ehui.http.handler.IRequestHandler;
 
 import java.io.IOException;
 

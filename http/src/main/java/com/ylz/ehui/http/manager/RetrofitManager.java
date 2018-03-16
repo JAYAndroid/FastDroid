@@ -5,8 +5,9 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.ylz.ehui.http.INetParamsBuild;
-import com.ylz.ehui.http.IRequestHandler;
+import com.ylz.ehui.http.builder.DefaultNetParamsBuild;
+import com.ylz.ehui.http.builder.INetParamsBuild;
+import com.ylz.ehui.http.handler.IRequestHandler;
 import com.ylz.ehui.http.interceptor.HttpLoggingInterceptor;
 import com.ylz.ehui.http.interceptor.NetInterceptor;
 
@@ -42,6 +43,7 @@ final public class RetrofitManager {
         providerMap = new HashMap<>();
         retrofitMap = new HashMap<>();
         clientMap = new HashMap<>();
+        sProvider = new DefaultNetParamsBuild();
 
         mGson = new GsonBuilder()
                 .setDateFormat("yyyy-MM-dd HH:mm:ss")

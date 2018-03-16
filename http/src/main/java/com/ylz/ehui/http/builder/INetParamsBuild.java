@@ -1,4 +1,6 @@
-package com.ylz.ehui.http;
+package com.ylz.ehui.http.builder;
+
+import com.ylz.ehui.http.handler.IRequestHandler;
 
 import okhttp3.CookieJar;
 import okhttp3.Interceptor;
