@@ -68,7 +68,8 @@ public abstract class BaseActivity<T extends BasePresenter> extends RxAppCompatA
         }
     }
 
-    protected <T> void bindToLifecycle(Observable<T> observable) {
+    @Override
+    public <T> void bind2Lifecycle(Observable<T> observable) {
         observable.compose(this.<T>bindToLifecycle());
     }
 
