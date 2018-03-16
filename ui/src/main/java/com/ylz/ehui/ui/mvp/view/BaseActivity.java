@@ -51,8 +51,8 @@ public abstract class BaseActivity<T extends BasePresenter> extends RxAppCompatA
         setContentView(getLayoutResource());
         AppManager.getInstance().addActivity(this);
         bind = ButterKnife.bind(this);
-        this.onInitialization(savedInstanceState);
         this.onInitData2Remote();
+        this.onInitialization(savedInstanceState);
     }
 
     //获得该页面的实例
