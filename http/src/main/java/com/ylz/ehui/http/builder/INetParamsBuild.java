@@ -1,7 +1,10 @@
 package com.ylz.ehui.http.builder;
 
 import com.ylz.ehui.http.handler.IRequestHandler;
+import com.ylz.ehui.http.interceptor.HttpLoggingInterceptor;
 
+import io.reactivex.annotations.CheckReturnValue;
+import io.reactivex.annotations.NonNull;
 import okhttp3.CookieJar;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -28,5 +31,7 @@ public interface INetParamsBuild {
     long configWriteTimeoutSecs();
 
     boolean configLogEnable();
+
+    HttpLoggingInterceptor.Level configLogLevel();
 
 }

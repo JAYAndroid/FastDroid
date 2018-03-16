@@ -181,7 +181,12 @@ final public class RetrofitManager {
                 }
             });
 
-            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            HttpLoggingInterceptor.Level level = provider.configLogLevel();
+            if (level == null) {
+                level = HttpLoggingInterceptor.Level.BODY;
+            }
+
+            loggingInterceptor.setLevel(level);
             builder.addInterceptor(loggingInterceptor);
         }
 
