@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LogicProxy {
+    private Map<Class, Object> mPresenters;
     private static final LogicProxy mInstance = new LogicProxy();
 
     public static LogicProxy getInstance() {
@@ -16,33 +17,34 @@ public class LogicProxy {
     }
 
     private LogicProxy() {
-        mImplements = new HashMap<>();
+        mPresenters = new HashMap<>();
     }
 
-    private Map<Class, Object> mImplements;
-
-    public void init(Class... clss) {
-        for (Class cls : clss) {
-            if (cls.isAnnotationPresent(Implement.class)) {
-                for (Annotation ann : cls.getDeclaredAnnotations()) {
-                    if (ann instanceof Implement) {
-                        try {
-                            mImplements.put(cls, ((Implement) ann).value().newInstance());
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
+    public void init(Class clzz) {
+//        if (clzz.isAnnotationPresent(Implement.class)) {
+//            for (Annotation ann : clzz.getDeclaredAnnotations()) {
+//                if (ann instanceof Implement) {
+//                    try {
+//                        mPresenters.put(clzz, ((Implement) ann).value().newInstance());
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        }
+        try {
+            mPresenters.put(clzz, clzz.newInstance());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     // 初始化presenter add map
     public <T> T bind(Class clzz, BaseView var1) {
-        if (!mImplements.containsKey(clzz)) {
+        if (!mPresenters.containsKey(clzz)) {
             init(clzz);
         }
-        BasePresenter presenter = ((BasePresenter) mImplements.get(clzz));
+        BasePresenter presenter = ((BasePresenter) mPresenters.get(clzz));
         if (var1 != presenter.getView()) {
             if (presenter.getView() != null) {
                 presenter.detachView();
@@ -54,14 +56,14 @@ public class LogicProxy {
 
     // 解除绑定 移除map
     public void unbind(Class clzz, BaseView var1) {
-        if (mImplements.containsKey(clzz)) {
-            BasePresenter presenter = ((BasePresenter) mImplements.get(clzz));
+        if (mPresenters.containsKey(clzz)) {
+            BasePresenter presenter = ((BasePresenter) mPresenters.get(clzz));
             if (var1 != presenter.getView()) {
                 if (presenter.getView() != null)
                     presenter.detachView();
-                mImplements.remove(clzz);
+                mPresenters.remove(clzz);
             }
-
         }
     }
+
 }
