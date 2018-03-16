@@ -1,6 +1,7 @@
 package com.ylz.ehui.http.builder;
 
 import com.ylz.ehui.http.handler.IRequestHandler;
+import com.ylz.ehui.http.interceptor.HttpLoggingInterceptor;
 
 import okhttp3.CookieJar;
 import okhttp3.Interceptor;
@@ -51,5 +52,10 @@ public class DefaultNetParamsBuild implements INetParamsBuild {
     @Override
     public boolean configLogEnable() {
         return false;
+    }
+
+    @Override
+    public HttpLoggingInterceptor.Level configLogLevel() {
+        return HttpLoggingInterceptor.Level.BODY;
     }
 }
