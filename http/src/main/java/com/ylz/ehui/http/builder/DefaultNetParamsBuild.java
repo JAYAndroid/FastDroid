@@ -11,6 +11,8 @@ import okhttp3.OkHttpClient;
  */
 
 public class DefaultNetParamsBuild implements INetParamsBuild {
+    private final int TIME_OUT_SEC = 60;
+
     @Override
     public Interceptor[] configInterceptors() {
         return new Interceptor[0];
@@ -33,17 +35,17 @@ public class DefaultNetParamsBuild implements INetParamsBuild {
 
     @Override
     public long configConnectTimeoutSecs() {
-        return 0;
+        return TIME_OUT_SEC;
     }
 
     @Override
     public long configReadTimeoutSecs() {
-        return 0;
+        return TIME_OUT_SEC;
     }
 
     @Override
     public long configWriteTimeoutSecs() {
-        return 0;
+        return TIME_OUT_SEC;
     }
 
     @Override

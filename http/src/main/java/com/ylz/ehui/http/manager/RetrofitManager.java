@@ -1,6 +1,7 @@
 package com.ylz.ehui.http.manager;
 
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -90,6 +91,9 @@ final public class RetrofitManager {
     }
 
     public void setBaseUrl(String baseUrl) {
+        if (!TextUtils.isEmpty(baseUrl) && !baseUrl.endsWith("/")) {
+            baseUrl = baseUrl + "/";
+        }
         mBaseUrl = baseUrl;
     }
 

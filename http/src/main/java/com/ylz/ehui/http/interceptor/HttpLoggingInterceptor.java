@@ -71,7 +71,7 @@ public class HttpLoggingInterceptor implements Interceptor {
         }
     }
 
-    public Response intercept(Chain chain) throws IOException {
+    public Response intercept(Interceptor.Chain chain) throws IOException {
         HttpLoggingInterceptor.Level level = this.level;
         Request request = chain.request();
         if (level == HttpLoggingInterceptor.Level.NONE) {
