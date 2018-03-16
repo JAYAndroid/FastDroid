@@ -1,6 +1,8 @@
 package com.ylz.ehui.http;
 
 
+import android.text.TextUtils;
+
 import com.google.gson.Gson;
 import com.ylz.ehui.http.manager.RetrofitManager;
 
@@ -62,6 +64,19 @@ public class BaseBusiness<T> {
         Type[] p = ((ParameterizedType) t).getActualTypeArguments();
         entityClass = (Class<T>) p[0];
         return entityClass;
+    }
+
+    protected Map joinRequest(Map params, String service) {
+        if (params == null) {
+            params = new HashMap();
+        }
+
+        if (TextUtils.isEmpty(service)) {
+            service = "";
+        }
+
+        params.put("serviceId", service);
+        return params;
     }
 
 }
