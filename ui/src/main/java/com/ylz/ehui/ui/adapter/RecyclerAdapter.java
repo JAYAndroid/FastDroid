@@ -38,13 +38,8 @@ public abstract class RecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerVi
         return viewHolder.getAdapterPosition();
     }
 
-    protected boolean isEnabled(int viewType) {
-        return true;
-    }
-
 
     protected void setListener(final ViewGroup parent, final RecyclerViewHolder viewHolder, int viewType) {
-        if (!isEnabled(viewType)) return;
         viewHolder.getConvertView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
