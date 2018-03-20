@@ -50,7 +50,7 @@ public abstract class RecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerVi
             public void onClick(View v) {
                 if (mOnItemClickListener != null) {
                     int position = getPosition(viewHolder);
-                    mOnItemClickListener.onItemClick(parent, v, mDatas.get(position), position);
+                    mOnItemClickListener.<T>onItemClick(parent, v, mDatas.get(position), position);
                 }
             }
         });
@@ -81,7 +81,7 @@ public abstract class RecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerVi
 
 
     public interface OnItemClickListener<T> {
-        void onItemClick(ViewGroup parent, View view, T t, int position);
+        void onItemClick(ViewGroup parent, View view, T data, int position);
     }
 
 }
