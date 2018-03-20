@@ -50,13 +50,12 @@ public class AppUtils {
         }
     }
 
-    public static int getActionBarSize(Activity activity) {
+    public static int getActionBarSize() {
         TypedValue typedValue = new TypedValue();
-        int[] textSizeAttr = new int[]{R.attr.actionBarSize};
-        int indexOfAttrTextSize = 0;
-        TypedArray a =  activity.obtainStyledAttributes(typedValue.data, textSizeAttr);
-        int actionBarSize = a.getDimensionPixelSize(indexOfAttrTextSize, -1);
-        a.recycle();
-        return actionBarSize;
+        if (Utils.getApp().getTheme().resolveAttribute(android.R.attr.actionBarSize, typedValue, true)) {
+            return TypedValue.complexToDimensionPixelSize(typedValue.data, Utils.getApp().getResources().getDisplayMetrics());
+        } else {
+            return SizeUtils.dp2px(72);
+        }
     }
 }
