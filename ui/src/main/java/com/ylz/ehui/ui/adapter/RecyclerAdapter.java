@@ -54,18 +54,16 @@ public abstract class RecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerVi
                 }
             }
         });
-
-
-        viewHolder.getConvertView().setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                if (mOnItemClickListener != null) {
-                    int position = getPosition(viewHolder);
-                    return mOnItemClickListener.onItemLongClick(parent, v, mDatas.get(position), position);
-                }
-                return false;
-            }
-        });
+//        viewHolder.getConvertView().setOnLongClickListener(new View.OnLongClickListener() {
+//            @Override
+//            public boolean onLongClick(View v) {
+//                if (mOnItemClickListener != null) {
+//                    int position = getPosition(viewHolder);
+//                    return mOnItemClickListener.onItemLongClick(parent, v, mDatas.get(position), position);
+//                }
+//                return false;
+//            }
+//        });
     }
 
     @Override
@@ -84,8 +82,6 @@ public abstract class RecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerVi
 
     public interface OnItemClickListener<T> {
         void onItemClick(ViewGroup parent, View view, T t, int position);
-
-        boolean onItemLongClick(ViewGroup parent, View view, T t, int position);
     }
 
 }
