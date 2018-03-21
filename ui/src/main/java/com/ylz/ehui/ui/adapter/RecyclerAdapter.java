@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class RecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerViewHolder> {
@@ -24,7 +25,10 @@ public abstract class RecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerVi
         mContext = context;
         mInflater = LayoutInflater.from(context);
         mLayoutId = layoutId;
-        mDatas = datas;
+        mDatas = new ArrayList<>();
+        if (datas != null) {
+            mDatas.addAll(datas);
+        }
     }
 
     @Override

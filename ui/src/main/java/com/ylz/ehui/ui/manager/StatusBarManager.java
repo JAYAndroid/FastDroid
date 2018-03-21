@@ -46,7 +46,7 @@ public class StatusBarManager {
      * @param activity
      * @param hideStatusBarBackground
      */
-    static void translucentStatusBar(Activity activity, boolean hideStatusBarBackground) {
+    public static void translucentStatusBar(Activity activity, boolean hideStatusBarBackground) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = activity.getWindow();
             //添加Flag把状态栏设为可绘制模式
