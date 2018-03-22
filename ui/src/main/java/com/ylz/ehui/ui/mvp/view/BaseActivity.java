@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.view.ViewGroup;
 import android.view.Window;
 
+import com.trello.rxlifecycle2.RxLifecycle;
 import com.trello.rxlifecycle2.android.ActivityEvent;
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 import com.ylz.ehui.ui.manager.AppManager;
@@ -13,17 +14,20 @@ import com.ylz.ehui.ui.manager.StatusBarManager;
 import com.ylz.ehui.ui.mvp.presenter.BasePresenter;
 import com.ylz.ehui.ui.proxy.LogicProxy;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.internal.subscriptions.ArrayCompositeSubscription;
 
 public abstract class BaseActivity<T extends BasePresenter> extends RxAppCompatActivity implements BaseView {
-
     private BasePresenter mPresenter;
     private Unbinder bind;
+    private List<Observable> mSubscriptions;
 
     protected abstract int getLayoutResource();
 
@@ -55,6 +59,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends RxAppCompatA
         setContentView(getLayoutResource());
         AppManager.getInstance().addActivity(this);
         bind = ButterKnife.bind(this);
+        mSubscriptions = new ArrayList<>();
         this.onInitData2Remote();
         this.onInitialization(savedInstanceState);
     }
@@ -75,7 +80,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends RxAppCompatA
     @Override
     public <T> void bind2Lifecycle(Observable<T> observable) {
         // 管理生命周期, 防止内存泄露
-        observable.compose(this.<T>bindToLifecycle()).subscribe();
+        observable.compose(this.<T>bindUntilEvent(ActivityEvent.DESTROY)).subscribe();
     }
 
     protected ViewGroup getRootView() {
@@ -105,7 +110,6 @@ public abstract class BaseActivity<T extends BasePresenter> extends RxAppCompatA
         if (mPresenter != null) {
             mPresenter.detachView();
         }
-
         AppManager.getInstance().removeActivity(this);
     }
 
