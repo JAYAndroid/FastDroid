@@ -6,15 +6,19 @@ import android.support.annotation.Nullable;
 import android.view.ViewGroup;
 import android.view.Window;
 
+import com.trello.rxlifecycle2.android.ActivityEvent;
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 import com.ylz.ehui.ui.manager.AppManager;
 import com.ylz.ehui.ui.manager.StatusBarManager;
 import com.ylz.ehui.ui.mvp.presenter.BasePresenter;
 import com.ylz.ehui.ui.proxy.LogicProxy;
 
+import java.util.concurrent.TimeUnit;
+
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 
 public abstract class BaseActivity<T extends BasePresenter> extends RxAppCompatActivity implements BaseView {
 
@@ -70,7 +74,8 @@ public abstract class BaseActivity<T extends BasePresenter> extends RxAppCompatA
 
     @Override
     public <T> void bind2Lifecycle(Observable<T> observable) {
-        observable.compose(this.<T>bindToLifecycle());
+        // 管理生命周期, 防止内存泄露
+        observable.compose(this.<T>bindUntilEvent(ActivityEvent.DESTROY)).subscribe();
     }
 
     protected ViewGroup getRootView() {
