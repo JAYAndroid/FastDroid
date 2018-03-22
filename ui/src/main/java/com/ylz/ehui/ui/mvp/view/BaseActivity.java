@@ -75,7 +75,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends RxAppCompatA
     @Override
     public <T> void bind2Lifecycle(Observable<T> observable) {
         // 管理生命周期, 防止内存泄露
-        observable.compose(this.<T>bindUntilEvent(ActivityEvent.DESTROY)).subscribe();
+        observable.compose(this.<T>bindToLifecycle()).subscribe();
     }
 
     protected ViewGroup getRootView() {
