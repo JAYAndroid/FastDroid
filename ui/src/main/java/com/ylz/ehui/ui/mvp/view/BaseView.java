@@ -1,8 +1,9 @@
 package com.ylz.ehui.ui.mvp.view;
 
-import io.reactivex.Observable;
+import io.reactivex.disposables.Disposable;
 
 public interface BaseView {
-    <T> void bind2Lifecycle(Observable<T> observable);
+    void bind2Lifecycle(Disposable subscribe);
+
     void showToast(String msg);
 }

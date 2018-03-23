@@ -22,13 +22,14 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.subscriptions.ArrayCompositeSubscription;
 import io.reactivex.schedulers.Schedulers;
 
 public abstract class BaseActivity<T extends BasePresenter> extends RxAppCompatActivity implements BaseView {
     private BasePresenter mPresenter;
     private Unbinder bind;
-    private List<Observable> mSubscriptions;
+    private List<Disposable> mSubscribers;
 
     protected abstract int getLayoutResource();
 
@@ -60,7 +61,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends RxAppCompatA
         setContentView(getLayoutResource());
         AppManager.getInstance().addActivity(this);
         bind = ButterKnife.bind(this);
-        mSubscriptions = new ArrayList<>();
+        mSubscribers = new ArrayList<>();
         this.onInitData2Remote();
         this.onInitialization(savedInstanceState);
     }
@@ -79,12 +80,15 @@ public abstract class BaseActivity<T extends BasePresenter> extends RxAppCompatA
     }
 
     @Override
-    public <T> void bind2Lifecycle(Observable<T> observable) {
+    public void bind2Lifecycle(Disposable subscribe) {
         // 管理生命周期, 防止内存泄露
-        observable.compose(this.<T>bindUntilEvent(ActivityEvent.DESTROY))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe();
+        if (!mSubscribers.contains(subscribe)) {
+            mSubscribers.add(subscribe);
+        }
+//        observable.compose(this.<T>bindUntilEvent(ActivityEvent.DESTROY))
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe();
     }
 
     protected ViewGroup getRootView() {
@@ -114,6 +118,14 @@ public abstract class BaseActivity<T extends BasePresenter> extends RxAppCompatA
         if (mPresenter != null) {
             mPresenter.detachView();
         }
+
+        for (Disposable subscriber : mSubscribers) {
+            if (!subscriber.isDisposed()) {
+                subscriber.dispose();
+            }
+        }
+
+        mSubscribers.clear();
         AppManager.getInstance().removeActivity(this);
     }
 
