@@ -23,6 +23,7 @@ import butterknife.Unbinder;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.internal.subscriptions.ArrayCompositeSubscription;
+import io.reactivex.schedulers.Schedulers;
 
 public abstract class BaseActivity<T extends BasePresenter> extends RxAppCompatActivity implements BaseView {
     private BasePresenter mPresenter;
@@ -80,7 +81,10 @@ public abstract class BaseActivity<T extends BasePresenter> extends RxAppCompatA
     @Override
     public <T> void bind2Lifecycle(Observable<T> observable) {
         // 管理生命周期, 防止内存泄露
-        observable.compose(this.<T>bindUntilEvent(ActivityEvent.DESTROY)).subscribe();
+        observable.compose(this.<T>bindUntilEvent(ActivityEvent.DESTROY))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe();
     }
 
     protected ViewGroup getRootView() {
