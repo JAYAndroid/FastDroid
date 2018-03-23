@@ -1129,6 +1129,12 @@ public final class TimeUtils {
         return cal.get(Calendar.WEEK_OF_MONTH);
     }
 
+    public static int getDayOfMonth(final Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return cal.get(Calendar.DAY_OF_MONTH);
+    }
+
     /**
      * Return the number for indicating the week number within the current month.
      *
