@@ -1,86 +1,44 @@
 package com.ylz.ehui.ui.adapter;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
-import java.util.ArrayList;
+import com.ylz.ehui.ui.adapter.base.ItemViewDelegate;
+import com.ylz.ehui.ui.adapter.base.ViewHolder;
+
 import java.util.List;
 
-public abstract class RecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerViewHolder> {
+public abstract class RecyclerAdapter<T> extends MultiItemTypeAdapter<T> {
     protected Context mContext;
     protected int mLayoutId;
     protected List<T> mDatas;
     protected LayoutInflater mInflater;
 
-    private OnItemClickListener mOnItemClickListener;
-
-    public void setOnItemClickListener(OnItemClickListener<T> onItemClickListener) {
-        this.mOnItemClickListener = onItemClickListener;
-    }
-
-    public RecyclerAdapter(Context context, int layoutId, List<T> datas) {
+    public RecyclerAdapter(final Context context, final int layoutId, List<T> datas) {
+        super(context, datas);
         mContext = context;
         mInflater = LayoutInflater.from(context);
         mLayoutId = layoutId;
-        mDatas = new ArrayList<>();
-        if (datas != null) {
-            mDatas.addAll(datas);
-        }
-    }
+        mDatas = datas;
 
-    @Override
-    public RecyclerViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
-        RecyclerViewHolder viewHolder = RecyclerViewHolder.get(mContext, null, parent, mLayoutId, -1);
-        setListener(parent, viewHolder, viewType);
-        return viewHolder;
-    }
-
-    protected int getPosition(RecyclerViewHolder viewHolder) {
-        return viewHolder.getAdapterPosition();
-    }
-
-
-    protected void setListener(final ViewGroup parent, final RecyclerViewHolder viewHolder, int viewType) {
-        viewHolder.getConvertView().setOnClickListener(new View.OnClickListener() {
+        addItemViewDelegate(new ItemViewDelegate<T>() {
             @Override
-            public void onClick(View v) {
-                if (mOnItemClickListener != null) {
-                    int position = getPosition(viewHolder);
-                    mOnItemClickListener.<T>onItemClick(parent, v, mDatas.get(position), position);
-                }
+            public int getItemViewLayoutId() {
+                return layoutId;
+            }
+
+            @Override
+            public boolean isForViewType(T item, int position) {
+                return true;
+            }
+
+            @Override
+            public void convert(ViewHolder holder, T t, int position) {
+                RecyclerAdapter.this.convert(holder, t, position);
             }
         });
-//        viewHolder.getConvertView().setOnLongClickListener(new View.OnLongClickListener() {
-//            @Override
-//            public boolean onLongClick(View v) {
-//                if (mOnItemClickListener != null) {
-//                    int position = getPosition(viewHolder);
-//                    return mOnItemClickListener.onItemLongClick(parent, v, mDatas.get(position), position);
-//                }
-//                return false;
-//            }
-//        });
     }
 
-    @Override
-    public void onBindViewHolder(RecyclerViewHolder hepler, int position) {
-        hepler.updatePosition(position);
-        convert(hepler, mDatas.get(position));
-    }
-
-    public abstract void convert(RecyclerViewHolder holder, T t);
-
-    @Override
-    public int getItemCount() {
-        return mDatas.size() != 0 ? mDatas.size() : 0;
-    }
-
-
-    public interface OnItemClickListener<T> {
-        void onItemClick(ViewGroup parent, View view, T data, int position);
-    }
+    protected abstract void convert(ViewHolder holder, T t, int position);
 
 }
