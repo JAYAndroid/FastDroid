@@ -13,6 +13,7 @@ import com.ylz.ehui.ui.manager.AppManager;
 import com.ylz.ehui.ui.manager.StatusBarManager;
 import com.ylz.ehui.ui.mvp.presenter.BasePresenter;
 import com.ylz.ehui.ui.proxy.LogicProxy;
+import com.ylz.ehui.utils.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,10 +84,11 @@ public abstract class BaseActivity<T extends BasePresenter> extends RxAppCompatA
         if (!mSubscribers.contains(subscribe)) {
             mSubscribers.add(subscribe);
         }
-//        observable.compose(this.<T>bindUntilEvent(ActivityEvent.DESTROY))
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe();
+    }
+
+    @Override
+    public void showToast(String msg) {
+        ToastUtils.showShort(msg);
     }
 
     protected ViewGroup getRootView() {
