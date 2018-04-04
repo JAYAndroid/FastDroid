@@ -33,7 +33,7 @@ ext {
             scalars_converter = "2.3.0",
             rxpermission = "0.9.4",
             eventbus = "3.0.0",
-            support_v4 = "25.4.0",
+            support_v4 = "26.1.0",
             okhttp3 = "3.3.1",
             multidex = "1.0.1"
     ]
