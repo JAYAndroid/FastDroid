@@ -45,10 +45,6 @@ public class LogicProxy {
             init(clzz);
         }
         BasePresenter presenter = ((BasePresenter) mPresenters.get(clzz));
-        if (presenter.getView() != null) {
-            presenter.detachView();
-        }
-
         presenter.attachView(var1);
         return (T) presenter;
     }
