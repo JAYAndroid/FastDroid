@@ -108,6 +108,17 @@ public abstract class BaseActivity<T extends BasePresenter> extends RxAppCompatA
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+
+        for (Disposable subscriber : mSubscribers) {
+            if (!subscriber.isDisposed()) {
+                subscriber.dispose();
+            }
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         if (bind != null) {
@@ -117,12 +128,6 @@ public abstract class BaseActivity<T extends BasePresenter> extends RxAppCompatA
         LogicProxy.getInstance().unbind(getLogicClazz(), this);
         if (mPresenter != null) {
             mPresenter.detachView();
-        }
-
-        for (Disposable subscriber : mSubscribers) {
-            if (!subscriber.isDisposed()) {
-                subscriber.dispose();
-            }
         }
 
         mSubscribers.clear();
