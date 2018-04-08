@@ -45,7 +45,9 @@ public class LogicProxy {
             init(clzz);
         }
         BasePresenter presenter = ((BasePresenter) mPresenters.get(clzz));
-        presenter.attachView(var1);
+        if (presenter.getView() == null) {
+            presenter.attachView(var1);
+        }
         return (T) presenter;
     }
 
@@ -53,11 +55,11 @@ public class LogicProxy {
     public void unbind(Class clzz, BaseView var1) {
         if (mPresenters.containsKey(clzz)) {
             BasePresenter presenter = ((BasePresenter) mPresenters.get(clzz));
-            if (var1 != presenter.getView()) {
-                if (presenter.getView() != null)
-                    presenter.detachView();
-                mPresenters.remove(clzz);
+            if (presenter.getView() != null) {
+                presenter.detachView();
             }
+
+            mPresenters.remove(clzz);
         }
     }
 
