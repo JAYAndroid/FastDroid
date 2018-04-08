@@ -35,7 +35,7 @@ ext {
             eventbus = "3.0.0",
             support_v4 = "26..0",
             okhttp3 = "3.3.1",
-            multidex = "1.0.1"
+            multidex = "1.0.3"
     ]
 
 
