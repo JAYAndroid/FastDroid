@@ -51,12 +51,13 @@ public abstract class BaseActivity<T extends BasePresenter> extends RxAppCompatA
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         checkResource();
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         StatusBarManager.setStatusBarColor(this, initStatusBarColor());
         super.onCreate(savedInstanceState);
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+
         setContentView(getLayoutResource());
         AppManager.getInstance().addActivity(this);
         bind = ButterKnife.bind(this);
