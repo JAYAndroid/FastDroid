@@ -141,10 +141,6 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
         }
 
         LogicProxy.getInstance().unbind(getLogicClazz(), this);
-        if (mPresenter != null) {
-            mPresenter.detachView();
-        }
-
         mSubscribers.clear();
         AppManager.getInstance().removeActivity(this);
 
