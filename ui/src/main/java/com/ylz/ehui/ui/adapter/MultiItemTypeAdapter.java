@@ -9,6 +9,7 @@ import com.ylz.ehui.ui.adapter.base.ItemViewDelegate;
 import com.ylz.ehui.ui.adapter.base.ItemViewDelegateManager;
 import com.ylz.ehui.ui.adapter.base.ViewHolder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,7 +25,10 @@ public class MultiItemTypeAdapter<T> extends RecyclerView.Adapter<ViewHolder> {
 
     public MultiItemTypeAdapter(Context context, List<T> datas) {
         mContext = context;
-        mDatas = datas;
+        mDatas = new ArrayList<>();
+        if (datas != null) {
+            mDatas.addAll(datas);
+        }
         mItemViewDelegateManager = new ItemViewDelegateManager();
     }
 
