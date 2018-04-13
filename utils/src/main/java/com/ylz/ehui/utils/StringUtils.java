@@ -178,7 +178,7 @@ public final class StringUtils {
         char[] chars = s.toCharArray();
         for (int i = 0, len = chars.length; i < len; i++) {
             if (chars[i] == ' ') {
-               chars[i] = (char) 12288;
+                chars[i] = (char) 12288;
             } else if (33 <= chars[i] && chars[i] <= 126) {
                 chars[i] = (char) (chars[i] + 65248);
             } else {
@@ -186,5 +186,16 @@ public final class StringUtils {
             }
         }
         return new String(chars);
+    }
+
+    /**
+     * 判断是否为整数
+     *
+     * @param strNum 传入的字符串
+     * @return 是整数返回true, 否则返回false
+     */
+    public static boolean isNum(String strNum) {
+        java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("^[-\\+]?[\\d]*$");
+        return pattern.matcher(strNum).matches();
     }
 }
