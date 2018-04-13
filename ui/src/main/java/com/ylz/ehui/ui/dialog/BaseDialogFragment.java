@@ -40,12 +40,31 @@ public abstract class BaseDialogFragment extends android.support.v4.app.DialogFr
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        DisplayMetrics displayMetrics = mContext.getResources().getDisplayMetrics();
+        Window window = getDialog().getWindow();
+        window.requestFeature(Window.FEATURE_NO_TITLE);
         super.onActivityCreated(savedInstanceState);
         getDialog().setCancelable(builder.mCancelable);
         getDialog().setCanceledOnTouchOutside(builder.CanceledOnTouchOutside);
-        getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(0x00000000));
-        getDialog().getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+
+        window.setBackgroundDrawable(new ColorDrawable(0x00000000));
+
+        int height = WindowManager.LayoutParams.WRAP_CONTENT;
+        int width = WindowManager.LayoutParams.MATCH_PARENT;
+
+        if (builder.mHeightScale > 0) {
+            height = (int) (builder.mHeightScale * displayMetrics.heightPixels);
+        }
+
+        if (builder.mWidthScale > 0) {
+            width = (int) (builder.mWidthScale * displayMetrics.widthPixels);
+        }
+
+        if (builder.mGravity > 0) {
+            window.setGravity(builder.mGravity);
+        }
+
+        window.setLayout(width, height);
     }
 
     protected abstract Builder build(Builder builder);
@@ -77,7 +96,6 @@ public abstract class BaseDialogFragment extends android.support.v4.app.DialogFr
      */
     protected static class Builder {
         private final Context mContext;
-        private final DisplayMetrics mDisplayMetrics;
         private final ViewGroup mContainer;
         private View mCustomView;
         private LayoutInflater mLayoutInflater;
@@ -92,11 +110,9 @@ public abstract class BaseDialogFragment extends android.support.v4.app.DialogFr
             this.mContext = context;
             this.mLayoutInflater = inflater;
             this.mContainer = container;
-            mDisplayMetrics = mContext.getResources().getDisplayMetrics();
             mCancelable = true;
             CanceledOnTouchOutside = true;
         }
-
 
         public Builder setView(@LayoutRes int layoutId) {
             mCustomView = mLayoutInflater.inflate(layoutId, mContainer, false);
@@ -104,22 +120,6 @@ public abstract class BaseDialogFragment extends android.support.v4.app.DialogFr
         }
 
         public View create() {
-            if (mCustomView != null) {
-                FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) mCustomView.getLayoutParams();
-
-                if (mHeightScale > 0) {
-                    layoutParams.height = (int) (mHeightScale * mDisplayMetrics.heightPixels);
-                }
-
-                if (mWidthScale > 0) {
-                    layoutParams.width = (int) (mWidthScale * mDisplayMetrics.widthPixels);
-                }
-
-                if (mGravity > 0) {
-                    layoutParams.gravity = mGravity;
-                }
-            }
-
             return mCustomView;
         }
 
