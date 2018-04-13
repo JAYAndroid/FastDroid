@@ -110,8 +110,8 @@ public abstract class BaseDialogFragment extends android.support.v4.app.DialogFr
             this.mContext = context;
             this.mLayoutInflater = inflater;
             this.mContainer = container;
-            mCancelable = true;
-            CanceledOnTouchOutside = true;
+            mCancelable = false;
+            CanceledOnTouchOutside = false;
         }
 
         public Builder setView(@LayoutRes int layoutId) {
