@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white">#FFFFFF</color>
+    <color name="theme">#FF196FFA</color>
+    <color name="fast_droid_count_down_dialog_title_color">#f5f5f5</color>
+    <color name="fast_droid_count_down_dialog_msg_color">#606060</color>
+    <color name="fast_droid_count_down_positive_color">#dcdcdc</color>
+    <color name="fast_droid_confirm_dialog_negative_color">#ecf3ff</color>
+    <color name="fast_droid_confirm_dialog_title_color">#333333</color>
+    <color name="fast_droid_confirm_dialog_msg_color">#606060</color>
+    <color name="fast_droid_confirm_dialog_positive_color">#ecf3ff</color>
+</resources>

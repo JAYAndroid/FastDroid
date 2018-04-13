@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tool="http://schemas.android.com/tools"
+    android:layout_width="295dp"
+    android:layout_height="190dp"
+    android:layout_gravity="center"
+    android:background="@drawable/fast_droid_shape_white_round_9"
+    android:orientation="vertical"
+    android:paddingBottom="24dp">
+
+    <TextView
+        android:id="@+id/tv_confirm_dialog_title"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@drawable/fast_droid_shape_confirm_dialog_title"
+        android:gravity="center"
+        android:text="温馨提示"
+        android:textColor="@color/fast_droid_confirm_dialog_title_color"
+        android:textSize="16dp" />
+
+    <TextView
+        android:id="@+id/tv_confirm_dialog_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:layout_margin="12dp"
+        android:layout_weight="1"
+        android:gravity="start|center"
+        android:textColor="@color/fast_droid_confirm_dialog_msg_color"
+        android:textSize="14dp"
+        tool:text="是否取消申请" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp">
+
+        <Button
+            android:id="@+id/btn_confirm_dialog_negative"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="21dp"
+            android:layout_weight="1"
+            android:background="@drawable/fast_droid_shape_confirm_dialog_negative"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:minHeight="0dp"
+            android:minWidth="0dp"
+            android:padding="10dp"
+            android:text="是"
+            android:textColor="@color/theme" />
+
+        <Button
+            android:id="@+id/btn_confirm_dialog_positive"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/fast_droid_shape_confirm_dialog_positive"
+            android:minHeight="0dp"
+            android:minWidth="0dp"
+            android:padding="10dp"
+            android:text="否"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
+</LinearLayout>
