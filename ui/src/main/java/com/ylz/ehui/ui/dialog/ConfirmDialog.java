@@ -97,12 +97,12 @@ public class ConfirmDialog extends BaseDialogFragment implements View.OnClickLis
 
         if (viewId == R.id.btn_confirm_dialog_negative) {
             if (mNegativeListener != null) {
-                mNegativeView.setOnClickListener(mNegativeListener);
+                mNegativeListener.onClick(view);
             }
 
         } else if (viewId == R.id.btn_confirm_dialog_positive) {
             if (mPositiveListener != null) {
-                mPositiveVew.setOnClickListener(mPositiveListener);
+                mPositiveListener.onClick(view);
             }
         }
 
