@@ -9,4 +9,8 @@
     <color name="fast_droid_confirm_dialog_title_color">#333333</color>
     <color name="fast_droid_confirm_dialog_msg_color">#606060</color>
     <color name="fast_droid_confirm_dialog_positive_color">#ecf3ff</color>
+
+    <color name="fast_droid_wait_dialog_color_fca73d">#fca73d</color>
+    <color name="fast_droid_wait_dialog_color_387dfb">#387dfb</color>
+    <color name="fast_droid_wait_dialog_color_97d94d">#97d94d</color>
 </resources>
