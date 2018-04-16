@@ -50,14 +50,18 @@ public abstract class BaseDialogFragment extends android.support.v4.app.DialogFr
         window.setBackgroundDrawable(new ColorDrawable(0x00000000));
 
         int height = WindowManager.LayoutParams.WRAP_CONTENT;
-        int width = WindowManager.LayoutParams.WRAP_CONTENT;
+        int width = WindowManager.LayoutParams.MATCH_PARENT;
 
         if (builder.mHeightScale > 0) {
             height = (int) (builder.mHeightScale * displayMetrics.heightPixels);
+        } else if (builder.mHeight > 0) {
+            height = builder.mHeight;
         }
 
         if (builder.mWidthScale > 0) {
             width = (int) (builder.mWidthScale * displayMetrics.widthPixels);
+        } else if (builder.mWidth > 0) {
+            width = builder.mWidth;
         }
 
         if (builder.mGravity > 0) {
@@ -104,6 +108,8 @@ public abstract class BaseDialogFragment extends android.support.v4.app.DialogFr
         private int mGravity;
         private boolean mCancelable;
         private boolean CanceledOnTouchOutside;
+        private int mWidth;
+        private int mHeight;
 
 
         public Builder(Context context, LayoutInflater inflater, ViewGroup container) {
@@ -130,6 +136,16 @@ public abstract class BaseDialogFragment extends android.support.v4.app.DialogFr
 
         public Builder widthScale(float scale) {
             this.mWidthScale = scale;
+            return this;
+        }
+
+        public Builder width(int width) {
+            this.mWidth = width;
+            return this;
+        }
+
+        public Builder height(int height) {
+            this.mHeight = height;
             return this;
         }
 
