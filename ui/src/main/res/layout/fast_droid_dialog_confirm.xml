@@ -29,6 +29,12 @@
         android:textSize="14dp"
         tool:text="是否取消申请" />
 
+    <FrameLayout
+        android:id="@+id/fl_custom_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -41,7 +47,6 @@
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginRight="21dp"
             android:layout_weight="1"
             android:background="@drawable/fast_droid_shape_confirm_dialog_negative"
             android:ellipsize="end"
@@ -50,7 +55,8 @@
             android:minWidth="0dp"
             android:padding="10dp"
             android:text="是"
-            android:textColor="@color/theme" />
+            android:textColor="@color/theme"
+            tool:layout_marginRight="20dp" />
 
         <Button
             android:id="@+id/btn_confirm_dialog_positive"

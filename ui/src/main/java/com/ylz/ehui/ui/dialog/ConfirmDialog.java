@@ -2,7 +2,10 @@ package com.ylz.ehui.ui.dialog;
 
 import android.support.annotation.ColorRes;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ylz.ehui.base_ui.R;
@@ -21,6 +24,11 @@ public class ConfirmDialog extends BaseDialogFragment implements View.OnClickLis
     private String mNegativeMsg;
     private View.OnClickListener mPositiveListener;
     private View.OnClickListener mNegativeListener;
+
+    private boolean mHidenPositiveButton;
+    private boolean mHidenNegativeButton;
+
+    private View mCustomView;
     private int mResColor;
 
     private TextView mTitleView;
@@ -57,6 +65,9 @@ public class ConfirmDialog extends BaseDialogFragment implements View.OnClickLis
         this.mPositiveListener = mCreater.mPositiveListener;
         this.mNegativeListener = mCreater.mNegativeListener;
         this.mResColor = mCreater.mResColor;
+        this.mCustomView = mCreater.mCustomView;
+        this.mHidenPositiveButton = mCreater.mHidenPositiveButton;
+        this.mHidenNegativeButton = mCreater.mHidenNegativeButton;
 
         mTitleView = parent.findViewById(R.id.tv_confirm_dialog_title);
         mMsgView = parent.findViewById(R.id.tv_confirm_dialog_msg);
@@ -87,7 +98,21 @@ public class ConfirmDialog extends BaseDialogFragment implements View.OnClickLis
             mNegativeView.setText(mNegativeMsg);
         }
 
+        if (mCustomView != null) {
+            FrameLayout customView = parent.findViewById(R.id.fl_custom_view);
+            customView.setVisibility(View.VISIBLE);
+            mMsgView.setVisibility(View.GONE);
+            customView.addView(mCustomView);
+        }
 
+        if (mHidenPositiveButton) {
+            mPositiveVew.setVisibility(View.GONE);
+
+            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) mNegativeView.getLayoutParams();
+            layoutParams.setMargins(0, 0, 0, 0);
+        } else if (mHidenNegativeButton) {
+            mNegativeView.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -115,10 +140,18 @@ public class ConfirmDialog extends BaseDialogFragment implements View.OnClickLis
         private String mNegativeMsg;
         private View.OnClickListener mPositiveListener;
         private View.OnClickListener mNegativeListener;
+        private View mCustomView;
         private int mResColor;
+        private boolean mHidenPositiveButton;
+        private boolean mHidenNegativeButton;
 
         public Creater setTitle(String title) {
             mTitle = title;
+            return this;
+        }
+
+        public Creater setCustomView(View view) {
+            this.mCustomView = view;
             return this;
         }
 
@@ -135,6 +168,16 @@ public class ConfirmDialog extends BaseDialogFragment implements View.OnClickLis
         public Creater setPositiveButton(String positiveMsg, View.OnClickListener listener) {
             mPositiveMsg = positiveMsg;
             mPositiveListener = listener;
+            return this;
+        }
+
+        public Creater hidenPositiveButton(boolean hiden) {
+            this.mHidenPositiveButton = hiden;
+            return this;
+        }
+
+        public Creater hidenNegativeButton(boolean hiden) {
+            this.mHidenNegativeButton = hiden;
             return this;
         }
 
