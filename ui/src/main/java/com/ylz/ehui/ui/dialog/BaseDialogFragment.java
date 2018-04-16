@@ -50,7 +50,7 @@ public abstract class BaseDialogFragment extends android.support.v4.app.DialogFr
         window.setBackgroundDrawable(new ColorDrawable(0x00000000));
 
         int height = WindowManager.LayoutParams.WRAP_CONTENT;
-        int width = WindowManager.LayoutParams.MATCH_PARENT;
+        int width = WindowManager.LayoutParams.WRAP_CONTENT;
 
         if (builder.mHeightScale > 0) {
             height = (int) (builder.mHeightScale * displayMetrics.heightPixels);
