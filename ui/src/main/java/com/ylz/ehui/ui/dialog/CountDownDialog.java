@@ -29,7 +29,6 @@ public class CountDownDialog extends BaseDialogFragment implements View.OnClickL
     @Override
     protected Builder build(Builder builder) {
         return builder.setView(R.layout.fast_droid_dialog_count_down)
-                .heightScale(0.4f)
                 .widthScale(0.8f);
     }
 
