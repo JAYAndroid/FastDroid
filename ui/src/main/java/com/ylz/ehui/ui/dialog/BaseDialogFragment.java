@@ -52,16 +52,16 @@ public abstract class BaseDialogFragment extends android.support.v4.app.DialogFr
         int height = WindowManager.LayoutParams.WRAP_CONTENT;
         int width = WindowManager.LayoutParams.MATCH_PARENT;
 
-        if (builder.mHeightScale > 0) {
-            height = (int) (builder.mHeightScale * displayMetrics.heightPixels);
-        } else if (builder.mHeight > 0) {
-            height = builder.mHeight;
-        }
-
         if (builder.mWidthScale > 0) {
             width = (int) (builder.mWidthScale * displayMetrics.widthPixels);
         } else if (builder.mWidth > 0) {
             width = builder.mWidth;
+        }
+
+        if (builder.mHeightScale > 0) {
+            height = (int) (builder.mHeightScale * displayMetrics.heightPixels);
+        } else if (builder.mHeight > 0) {
+            height = builder.mHeight;
         }
 
         if (builder.mGravity > 0) {
