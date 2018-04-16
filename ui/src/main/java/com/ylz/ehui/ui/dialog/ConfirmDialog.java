@@ -40,7 +40,8 @@ public class ConfirmDialog extends BaseDialogFragment implements View.OnClickLis
 
     @Override
     protected Builder build(Builder builder) {
-        return builder.setView(R.layout.fast_droid_dialog_confirm);
+        return builder.setView(R.layout.fast_droid_dialog_confirm)
+                .widthScale(0.8f);
     }
 
     @Override
