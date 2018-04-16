@@ -198,4 +198,9 @@ public final class StringUtils {
         java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("^[-\\+]?[\\d]*$");
         return pattern.matcher(strNum).matches();
     }
+
+    public static String formatStr(String prefix, String suffix) {
+        String template = "PREFIX(SUFFIX)";
+        return template.replace("PREFIX", prefix).replace("SUFFIX", suffix);
+    }
 }
