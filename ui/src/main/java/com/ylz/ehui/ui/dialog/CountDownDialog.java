@@ -93,7 +93,7 @@ public class CountDownDialog extends BaseDialogFragment implements View.OnClickL
         dismiss();
 
         if (viewId == R.id.btn_confirm_dialog_positive && mPositiveListener != null) {
-            mPositiveVew.setOnClickListener(mPositiveListener);
+            mPositiveListener.onClick(view);
         }
     }
 
