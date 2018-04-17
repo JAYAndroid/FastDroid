@@ -6,4 +6,6 @@ public interface BaseView {
     void bind2Lifecycle(Disposable subscribe);
 
     void showToast(String msg);
+
+    void onError(String msg);
 }

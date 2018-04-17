@@ -94,6 +94,11 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
         ToastUtils.showShort(msg);
     }
 
+    @Override
+    public void onError(String msg) {
+
+    }
+
     protected ViewGroup getRootView() {
         checkResource();
         return (ViewGroup) ((ViewGroup) findViewById(android.R.id.content))
