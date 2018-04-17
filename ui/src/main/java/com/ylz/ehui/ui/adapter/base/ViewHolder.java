@@ -20,6 +20,8 @@ import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.ylz.ehui.image.utils.GlideUtils;
+
 public class ViewHolder extends RecyclerView.ViewHolder {
     private SparseArray<View> mViews;
     private View mConvertView;
@@ -81,9 +83,21 @@ public class ViewHolder extends RecyclerView.ViewHolder {
         return this;
     }
 
-    public ViewHolder setImageResource(int viewId, int resId) {
-        ImageView view = getView(viewId);
-        view.setImageResource(resId);
+    public ViewHolder setImageResource(int viewId, int resId, boolean isCircle) {
+        ImageView iv = getView(viewId);
+        GlideUtils.getInstance().load(iv, resId, isCircle);
+        return this;
+    }
+
+    public ViewHolder setImageViewUrl(int viewId, String url, boolean isCircle, int... defaultResId) {
+        ImageView iv = getView(viewId);
+        GlideUtils.getInstance().load(iv, url, isCircle, defaultResId);
+        return this;
+    }
+
+    public ViewHolder setImageViewRoundCorner(int viewId, String url, int radius, int... defaultResId) {
+        ImageView iv = getView(viewId);
+        GlideUtils.getInstance().loadRoundCorners(iv, url, radius, defaultResId);
         return this;
     }
 
@@ -99,6 +113,7 @@ public class ViewHolder extends RecyclerView.ViewHolder {
         return this;
     }
 
+
     public ViewHolder setBackgroundColor(int viewId, int color) {
         View view = getView(viewId);
         view.setBackgroundColor(color);
@@ -110,6 +125,7 @@ public class ViewHolder extends RecyclerView.ViewHolder {
         view.setBackgroundResource(backgroundRes);
         return this;
     }
+
 
     public ViewHolder setTextColor(int viewId, int textColor) {
         TextView view = getView(viewId);

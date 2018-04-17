@@ -52,4 +52,8 @@ dependencies {
     api 'com.nineoldandroids:library:2.4.0'
     annotationProcessor 'com.alibaba:arouter-compiler:1.1.4'
     compile project(':utils')
+    compile project(path: ':image')
+
+    //下拉刷新，加载更多
+    compile 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-4'
 }
