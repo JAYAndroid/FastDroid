@@ -15,6 +15,7 @@ import com.ylz.ehui.ui.manager.StatusBarManager;
 import com.ylz.ehui.ui.mvp.presenter.BasePresenter;
 import com.ylz.ehui.ui.proxy.LogicProxy;
 import com.ylz.ehui.utils.ToastUtils;
+import com.zhy.autolayout.AutoLayoutActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import io.reactivex.disposables.Disposable;
 
-public abstract class BaseActivity<T extends BasePresenter> extends AppCompatActivity implements BaseView {
+public abstract class BaseActivity<T extends BasePresenter> extends AutoLayoutActivity implements BaseView {
     private BasePresenter mPresenter;
     private Unbinder bind;
     private List<Disposable> mSubscribers;
