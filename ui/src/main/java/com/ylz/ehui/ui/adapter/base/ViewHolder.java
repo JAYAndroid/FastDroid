@@ -30,10 +30,10 @@ public class ViewHolder extends RecyclerView.ViewHolder {
 
     public ViewHolder(Context context, View itemView) {
         super(itemView);
-        AutoUtils.autoSize(itemView);
         mContext = context;
         mConvertView = itemView;
-        mViews = new SparseArray<View>();
+        mViews = new SparseArray<>();
+        AutoUtils.autoSize(mConvertView);
     }
 
 
