@@ -18,7 +18,6 @@ public class HeaderAndFooterWrapper<T> extends RecyclerView.Adapter<RecyclerView
     private static final int BASE_ITEM_TYPE_FOOTER = 200000;
 
     private SparseArrayCompat<View> mHeaderViews = new SparseArrayCompat<>();
-    private SparseArrayCompat<Integer> mHeaderViewIds = new SparseArrayCompat<>();
     private SparseArrayCompat<View> mFootViews = new SparseArrayCompat<>();
 
     private RecyclerView.Adapter mInnerAdapter;
@@ -32,9 +31,6 @@ public class HeaderAndFooterWrapper<T> extends RecyclerView.Adapter<RecyclerView
         if (mHeaderViews.get(viewType) != null) {
             ViewHolder holder = ViewHolder.createViewHolder(parent.getContext(), mHeaderViews.get(viewType));
             return holder;
-        } else if (mHeaderViewIds.get(viewType) != null) {
-            ViewHolder holder = ViewHolder.createViewHolder(parent.getContext(), parent, mHeaderViewIds.get(viewType));
-            return holder;
         } else if (mFootViews.get(viewType) != null) {
             ViewHolder holder = ViewHolder.createViewHolder(parent.getContext(), mFootViews.get(viewType));
             return holder;
@@ -45,10 +41,7 @@ public class HeaderAndFooterWrapper<T> extends RecyclerView.Adapter<RecyclerView
     @Override
     public int getItemViewType(int position) {
         if (isHeaderViewPos(position)) {
-            if (mHeaderViews.size() > 0) {
-                return mHeaderViews.keyAt(position);
-            }
-            return mHeaderViewIds.keyAt(position);
+            return mHeaderViews.keyAt(position);
         } else if (isFooterViewPos(position)) {
             return mFootViews.keyAt(position - getHeadersCount() - getRealItemCount());
         }
@@ -114,10 +107,6 @@ public class HeaderAndFooterWrapper<T> extends RecyclerView.Adapter<RecyclerView
 
     public void addHeaderView(View view) {
         mHeaderViews.put(mHeaderViews.size() + BASE_ITEM_TYPE_HEADER, view);
-    }
-
-    public void addHeaderViewWithId(int viewId) {
-        mHeaderViewIds.put(mHeaderViews.size() + BASE_ITEM_TYPE_HEADER, viewId);
     }
 
     public void addFootView(View view) {
