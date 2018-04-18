@@ -21,6 +21,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.ylz.ehui.image.utils.GlideUtils;
+import com.zhy.autolayout.utils.AutoUtils;
 
 public class ViewHolder extends RecyclerView.ViewHolder {
     private SparseArray<View> mViews;
@@ -29,6 +30,7 @@ public class ViewHolder extends RecyclerView.ViewHolder {
 
     public ViewHolder(Context context, View itemView) {
         super(itemView);
+        AutoUtils.autoSize(itemView);
         mContext = context;
         mConvertView = itemView;
         mViews = new SparseArray<View>();
