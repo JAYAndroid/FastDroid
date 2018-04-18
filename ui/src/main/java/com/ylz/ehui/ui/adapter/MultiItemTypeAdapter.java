@@ -25,9 +25,10 @@ public class MultiItemTypeAdapter<T> extends RecyclerView.Adapter<ViewHolder> {
 
     public MultiItemTypeAdapter(Context context, List<T> datas) {
         mContext = context;
-        mDatas = new ArrayList<>();
-        if (datas != null) {
-            mDatas.addAll(datas);
+        if (datas == null) {
+            mDatas = new ArrayList<>();
+        } else {
+            mDatas = datas;
         }
         mItemViewDelegateManager = new ItemViewDelegateManager();
     }
