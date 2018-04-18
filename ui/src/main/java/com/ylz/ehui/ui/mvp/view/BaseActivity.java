@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.view.Window;
 
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
+import com.ylz.ehui.ui.dialog.BaseDialogFragment;
+import com.ylz.ehui.ui.dialog.WaitDialog;
 import com.ylz.ehui.ui.manager.AppManager;
 import com.ylz.ehui.ui.manager.StatusBarManager;
 import com.ylz.ehui.ui.mvp.presenter.BasePresenter;
@@ -30,6 +32,8 @@ public abstract class BaseActivity<T extends BasePresenter> extends AutoLayoutAc
     private List<Disposable> mSubscribers;
     private boolean isDestroyed = false;
 
+    private BaseDialogFragment mDialog;
+
     protected abstract int getLayoutResource();
 
     protected abstract void onInitialization(Bundle bundle);
@@ -41,6 +45,10 @@ public abstract class BaseActivity<T extends BasePresenter> extends AutoLayoutAc
     protected void onInitData2Remote() {
         if (getLogicClazz() != null)
             mPresenter = getLogicImpl();
+    }
+
+    protected BaseDialogFragment initDialog() {
+        return new WaitDialog();
     }
 
     protected T getPresenter() {
@@ -67,6 +75,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AutoLayoutAc
         mSubscribers = new ArrayList<>();
         this.onInitData2Remote();
         this.onInitialization(savedInstanceState);
+        mDialog = initDialog();
     }
 
     //获得该页面的实例
@@ -93,6 +102,18 @@ public abstract class BaseActivity<T extends BasePresenter> extends AutoLayoutAc
     @Override
     public void showToast(String msg) {
         ToastUtils.showShort(msg);
+    }
+
+    protected void showDialog() {
+        if (mDialog != null && mDialog.getDialog() != null && !mDialog.getDialog().isShowing()) {
+            mDialog.show(this);
+        }
+    }
+
+    protected void dismissDialog() {
+        if (mDialog != null && mDialog.getDialog() != null && mDialog.getDialog().isShowing()) {
+            mDialog.dismiss();
+        }
     }
 
     @Override
