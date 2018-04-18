@@ -54,6 +54,9 @@ dependencies {
     api project(':utils')
     api project(path: ':image')
 
+    api 'com.jakewharton:butterknife:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+
     //下拉刷新，加载更多
     api 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-4'
 
