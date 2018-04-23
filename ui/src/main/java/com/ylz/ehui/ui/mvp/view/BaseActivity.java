@@ -73,9 +73,9 @@ public abstract class BaseActivity<T extends BasePresenter> extends AutoLayoutAc
         AppManager.getInstance().addActivity(this);
         bind = ButterKnife.bind(this);
         mSubscribers = new ArrayList<>();
+        mDialog = initDialog();
         this.onInitData2Remote();
         this.onInitialization(savedInstanceState);
-        mDialog = initDialog();
     }
 
     //获得该页面的实例

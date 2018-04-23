@@ -39,7 +39,7 @@ public final class ToastUtils {
     private static Toast               sToast;
     private static WeakReference<View> sViewWeakReference;
     private static int sLayoutId  = -1;
-    private static int gravity    = Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM;
+    private static int gravity    = Gravity.CENTER;
     private static int xOffset    = 0;
     private static int yOffset    = (int) (64 * Utils.getApp().getResources().getDisplayMetrics().density + 0.5);
     private static int bgColor    = COLOR_DEFAULT;
@@ -213,6 +213,7 @@ public final class ToastUtils {
                 cancel();
                 sToast = Toast.makeText(Utils.getApp(), text, duration);
                 TextView tvMessage = sToast.getView().findViewById(android.R.id.message);
+                tvMessage.setGravity(gravity);
                 TextViewCompat.setTextAppearance(tvMessage, android.R.style.TextAppearance);
                 tvMessage.setTextColor(msgColor);
                 sToast.setGravity(gravity, xOffset, yOffset);
