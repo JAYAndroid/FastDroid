@@ -21,6 +21,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ylz.ehui.module_utils.R;
+
 import java.lang.ref.WeakReference;
 
 /**
@@ -33,18 +35,19 @@ import java.lang.ref.WeakReference;
  */
 public final class ToastUtils {
 
-    private static final int     COLOR_DEFAULT = 0xFEFFFFFF;
-    private static final Handler HANDLER       = new Handler(Looper.getMainLooper());
+    private static final int COLOR_DEFAULT = 0xFEFFFFFF;
+    private static final Handler HANDLER = new Handler(Looper.getMainLooper());
 
-    private static Toast               sToast;
+    private static Toast sToast;
     private static WeakReference<View> sViewWeakReference;
-    private static int sLayoutId  = -1;
-    private static int gravity    = Gravity.CENTER;
-    private static int xOffset    = 0;
-    private static int yOffset    = (int) (64 * Utils.getApp().getResources().getDisplayMetrics().density + 0.5);
-    private static int bgColor    = COLOR_DEFAULT;
+    private static int sLayoutId = -1;
+    private static int gravity = Gravity.CENTER;
+    private static int xOffset = 0;
+    private static int yOffset = (int) (64 * Utils.getApp().getResources().getDisplayMetrics().density + 0.5);
+    private static int bgColor = COLOR_DEFAULT;
     private static int bgResource = -1;
-    private static int msgColor   = COLOR_DEFAULT;
+    private static int msgColor = COLOR_DEFAULT;
+    private static TextView mToastView;
 
     private ToastUtils() {
         throw new UnsupportedOperationException("u can't instantiate me...");
@@ -184,16 +187,6 @@ public final class ToastUtils {
         return view;
     }
 
-    /**
-     * 取消吐司显示
-     */
-    public static void cancel() {
-        if (sToast != null) {
-            sToast.cancel();
-            sToast = null;
-        }
-    }
-
     private static void show(@StringRes final int resId, final int duration) {
         show(Utils.getApp().getResources().getText(resId).toString(), duration);
     }
@@ -210,14 +203,29 @@ public final class ToastUtils {
         HANDLER.post(new Runnable() {
             @Override
             public void run() {
-                cancel();
-                sToast = Toast.makeText(Utils.getApp(), text, duration);
-                TextView tvMessage = sToast.getView().findViewById(android.R.id.message);
-                tvMessage.setGravity(Gravity.CENTER);
-                TextViewCompat.setTextAppearance(tvMessage, android.R.style.TextAppearance);
-                tvMessage.setTextColor(msgColor);
+//                cancel();
+//                sToast = Toast.makeText(Utils.getApp(), text, duration);
+//                TextView tvMessage = sToast.getView().findViewById(android.R.id.message);
+//                tvMessage.setGravity(Gravity.CENTER);
+//                TextViewCompat.setTextAppearance(tvMessage, android.R.style.TextAppearance);
+//                tvMessage.setTextColor(msgColor);
+//                sToast.setGravity(gravity, xOffset, yOffset);
+//                setBg(tvMessage);
+//                sToast.show();
+                if (sToast == null || mToastView == null) {
+                    sToast = Toast.makeText(Utils.getApp(), text, duration);
+                    mToastView = new TextView(Utils.getApp());
+                    mToastView.setText(text);
+                    mToastView.setTextSize(15);
+                    mToastView.setGravity(Gravity.CENTER);
+                    sToast.setView(mToastView);
+                } else {
+                    mToastView.setText(text);
+                }
+
                 sToast.setGravity(gravity, xOffset, yOffset);
-                setBg(tvMessage);
+                setBg(mToastView);
+                mToastView.setTextColor(msgColor);
                 sToast.show();
             }
         });
@@ -227,12 +235,19 @@ public final class ToastUtils {
         HANDLER.post(new Runnable() {
             @Override
             public void run() {
-                cancel();
-                sToast = new Toast(Utils.getApp());
+//                cancel();
+//                sToast = new Toast(Utils.getApp());
+//                sToast.setView(view);
+//                sToast.setDuration(duration);
+//                setBg();
+//                sToast.show();
+                if (sToast == null) {
+                    sToast = new Toast(Utils.getApp());
+                    sToast.setDuration(duration);
+                }
                 sToast.setView(view);
-                sToast.setDuration(duration);
                 sToast.setGravity(gravity, xOffset, yOffset);
-                setBg();
+                setBg(mToastView);
                 sToast.show();
             }
         });
