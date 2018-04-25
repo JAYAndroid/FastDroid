@@ -213,7 +213,7 @@ public final class ToastUtils {
                 cancel();
                 sToast = Toast.makeText(Utils.getApp(), text, duration);
                 TextView tvMessage = sToast.getView().findViewById(android.R.id.message);
-                tvMessage.setGravity(gravity);
+                tvMessage.setGravity(Gravity.CENTER);
                 TextViewCompat.setTextAppearance(tvMessage, android.R.style.TextAppearance);
                 tvMessage.setTextColor(msgColor);
                 sToast.setGravity(gravity, xOffset, yOffset);
