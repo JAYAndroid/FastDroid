@@ -101,7 +101,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AutoLayoutAc
 
     @Override
     public void showToast(String msg) {
-        ToastUtils.showShort(msg);
+        ToastUtils.showHint(msg);
     }
 
     protected void showDialog() {
