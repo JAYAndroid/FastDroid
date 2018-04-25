@@ -21,6 +21,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.ylz.ehui.image.utils.GlideUtils;
+import com.ylz.ehui.utils.StringUtils;
 import com.zhy.autolayout.utils.AutoUtils;
 
 public class ViewHolder extends RecyclerView.ViewHolder {
@@ -81,7 +82,7 @@ public class ViewHolder extends RecyclerView.ViewHolder {
      */
     public ViewHolder setText(int viewId, String text) {
         TextView tv = getView(viewId);
-        tv.setText(text);
+        tv.setText(StringUtils.isEmpty(text) ? "" : text);
         return this;
     }
 
