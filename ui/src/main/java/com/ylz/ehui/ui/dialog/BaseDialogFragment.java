@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -91,7 +92,7 @@ public abstract class BaseDialogFragment extends android.support.v4.app.DialogFr
     }
 
 
-    public void show(AppCompatActivity activity) {
+    public void show(FragmentActivity activity) {
         show(activity.getSupportFragmentManager(), getClass().getName());
     }
 

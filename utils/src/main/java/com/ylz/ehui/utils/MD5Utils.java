@@ -23,7 +23,7 @@ public class MD5Utils {
         }
     }
 
-    public static String getFileMD5String(File file) throws IOException {
+    public static synchronized String getFileMD5String(File file) throws IOException {
         String md5 = null;
         FileInputStream in = null;
         try {
@@ -48,7 +48,7 @@ public class MD5Utils {
         return md5;
     }
 
-    public static String getMD5String(String s) {
+    public static synchronized String getMD5String(String s) {
         try {
             return getMD5String(s.getBytes("UTF-8"));
         } catch (UnsupportedEncodingException e) {
@@ -58,7 +58,7 @@ public class MD5Utils {
         return null;
     }
 
-    public static String getMD5String(byte[] bytes) {
+    public static synchronized String getMD5String(byte[] bytes) {
         messagedigest.update(bytes);
         return bufferToHex(messagedigest.digest());
     }
