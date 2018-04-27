@@ -5,20 +5,21 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.view.ViewGroup;
 import android.view.Window;
 
-import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 import com.ylz.ehui.ui.dialog.BaseDialogFragment;
 import com.ylz.ehui.ui.dialog.WaitDialog;
 import com.ylz.ehui.ui.manager.AppManager;
 import com.ylz.ehui.ui.manager.StatusBarManager;
 import com.ylz.ehui.ui.mvp.presenter.BasePresenter;
+import com.ylz.ehui.ui.mvp.view.BaseView;
 import com.ylz.ehui.ui.proxy.LogicProxy;
 import com.ylz.ehui.utils.ToastUtils;
 import com.zhy.autolayout.AutoLayoutActivity;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,8 +39,12 @@ public abstract class BaseActivity<T extends BasePresenter> extends AutoLayoutAc
 
     protected abstract void onInitialization(Bundle bundle);
 
-    protected Class getLogicClazz() {
-        return null;
+    private Class<T>  getLogicClazz() {
+        Class<T> entityClass = null;
+        Type t = this.getClass().getGenericSuperclass();
+        Type[] p = ((ParameterizedType)t).getActualTypeArguments();
+        entityClass = (Class)p[0];
+        return entityClass;
     }
 
     protected void onInitData2Remote() {
