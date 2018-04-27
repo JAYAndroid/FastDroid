@@ -39,12 +39,16 @@ public abstract class BaseActivity<T extends BasePresenter> extends AutoLayoutAc
 
     protected abstract void onInitialization(Bundle bundle);
 
-    private Class<T>  getLogicClazz() {
+    private Class<T> getLogicClazz() {
         Class<T> entityClass = null;
         Type t = this.getClass().getGenericSuperclass();
-        Type[] p = ((ParameterizedType)t).getActualTypeArguments();
-        entityClass = (Class)p[0];
-        return entityClass;
+        if (t instanceof ParameterizedType) {
+            Type[] p = ((ParameterizedType) t).getActualTypeArguments();
+            entityClass = (Class) p[0];
+            return entityClass;
+        }
+
+        return null;
     }
 
     protected void onInitData2Remote() {
