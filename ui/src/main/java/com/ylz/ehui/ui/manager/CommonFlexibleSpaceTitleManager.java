@@ -1,6 +1,7 @@
 package com.ylz.ehui.ui.manager;
 
 import android.content.Context;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.IdRes;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -9,9 +10,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.text.style.ForegroundColorSpan;
 import android.util.SparseArray;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -27,6 +28,8 @@ import com.ylz.ehui.utils.SizeUtils;
 public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChangeListener, AppBarLayout.OnOffsetChangedListener {
     private View mRootView;
     private Context mContext;
+    private FrameLayout mMainContentLayout;
+    private final int mMainContentLayoutBg;
     private CommonTitleBarManager mCommonTitleBarManager;
     private SubHeadLayoutOnOffsetChangedListener mSubHeadLayoutOnOffsetChangedListener;
     private View.OnClickListener mRightListener;
@@ -34,6 +37,7 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
     private TextView mFlexibleSpaceTitleView;
     private TextView mFlexibleSpaceSubTitleView;
     private View mFlexibleSpaceTitleLayout;
+    private int mFlexibleSpaceTitleLayoutColor;
     private View mFlexibleSpaceRightView;
 
     private NestedScrollView mCustomFlexibleLayout;
@@ -50,6 +54,7 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
     private AppBarLayout mAppBarLayout;
 
     private String mTitle;
+    private int mFlexibleTitleColor;
     private String mSubTitle;
     private int mSubTitleResId;
     private int mFlexibleRightViewResId;
@@ -66,6 +71,7 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
         this.mCommonTitleBarManager = builder.mCommonTitleBarManager;
         this.mSubHeadLayoutOnOffsetChangedListener = builder.mSubHeadLayoutOnOffsetChangedListener;
         this.mTitle = builder.mTitle;
+        this.mFlexibleTitleColor = builder.mFlexibleTitleColor;
         this.mSubTitle = builder.mSubTitle;
         this.mSubTitleResId = builder.mSubTitleResId;
         this.mHidenFlexibleRightView = builder.mHidenFlexibleRightView;
@@ -74,6 +80,8 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
         this.mCustomFlexibleView = builder.mCustomFlexibleView;
         this.mFlexibleRightViewResId = builder.mFlexibleRightViewResId;
         this.mRightListener = builder.mRightListener;
+        this.mFlexibleSpaceTitleLayoutColor = builder.mFlexibleSpaceTitleLayoutColor;
+        this.mMainContentLayoutBg = builder.mMainContentLayoutBg;
 
         initView();
         initListener();
@@ -95,12 +103,25 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
         mViewCache = new SparseArray<>();
         toolbar = mRootView.findViewById(R.id.toolbar);
         mFlexibleSpaceTitleLayout = mRootView.findViewById(R.id.rl_flexible_title_layout);
-        mFlexibleSpaceTitleLayout.measure(0,0);
+        mFlexibleSpaceTitleLayout.measure(0, 0);
+        if (mFlexibleSpaceTitleLayoutColor > 0) {
+            try {
+                mFlexibleSpaceTitleLayout.setBackgroundColor(mContext.getResources().getColor(mFlexibleSpaceTitleLayoutColor));
+            } catch (Exception e) {
+                mFlexibleSpaceTitleLayout.setBackgroundColor(mFlexibleSpaceTitleLayoutColor);
+            }
+        }
+
+        if (mMainContentLayoutBg > 0) {
+            mMainContentLayout = mRootView.findViewById(R.id.fl_main_content_layout);
+            mMainContentLayout.setBackgroundResource(mMainContentLayoutBg);
+        }
+
         mFlexibleSpaceTitleView = mRootView.findViewById(R.id.tv_flexible_title);
         mFlexibleSpaceTitleView.measure(0, 0);
 
         mFlexibleSpaceSubTitleView = mRootView.findViewById(R.id.tv_flexible_sub_title);
-        mFlexibleSpaceSubTitleView.measure(0,0);
+        mFlexibleSpaceSubTitleView.measure(0, 0);
         if (!mHidenLocationView) {
             mFlexibleSpaceSubTitleView.setVisibility(View.VISIBLE);
             mFlexibleSpaceSubTitleView.setText(TextUtils.isEmpty(mSubTitle) ? "" : mSubTitle);
@@ -120,7 +141,13 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
         mFlexibleContentRc.setLayoutManager(new LinearLayoutManager(mContext));
 
         mFlexibleSpaceTitleView.setText(TextUtils.isEmpty(mTitle) ? "" : mTitle);
-
+        if (mFlexibleTitleColor > 0) {
+            try {
+                mFlexibleSpaceTitleView.setTextColor(mContext.getResources().getColor(mFlexibleTitleColor));
+            } catch (Exception e) {
+                mFlexibleSpaceTitleView.setTextColor(mFlexibleTitleColor);
+            }
+        }
 
         mTotalFlexibleSpaceHeight = mContext.getResources().getDimensionPixelSize(R.dimen.flexible_space_show_height);
         mAppBarLayout.getLayoutParams().height = mTotalFlexibleSpaceHeight;
@@ -336,6 +363,9 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
         private View mCustomSubFlexibleView;
         private int mFlexibleRightViewResId;
         private View.OnClickListener mRightListener;
+        private int mFlexibleSpaceTitleLayoutColor;
+        private int mFlexibleTitleColor;
+        private int mMainContentLayoutBg;
 
         public Builder(View rootView) {
             mRootView = rootView;
@@ -386,7 +416,13 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
         }
 
         public Builder setFlexibleTitle(String title) {
+            setFlexibleTitle(title, 0);
+            return this;
+        }
+
+        public Builder setFlexibleTitle(String title, int colorRes) {
             this.mTitle = title;
+            this.mFlexibleTitleColor = colorRes;
             return this;
         }
 
@@ -417,6 +453,16 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
 
         public Builder setCustomSubFlexibleView(View customView) {
             this.mCustomSubFlexibleView = customView;
+            return this;
+        }
+
+        public Builder setFlexibleSpaceTitleLayoutColor(int colorRes) {
+            this.mFlexibleSpaceTitleLayoutColor = colorRes;
+            return this;
+        }
+
+        public Builder setMainContentLayoutBg(@DrawableRes int drawableRes) {
+            this.mMainContentLayoutBg = drawableRes;
             return this;
         }
     }

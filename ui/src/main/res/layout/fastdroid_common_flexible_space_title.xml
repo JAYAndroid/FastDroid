@@ -9,6 +9,7 @@
 
     <!-- 需要放置在AppBarLayout前面，为了超出屏幕部分的RecyclerView内容被Toolbar遮住-->
     <FrameLayout
+        android:id="@+id/fl_main_content_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/fastdroid_shape_main_content_shade_bg"
@@ -68,6 +69,7 @@
 
     <!--用来做折叠动画的布局-->
     <RelativeLayout
+        tool:background="@color/theme"
         android:id="@+id/rl_flexible_title_layout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/flexible_space_show_height"
