@@ -114,7 +114,11 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
 
         if (mMainContentLayoutBg > 0) {
             mMainContentLayout = mRootView.findViewById(R.id.fl_main_content_layout);
-            mMainContentLayout.setBackgroundResource(mMainContentLayoutBg);
+            try {
+                mMainContentLayout.setBackgroundResource(mMainContentLayoutBg);
+            } catch (Exception e) {
+                mMainContentLayout.setBackgroundColor(mMainContentLayoutBg);
+            }
         }
 
         mFlexibleSpaceTitleView = mRootView.findViewById(R.id.tv_flexible_title);
@@ -465,7 +469,7 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
             return this;
         }
 
-        public Builder setMainContentLayoutBg(@DrawableRes int drawableRes) {
+        public Builder setMainContentLayoutBg(int drawableRes) {
             this.mMainContentLayoutBg = drawableRes;
             return this;
         }
