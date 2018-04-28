@@ -1,8 +1,6 @@
 package com.ylz.ehui.ui.manager;
 
 import android.content.Context;
-import android.graphics.drawable.ColorDrawable;
-import android.support.annotation.DrawableRes;
 import android.support.annotation.IdRes;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -38,7 +36,7 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
     private TextView mFlexibleSpaceTitleView;
     private TextView mFlexibleSpaceSubTitleView;
     private View mFlexibleSpaceTitleLayout;
-    private int mFlexibleSpaceTitleLayoutColor;
+    private int mCollapsingToolbarLayoutColor;
     private View mFlexibleSpaceRightView;
 
     private NestedScrollView mCustomFlexibleLayout;
@@ -81,7 +79,7 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
         this.mCustomFlexibleView = builder.mCustomFlexibleView;
         this.mFlexibleRightViewResId = builder.mFlexibleRightViewResId;
         this.mRightListener = builder.mRightListener;
-        this.mFlexibleSpaceTitleLayoutColor = builder.mFlexibleSpaceTitleLayoutColor;
+        this.mCollapsingToolbarLayoutColor = builder.mCollapsingToolbarLayoutColor;
         this.mMainContentLayoutBg = builder.mMainContentLayoutBg;
 
         initView();
@@ -105,13 +103,6 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
         toolbar = mRootView.findViewById(R.id.toolbar);
         mFlexibleSpaceTitleLayout = mRootView.findViewById(R.id.rl_flexible_title_layout);
         mFlexibleSpaceTitleLayout.measure(0, 0);
-        if (mFlexibleSpaceTitleLayoutColor > 0) {
-            try {
-                mFlexibleSpaceTitleLayout.setBackground(new ColorDrawable(mContext.getResources().getColor(mFlexibleSpaceTitleLayoutColor)));
-            } catch (Exception e) {
-                mFlexibleSpaceTitleLayout.setBackground(new ColorDrawable(mFlexibleSpaceTitleLayoutColor));
-            }
-        }
 
         if (mMainContentLayoutBg > 0) {
             mMainContentLayout = mRootView.findViewById(R.id.fl_main_content_layout);
@@ -142,6 +133,13 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
         mFlexibleContentRc = mRootView.findViewById(R.id.rc_flexible);
         mAppBarLayout = mRootView.findViewById(R.id.app_bar_layout);
         collapsingToolbarLayout = mRootView.findViewById(R.id.collapsing_toolbar_layout);
+        if (mCollapsingToolbarLayoutColor > 0) {
+            try {
+                collapsingToolbarLayout.setBackgroundColor(mContext.getResources().getColor(mCollapsingToolbarLayoutColor));
+            } catch (Exception e) {
+                collapsingToolbarLayout.setBackgroundColor(mCollapsingToolbarLayoutColor);
+            }
+        }
 
         mFlexibleContentRc.setLayoutManager(new LinearLayoutManager(mContext));
 
@@ -368,7 +366,7 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
         private View mCustomSubFlexibleView;
         private int mFlexibleRightViewResId;
         private View.OnClickListener mRightListener;
-        private int mFlexibleSpaceTitleLayoutColor;
+        private int mCollapsingToolbarLayoutColor;
         private int mFlexibleTitleColor;
         private int mMainContentLayoutBg;
 
@@ -465,8 +463,8 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
             return this;
         }
 
-        public Builder setFlexibleSpaceTitleLayoutColor(int colorRes) {
-            this.mFlexibleSpaceTitleLayoutColor = colorRes;
+        public Builder setCollapsingToolbarLayoutColor(int colorRes) {
+            this.mCollapsingToolbarLayoutColor = colorRes;
             return this;
         }
 
