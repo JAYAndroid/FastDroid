@@ -473,6 +473,11 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
             this.mMainContentLayoutBg = drawableRes;
             return this;
         }
+
+        public Builder setFixedTitleBgColor(int colorRes) {
+            mCommonTitleBarManagerBuilder.setBackgroundColor(colorRes);
+            return this;
+        }
     }
 
     public interface SubHeadLayoutOnOffsetChangedListener {
