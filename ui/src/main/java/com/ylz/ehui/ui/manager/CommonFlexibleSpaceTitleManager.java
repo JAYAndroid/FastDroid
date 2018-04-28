@@ -1,6 +1,7 @@
 package com.ylz.ehui.ui.manager;
 
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IdRes;
 import android.support.design.widget.AppBarLayout;
@@ -106,9 +107,9 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
         mFlexibleSpaceTitleLayout.measure(0, 0);
         if (mFlexibleSpaceTitleLayoutColor > 0) {
             try {
-                mFlexibleSpaceTitleLayout.setBackgroundColor(mContext.getResources().getColor(mFlexibleSpaceTitleLayoutColor));
+                mFlexibleSpaceTitleLayout.setBackground(new ColorDrawable(mContext.getResources().getColor(mFlexibleSpaceTitleLayoutColor)));
             } catch (Exception e) {
-                mFlexibleSpaceTitleLayout.setBackgroundColor(mFlexibleSpaceTitleLayoutColor);
+                mFlexibleSpaceTitleLayout.setBackground(new ColorDrawable(mFlexibleSpaceTitleLayoutColor));
             }
         }
 
