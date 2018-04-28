@@ -390,7 +390,11 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
 
         public Builder setRightDrawable(int resId) {
             mFlexibleRightViewResId = resId;
-//            mCommonTitleBarManagerBuilder.setRightDrawable(resId);
+            return this;
+        }
+
+        public Builder setLeftDrawable(int resId) {
+            mCommonTitleBarManagerBuilder.setLeftDrawable(resId);
             return this;
         }
 
