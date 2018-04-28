@@ -20,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <com.module.appointment.widget.MyNestedScrollView
+        <com.ylz.ehui.ui.widget.MyNestedScrollView
             android:id="@+id/ns_custom_flexible_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -69,11 +69,11 @@
 
     <!--用来做折叠动画的布局-->
     <RelativeLayout
-        tool:background="@color/theme"
         android:id="@+id/rl_flexible_title_layout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/flexible_space_show_height"
-        android:paddingTop="16dp">
+        android:paddingTop="16dp"
+        tool:background="@color/theme">
 
         <TextView
             android:id="@+id/tv_flexible_title"
