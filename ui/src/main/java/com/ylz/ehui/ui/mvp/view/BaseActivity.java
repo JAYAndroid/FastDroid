@@ -74,10 +74,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AutoLayoutAc
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         StatusBarManager.setStatusBarColor(this, initStatusBarColor());
         super.onCreate(savedInstanceState);
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
-
+        setRequestedOrientation(initOrientation());
         setContentView(getLayoutResource());
         AppManager.getInstance().addActivity(this);
         bind = ButterKnife.bind(this);
@@ -85,6 +82,10 @@ public abstract class BaseActivity<T extends BasePresenter> extends AutoLayoutAc
         mDialog = initDialog();
         this.onInitData2Remote();
         this.onInitialization(savedInstanceState);
+    }
+
+    protected int initOrientation() {
+        return ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
     }
 
     //获得该页面的实例
