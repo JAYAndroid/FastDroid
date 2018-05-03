@@ -2,6 +2,7 @@ package com.ylz.ehui.ui.dialog;
 
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
@@ -31,6 +32,7 @@ public abstract class BaseDialogFragment extends android.support.v4.app.DialogFr
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mContext = getActivity();
         builder = new Builder(mContext, inflater, container);
+        getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         return build(builder).create();
     }
 
@@ -48,7 +50,7 @@ public abstract class BaseDialogFragment extends android.support.v4.app.DialogFr
         getDialog().setCancelable(builder.mCancelable);
         getDialog().setCanceledOnTouchOutside(builder.CanceledOnTouchOutside);
 
-        window.setBackgroundDrawable(new ColorDrawable(0x00000000));
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         int height = WindowManager.LayoutParams.WRAP_CONTENT;
         int width = WindowManager.LayoutParams.MATCH_PARENT;
