@@ -13,10 +13,11 @@ import com.ylz.ehui.ui.dialog.WaitDialog;
 import com.ylz.ehui.ui.manager.AppManager;
 import com.ylz.ehui.ui.manager.StatusBarManager;
 import com.ylz.ehui.ui.mvp.presenter.BasePresenter;
-import com.ylz.ehui.ui.mvp.view.BaseView;
 import com.ylz.ehui.ui.proxy.LogicProxy;
 import com.ylz.ehui.utils.ToastUtils;
 import com.zhy.autolayout.AutoLayoutActivity;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -74,6 +75,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AutoLayoutAc
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         StatusBarManager.setStatusBarColor(this, initStatusBarColor());
         super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
         setRequestedOrientation(initOrientation());
         setContentView(getLayoutResource());
         AppManager.getInstance().addActivity(this);
@@ -159,9 +161,10 @@ public abstract class BaseActivity<T extends BasePresenter> extends AutoLayoutAc
     protected void onDestroy() {
         doDestroy();
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
-    protected void doDestroy() {
+    private void doDestroy() {
         if (isDestroyed) {
             return;
         }
