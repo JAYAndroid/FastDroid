@@ -18,6 +18,8 @@ import com.ylz.ehui.utils.ToastUtils;
 import com.zhy.autolayout.AutoLayoutActivity;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -155,6 +157,11 @@ public abstract class BaseActivity<T extends BasePresenter> extends AutoLayoutAc
         if (isFinishing()) {
             doDestroy();
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void handleEvent(Object event) {
+
     }
 
     @Override
