@@ -10,6 +10,8 @@ public class WaitDialog extends BaseDialogFragment {
     protected Builder build(Builder builder) {
         return builder.setView(R.layout.fast_droid_dialog_wait)
                 .height(SizeUtils.dp2px(120))
+                .setCanceledOnTouchOutside(true)
+                .setCancelable(true)
                 .width(SizeUtils.dp2px(120));
     }
 
