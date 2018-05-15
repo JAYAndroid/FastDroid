@@ -125,7 +125,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AutoLayoutAc
     }
 
     protected void dismissDialog() {
-        if (mDialog != null && mDialog.getDialog() != null && mDialog.getDialog().isShowing()) {
+        if (mDialog != null) {
             mDialog.dismiss();
         }
     }
