@@ -119,7 +119,7 @@ final public class RetrofitManager {
                 .baseUrl(mBaseUrl)
                 .client(getClient(mBaseUrl, provider))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(customConverterFactory == null ? GsonConverterFactory.create(getGson()) : customConverterFactory);
+                .addConverterFactory(customConverterFactory);
 
         Retrofit retrofit = builder.build();
         retrofitMap.put(mBaseUrl, retrofit);
