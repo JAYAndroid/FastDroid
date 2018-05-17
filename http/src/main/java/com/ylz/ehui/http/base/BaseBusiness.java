@@ -1,4 +1,4 @@
-package com.ylz.ehui.http;
+package com.ylz.ehui.http.base;
 
 
 import android.text.TextUtils;

@@ -23,6 +23,8 @@ import java.util.List;
 public final class Utils {
     @SuppressLint("StaticFieldLeak")
     private static Context mApplicationContext;
+    private static String sessionId;
+    private static boolean isDebug = false;
 
     private Utils() {
         throw new UnsupportedOperationException("u can't instantiate me...");
@@ -32,7 +34,12 @@ public final class Utils {
      * 初始化工具类
      */
     public static void init(@NonNull final Context context) {
+        init(context, false);
+    }
+
+    public static void init(@NonNull final Context context, boolean debug) {
         mApplicationContext = context.getApplicationContext();
+        isDebug = debug;
     }
 
     /**
@@ -42,6 +49,22 @@ public final class Utils {
      */
     public static Context getApp() {
         if (mApplicationContext != null) return mApplicationContext;
-        throw new NullPointerException("u should init first");
+        throw new NullPointerException("请先调用Utils的init进行初始化");
+    }
+
+    public static String getSessionId() {
+        if (StringUtils.isEmpty(sessionId)) {
+            sessionId = "";
+        }
+
+        return sessionId;
+    }
+
+    public static void setSessionId(String id) {
+        sessionId = id;
+    }
+
+    public static boolean isDebug() {
+        return isDebug;
     }
 }

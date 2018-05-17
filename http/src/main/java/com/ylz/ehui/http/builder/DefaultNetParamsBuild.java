@@ -2,10 +2,12 @@ package com.ylz.ehui.http.builder;
 
 import com.ylz.ehui.http.handler.IRequestHandler;
 import com.ylz.ehui.http.interceptor.HttpLoggingInterceptor;
+import com.ylz.ehui.utils.Utils;
 
 import okhttp3.CookieJar;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.internal.Util;
 
 /**
  * Created by yms on 2018/3/16.
@@ -56,6 +58,6 @@ public class DefaultNetParamsBuild implements INetParamsBuild {
 
     @Override
     public HttpLoggingInterceptor.Level configLogLevel() {
-        return HttpLoggingInterceptor.Level.BODY;
+        return Utils.isDebug() ? HttpLoggingInterceptor.Level.ALL : HttpLoggingInterceptor.Level.NONE;
     }
 }

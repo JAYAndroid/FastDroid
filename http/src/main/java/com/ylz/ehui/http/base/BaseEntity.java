@@ -1,4 +1,4 @@
-package business.entity;
+package com.ylz.ehui.http.base;
 
 import java.io.Serializable;
 
