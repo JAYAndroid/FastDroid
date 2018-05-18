@@ -14,10 +14,12 @@
         android:background="@drawable/fastdroid_shape_main_content_shade_bg"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+        <!-- 需要放置在AppBarLayout前面，为了超出屏幕部分的RecyclerView内容被Toolbar遮住-->
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rc_flexible"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:visibility="visible" />
 
         <com.ylz.ehui.ui.widget.MyNestedScrollView
             android:id="@+id/ns_custom_flexible_layout"
@@ -25,6 +27,7 @@
             android:layout_height="match_parent"
             android:visibility="gone" />
     </FrameLayout>
+
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar_layout"
@@ -37,6 +40,7 @@
             android:id="@+id/collapsing_toolbar_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
             android:minHeight="?actionBarSize"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
 
