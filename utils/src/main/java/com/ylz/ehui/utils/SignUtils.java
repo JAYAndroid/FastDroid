@@ -6,6 +6,7 @@ import android.util.ArrayMap;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.ylz.ehui.common.bean.CommonUserInfos;
 import com.ylz.ehui.utils.AppUtils;
 import com.ylz.ehui.utils.MD5Utils;
 import com.ylz.ehui.utils.SecurityUtils;
@@ -53,7 +54,7 @@ public class SignUtils {
         map.put("version", AppUtils.getVersionCode());
         map.put("deviceId", AppUtils.getUUid());
         map.put("appId", APP_ID);
-        map.put("sessionId", Utils.getSessionId());
+        map.put("sessionId", CommonUserInfos.getInstance().getSessionId());
 
         if (ENTRY) {
             Gson gson = new Gson();

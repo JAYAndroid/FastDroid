@@ -23,7 +23,6 @@ import java.util.List;
 public final class Utils {
     @SuppressLint("StaticFieldLeak")
     private static Context mApplicationContext;
-    private static String sessionId;
     private static boolean isDebug = false;
 
     private Utils() {
@@ -50,18 +49,6 @@ public final class Utils {
     public static Context getApp() {
         if (mApplicationContext != null) return mApplicationContext;
         throw new NullPointerException("请先调用Utils的init进行初始化");
-    }
-
-    public static String getSessionId() {
-        if (StringUtils.isEmpty(sessionId)) {
-            sessionId = "";
-        }
-
-        return sessionId;
-    }
-
-    public static void setSessionId(String id) {
-        sessionId = id;
     }
 
     public static boolean isDebug() {
