@@ -1,9 +1,9 @@
 ext {
     fastdroid_android = [
-            compileSdkVersion: 27,
-            buildToolsVersion: "27.0.0",
+            compileSdkVersion: 26,
+            buildToolsVersion: "26.0.3",
             minSdkVersion    : 19,
-            targetSdkVersion : 27,
+            targetSdkVersion : 26,
             versionCode      : 1,
             versionName      : '1.0.0',
             javaVersion      : JavaVersion.VERSION_1_7
@@ -11,7 +11,7 @@ ext {
 
     libsVersion = [
             // App dependencies version
-            supportLibraryVersion = "27.1.1",
+            supportLibraryVersion = "26.1.0",
             retrofitVersion = "2.1.0",
             glideVersion = "3.7.0",
 //            loggerVersion = "1.15",
