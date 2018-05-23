@@ -9,7 +9,6 @@ import com.ylz.ehui.ui.adapter.base.ViewHolder;
 import java.util.List;
 
 public abstract class RecyclerAdapter<T> extends MultiItemTypeAdapter<T> {
-    protected Context mContext;
 //    protected List<T> mDatas;
 
     public RecyclerAdapter(final Context context, final int layoutId, List<T> datas) {
