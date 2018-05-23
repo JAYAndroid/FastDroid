@@ -1,11 +1,15 @@
 apply plugin: 'com.android.application'
 
+def fastdroid_android = rootProject.ext.fastdroid_android
+
 android {
-    compileSdkVersion 27
+    compileSdkVersion fastdroid_android.compileSdkVersion
+    buildToolsVersion fastdroid_android.buildToolsVersion
+
     defaultConfig {
         applicationId "com.ylz.ehui.fastdroid"
-        minSdkVersion 19
-        targetSdkVersion 27
+        minSdkVersion fastdroid_android.minSdkVersion
+        targetSdkVersion fastdroid_android.targetSdkVersion
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
