@@ -222,6 +222,13 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
         return mFlexibleContentRc;
     }
 
+    public void setFlexibleContentRvMargins(int left, int top, int right, int bottom) {
+        if (mFlexibleContentRc != null) {
+            FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) mFlexibleContentRc.getLayoutParams();
+            layoutParams.setMargins(left, top, right, bottom);
+        }
+    }
+
     @Override
     public void onViewAttachedToWindow(View view) {
 
