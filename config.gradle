@@ -1,7 +1,7 @@
 ext {
     fastdroid_android = [
             compileSdkVersion: 26,
-            buildToolsVersion: "26.0.3",
+            buildToolsVersion: "26.0.2",
             minSdkVersion    : 19,
             targetSdkVersion : 26,
             versionCode      : 1,

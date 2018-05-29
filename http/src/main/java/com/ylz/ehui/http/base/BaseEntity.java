@@ -3,13 +3,13 @@ package com.ylz.ehui.http.base;
 import java.io.Serializable;
 
 public class BaseEntity<P> implements Serializable {
-    public String encryptType;
-    public String encryptData;
-    public String respCode;
-    public String respMsg;
-    public String sign;
-    public String signType;
-    public String timestamp;
+    private String encryptType;
+    private String encryptData;
+    private String respCode;
+    private String respMsg;
+    private String sign;
+    private String signType;
+    private String timestamp;
     private P param;
 
     public P getParam() {
