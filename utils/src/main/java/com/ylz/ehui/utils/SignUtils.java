@@ -57,6 +57,7 @@ public class SignUtils {
         map.put("sessionId", CommonUserInfos.getInstance().getSessionId());
 
         if (ENTRY) {
+            params.remove("serviceId");
             Gson gson = new Gson();
             map.put("isEncrypt", 1);
             //明文
