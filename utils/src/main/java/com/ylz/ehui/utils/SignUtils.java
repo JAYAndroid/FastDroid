@@ -25,9 +25,9 @@ import java.util.TreeMap;
  * 注释：访问网络时，签名
  ********************/
 public class SignUtils {
-    public static final String APP_SECRET = "SKnYwGwnwh3LI56mMwJgDw==";
-    public static final String APP_ID = "Android";
-    public static final boolean ENTRY = true;
+    public static String APP_SECRET = "SKnYwGwnwh3LI56mMwJgDw==";
+    public static String APP_ID = "Android";
+    public static boolean ENTRY = true;
 
     public static Map getRequest(Map<String, Object> params, String service) {
         if (params == null) {
