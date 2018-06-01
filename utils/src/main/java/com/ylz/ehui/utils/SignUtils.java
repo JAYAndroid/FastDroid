@@ -27,7 +27,7 @@ import java.util.TreeMap;
 public class SignUtils {
     public static String APP_SECRET = "SKnYwGwnwh3LI56mMwJgDw==";
     public static String APP_ID = "Android";
-    public static boolean ENTRY = true;
+    public static boolean ENTRY = !Utils.isDebug();
 
     public static Map getRequest(Map<String, Object> params, String service) {
         if (params == null) {
@@ -136,7 +136,6 @@ public class SignUtils {
         String result = sb.toString();
         result += "key=" + key;
         String signType = (String) map.get("signType");
-        Log.d("RetrofitLog", "content:" + result);
         if (StringUtils.isEmpty(signType) || "MD5".equals(signType)) {
             result = MD5Utils.getMD5String(result).toUpperCase();
         } else if ("RSA".equals(signType)) {
