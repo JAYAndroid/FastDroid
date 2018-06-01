@@ -53,7 +53,7 @@ public class DefaultNetParamsBuild implements INetParamsBuild {
 
     @Override
     public boolean configLogEnable() {
-        return false;
+        return Utils.isDebug();
     }
 
     @Override
