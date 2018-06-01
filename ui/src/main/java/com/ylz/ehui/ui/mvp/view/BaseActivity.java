@@ -145,6 +145,11 @@ public abstract class BaseActivity<T extends BasePresenter> extends AutoLayoutAc
         AppManager.getInstance().finishActivity(this);
     }
 
+    @Override
+    public void onBackPressed() {
+        doBack();
+    }
+
     private void checkResource() {
         if (getLayoutResource() == 0) {
             throw new RuntimeException("getLayoutResource()需要返回有效的layout id");
