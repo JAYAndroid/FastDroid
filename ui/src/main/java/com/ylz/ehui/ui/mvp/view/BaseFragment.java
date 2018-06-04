@@ -53,6 +53,7 @@ public abstract class BaseFragment<T extends BasePresenter> extends RxFragment i
         }
 
         bind = ButterKnife.bind(this, rootView);
+        onInitData2Remote();
         this.onInitView(savedInstanceState);
         return rootView;
     }
@@ -61,12 +62,6 @@ public abstract class BaseFragment<T extends BasePresenter> extends RxFragment i
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = getActivity();
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        onInitData2Remote();
     }
 
     protected <T> void bindToLifecycle(Observable<T> observable) {
