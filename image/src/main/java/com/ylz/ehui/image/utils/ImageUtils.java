@@ -1916,4 +1916,23 @@ public class ImageUtils {
             }
         }
     }
+
+    /**
+     * 把batmap 转file
+     *
+     * @param bitmap
+     * @param filepath
+     */
+    public static File bitmap2File(Bitmap bitmap, String filepath) {
+        File file = new File(filepath);//将要保存图片的路径
+        try {
+            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
+            bos.flush();
+            bos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return file;
+    }
 }
