@@ -959,7 +959,7 @@ public final class MyDiskLruCache implements Closeable {
         }
 
         public File getCleanFile(int i) {
-            return new File(directory, key + "." + i);
+            return new File(directory, key);
         }
 
         public File getDirtyFile(int i) {
