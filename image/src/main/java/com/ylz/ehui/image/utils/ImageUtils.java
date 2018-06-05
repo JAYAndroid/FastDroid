@@ -37,6 +37,8 @@ import android.support.v4.content.ContextCompat;
 import android.view.View;
 
 
+import com.ylz.ehui.utils.AppUtils;
+import com.ylz.ehui.utils.TimeUtils;
 import com.ylz.ehui.utils.Utils;
 
 import java.io.BufferedOutputStream;
@@ -48,6 +50,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
+import okhttp3.internal.cache.DiskLruCache;
+import okhttp3.internal.io.FileSystem;
+import okio.BufferedSink;
+import okio.Okio;
 
 public class ImageUtils {
 
@@ -1921,18 +1928,25 @@ public class ImageUtils {
      * 把batmap 转file
      *
      * @param bitmap
-     * @param filepath
+     * @param directory
      */
-    public static File bitmap2File(Bitmap bitmap, String filepath) {
-        File file = new File(filepath);//将要保存图片的路径
+    public static File bitmap2File(Bitmap bitmap, String directory) {
+        File dir = new File(directory);//将要保存图片的路径
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
+
+        String uniqueName = String.valueOf(TimeUtils.getNowMills()) + ".png";
+        DiskLruCache cache = DiskLruCache.create(FileSystem.SYSTEM, dir, AppUtils.getVersionCode(), 1, 10 * 1024 * 1024);
         try {
-            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
-            bos.flush();
-            bos.close();
-        } catch (IOException e) {
+            DiskLruCache.Editor editor = cache.edit(uniqueName);
+            BufferedSink sink = Okio.buffer(editor.newSink(0));
+            sink.write(ImageUtils.bitmap2Bytes(bitmap, Bitmap.CompressFormat.PNG));
+            sink.close();
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        return file;
+
+        return new File(directory + File.separator + uniqueName);
     }
 }
