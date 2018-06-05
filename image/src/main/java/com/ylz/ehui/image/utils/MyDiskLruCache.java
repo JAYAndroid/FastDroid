@@ -210,7 +210,7 @@ public final class MyDiskLruCache implements Closeable {
      * "\n".
      *
      * @throws EOFException if the stream is exhausted before the next newline
-     *                              character.
+     *                      character.
      */
     public static String readAsciiLine(InputStream in) throws IOException {
         // support UTF-8 here instead
@@ -963,7 +963,7 @@ public final class MyDiskLruCache implements Closeable {
         }
 
         public File getDirtyFile(int i) {
-            return new File(directory, key + "." + i + ".tmp");
+            return new File(directory, key + "." + ".tmp");
         }
     }
 }

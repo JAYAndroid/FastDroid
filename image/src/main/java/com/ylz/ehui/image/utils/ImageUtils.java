@@ -1929,24 +1929,29 @@ public class ImageUtils {
      * 把batmap 转file
      */
     public static File bitmap2File(Bitmap bitmap, String cacheDir, String fileName) {
+        File cacheDirFile = new File(cacheDir);
         File file = new File(cacheDir + File.separator + fileName);
-        if (!file.exists()) {
-            file.mkdir();
+
+        if (!cacheDirFile.exists()) {
+            cacheDirFile.mkdir();
         }
         try {
-            MyDiskLruCache cache = MyDiskLruCache.open(new File(cacheDir), AppUtils.getVersionCode(), 1, 10 * 1024 * 1024);
+            MyDiskLruCache cache = MyDiskLruCache.open(cacheDirFile, AppUtils.getVersionCode(), 1, 10 * 1024 * 1024);
             MyDiskLruCache.Editor edit = cache.edit(fileName);
             if (edit == null) {
+                file.delete();
                 return file;
             }
             OutputStream outputStream = edit.newOutputStream(0);
             if (bitmap.compress(CompressFormat.PNG, 100, outputStream)) {
                 edit.commit();
             } else {
+                file.delete();
                 edit.abort();
             }
             cache.flush();
         } catch (Exception e) {
+            file.delete();
             e.printStackTrace();
         }
         return file;
