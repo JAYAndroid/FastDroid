@@ -1930,14 +1930,11 @@ public class ImageUtils {
      */
     public static File bitmap2File(Bitmap bitmap, String cacheDir, String fileName) {
         File file = new File(cacheDir + File.separator + fileName);
-
-        File cacheDirFile = new File(cacheDir);
-        if (!cacheDirFile.exists()) {
-            cacheDirFile.mkdir();
+        if (!file.exists()) {
+            file.mkdir();
         }
-
         try {
-            MyDiskLruCache cache = MyDiskLruCache.open(cacheDirFile, AppUtils.getVersionCode(), 1, 10 * 1024 * 1024);
+            MyDiskLruCache cache = MyDiskLruCache.open(new File(cacheDir), AppUtils.getVersionCode(), 1, 10 * 1024 * 1024);
             MyDiskLruCache.Editor edit = cache.edit(fileName);
             if (edit == null) {
                 return file;
