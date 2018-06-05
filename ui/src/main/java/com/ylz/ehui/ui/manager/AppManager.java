@@ -88,12 +88,20 @@ public class AppManager {
         from.finish();
     }
 
+    public <T extends FragmentActivity> void startActivityForResult(FragmentActivity from, Intent intent, int requestCode) {
+        from.startActivityForResult(intent, requestCode);
+    }
+
     public <T extends FragmentActivity> void startActivityWithFinish(FragmentActivity from, Intent intent) {
         startActivity(from, intent);
         from.finish();
     }
 
     public <T extends FragmentActivity> void startActivity(Context context, Class<T> cls) {
+        startActivity(context, cls, -1);
+    }
+
+    public <T extends FragmentActivity> void startActivityForResult(Context context, Class<T> cls) {
         startActivity(context, cls, -1);
     }
 
