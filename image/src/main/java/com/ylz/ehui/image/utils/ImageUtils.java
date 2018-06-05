@@ -23,6 +23,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.os.Build;
+import android.os.Environment;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
@@ -1928,25 +1929,43 @@ public class ImageUtils {
      * 把batmap 转file
      *
      * @param bitmap
-     * @param directory
+     * @param cacheDir
      */
-    public static File bitmap2File(Bitmap bitmap, String directory) {
+    public static File bitmap2File(Bitmap bitmap, File cacheDir) {
         String uniqueName = String.valueOf(TimeUtils.getNowMills()) + ".png";
-        File imageFile = new File(directory + File.separator + uniqueName);//将要保存图片的路径
-        if (!imageFile.exists()) {
-            imageFile.mkdir();
+        if (cacheDir == null) {
+            cacheDir = new File(getDiskCacheDir(uniqueName));
         }
-
-        DiskLruCache cache = DiskLruCache.create(FileSystem.SYSTEM, new File(directory), AppUtils.getVersionCode(), 1, 10 * 1024 * 1024);
+        if (!cacheDir.exists()) {
+            cacheDir.mkdir();
+        }
         try {
-            DiskLruCache.Editor editor = cache.edit(uniqueName);
-            BufferedSink sink = Okio.buffer(editor.newSink(0));
-            sink.write(ImageUtils.bitmap2Bytes(bitmap, Bitmap.CompressFormat.PNG));
-            sink.close();
+            MyDiskLruCache cache = MyDiskLruCache.open(cacheDir, AppUtils.getVersionCode(), 1, 10 * 1024 * 1024);
+            MyDiskLruCache.Editor edit = cache.edit(uniqueName);
+            if (edit == null) {
+                return cacheDir;
+            }
+            OutputStream outputStream = edit.newOutputStream(0);
+            if (bitmap.compress(CompressFormat.PNG, 100, outputStream)) {
+                edit.commit();
+            } else {
+                edit.abort();
+            }
+            cache.flush();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return cacheDir;
+    }
 
-        return imageFile;
+    public static String getDiskCacheDir(String uniqueName) {
+        String cachePath;
+        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
+                || !Environment.isExternalStorageRemovable()) {
+            cachePath = Utils.getApp().getExternalCacheDir().getPath();
+        } else {
+            cachePath = Utils.getApp().getCacheDir().getPath();
+        }
+        return cachePath + File.separator + uniqueName;
     }
 }
