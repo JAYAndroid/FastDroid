@@ -1927,23 +1927,20 @@ public class ImageUtils {
 
     /**
      * 把batmap 转file
-     *
-     * @param bitmap
-     * @param cacheDir
      */
-    public static File bitmap2File(Bitmap bitmap, File cacheDir) {
-        String uniqueName = String.valueOf(TimeUtils.getNowMills()) + ".png";
-        if (cacheDir == null) {
-            cacheDir = new File(getDiskCacheDir(uniqueName));
+    public static File bitmap2File(Bitmap bitmap, String cacheDir, String fileName) {
+        File file = new File(cacheDir + File.separator + fileName);
+
+        File cacheDirFile = new File(cacheDir);
+        if (!cacheDirFile.exists()) {
+            cacheDirFile.mkdir();
         }
-        if (!cacheDir.exists()) {
-            cacheDir.mkdir();
-        }
+
         try {
-            MyDiskLruCache cache = MyDiskLruCache.open(cacheDir, AppUtils.getVersionCode(), 1, 10 * 1024 * 1024);
-            MyDiskLruCache.Editor edit = cache.edit(uniqueName);
+            MyDiskLruCache cache = MyDiskLruCache.open(cacheDirFile, AppUtils.getVersionCode(), 1, 10 * 1024 * 1024);
+            MyDiskLruCache.Editor edit = cache.edit(fileName);
             if (edit == null) {
-                return cacheDir;
+                return file;
             }
             OutputStream outputStream = edit.newOutputStream(0);
             if (bitmap.compress(CompressFormat.PNG, 100, outputStream)) {
@@ -1955,10 +1952,10 @@ public class ImageUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return cacheDir;
+        return file;
     }
 
-    public static String getDiskCacheDir(String uniqueName) {
+    public static String getDiskCacheDir(String dirName) {
         String cachePath;
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
                 || !Environment.isExternalStorageRemovable()) {
@@ -1966,6 +1963,7 @@ public class ImageUtils {
         } else {
             cachePath = Utils.getApp().getCacheDir().getPath();
         }
-        return cachePath + File.separator + uniqueName;
+
+        return cachePath + File.separator + dirName;
     }
 }
