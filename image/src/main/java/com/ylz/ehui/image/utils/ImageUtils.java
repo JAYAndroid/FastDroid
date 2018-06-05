@@ -1931,13 +1931,13 @@ public class ImageUtils {
      * @param directory
      */
     public static File bitmap2File(Bitmap bitmap, String directory) {
-        File dir = new File(directory);//将要保存图片的路径
-        if (!dir.exists()) {
-            dir.mkdir();
+        String uniqueName = String.valueOf(TimeUtils.getNowMills()) + ".png";
+        File imageFile = new File(directory + File.separator + uniqueName);//将要保存图片的路径
+        if (!imageFile.exists()) {
+            imageFile.mkdir();
         }
 
-        String uniqueName = String.valueOf(TimeUtils.getNowMills()) + ".png";
-        DiskLruCache cache = DiskLruCache.create(FileSystem.SYSTEM, dir, AppUtils.getVersionCode(), 1, 10 * 1024 * 1024);
+        DiskLruCache cache = DiskLruCache.create(FileSystem.SYSTEM, new File(directory), AppUtils.getVersionCode(), 1, 10 * 1024 * 1024);
         try {
             DiskLruCache.Editor editor = cache.edit(uniqueName);
             BufferedSink sink = Okio.buffer(editor.newSink(0));
@@ -1947,6 +1947,6 @@ public class ImageUtils {
             e.printStackTrace();
         }
 
-        return new File(directory + File.separator + uniqueName);
+        return imageFile;
     }
 }
