@@ -222,6 +222,10 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
         return mFlexibleContentRc;
     }
 
+    public NestedScrollView getCustomFlexibleLayout(){
+        return mCustomFlexibleLayout;
+    }
+
 
     public void setFlexibleContentRvMargins(int left, int top, int right, int bottom) {
         if (mFlexibleContentRc != null) {
