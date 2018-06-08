@@ -101,8 +101,7 @@ public class RetrofitBaseUrlManager {
      * @return {@link OkHttpClient.Builder}
      */
     public OkHttpClient.Builder with(OkHttpClient.Builder builder) {
-        return builder
-                .addInterceptor(mInterceptor);
+        return builder.addInterceptor(mInterceptor);
     }
 
     /**
@@ -147,7 +146,6 @@ public class RetrofitBaseUrlManager {
                     ((OnUrlChangeListener) listeners[i]).onUrlChanged(newUrl, request.url()); // 通知监听器此 Url 的 BaseUrl 已被切换
                 }
             }
-
             return newBuilder
                     .url(newUrl)
                     .build();
