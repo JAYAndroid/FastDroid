@@ -7,26 +7,46 @@
     android:clipChildren="false">
 
     <!-- 需要放置在AppBarLayout前面，为了超出屏幕部分的RecyclerView内容被Toolbar遮住-->
-    <FrameLayout
-        android:id="@+id/fl_main_content_layout"
+
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+        android:id="@+id/refreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/fastdroid_shape_main_content_shade_bg"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:background="#444444"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:srlAccentColor="@android:color/white"
+        app:srlEnablePreviewInEditMode="true"
+        app:srlPrimaryColor="#3F51B5">
+        <!--srlAccentColor srlPrimaryColor 将会改变 Header 和 Footer 的主题颜色-->
+        <!--srlEnablePreviewInEditMode 可以开启和关闭预览功能-->
+        <com.scwang.smartrefresh.layout.header.ClassicsHeader
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-        <!-- 需要放置在AppBarLayout前面，为了超出屏幕部分的RecyclerView内容被Toolbar遮住-->
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rc_flexible"
+        <FrameLayout
+            android:id="@+id/fl_main_content_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="visible" />
+            android:background="@drawable/fastdroid_shape_main_content_shade_bg">
 
-        <com.ylz.ehui.ui.widget.MyNestedScrollView
-            android:id="@+id/ns_custom_flexible_layout"
+            <!-- 需要放置在AppBarLayout前面，为了超出屏幕部分的RecyclerView内容被Toolbar遮住-->
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rc_flexible"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="visible" />
+
+            <com.ylz.ehui.ui.widget.MyNestedScrollView
+                android:id="@+id/ns_custom_flexible_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone" />
+        </FrameLayout>
+
+        <com.scwang.smartrefresh.layout.footer.ClassicsFooter
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone" />
-    </FrameLayout>
+            android:layout_height="wrap_content" />
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
 
     <android.support.design.widget.AppBarLayout

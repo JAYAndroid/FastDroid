@@ -16,6 +16,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nineoldandroids.view.ViewHelper;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.ylz.ehui.base_ui.R;
 import com.ylz.ehui.utils.AppUtils;
 import com.ylz.ehui.utils.SizeUtils;
@@ -38,6 +41,10 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
     private View mFlexibleSpaceTitleLayout;
     private int mCollapsingToolbarLayoutColor;
     private View mFlexibleSpaceRightView;
+
+    private SmartRefreshLayout smartRefreshLayout;
+    private OnRefreshListener onRefreshListener;
+    private OnLoadMoreListener onLoadMoreListener;
 
     private NestedScrollView mCustomFlexibleLayout;
     private View mCustomFlexibleView;
@@ -81,6 +88,8 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
         this.mRightListener = builder.mRightListener;
         this.mCollapsingToolbarLayoutColor = builder.mCollapsingToolbarLayoutColor;
         this.mMainContentLayoutBg = builder.mMainContentLayoutBg;
+        this.onLoadMoreListener = builder.onLoadMoreListener;
+        this.onRefreshListener = builder.onRefreshListener;
 
         initView();
         initListener();
@@ -103,6 +112,17 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
         toolbar = mRootView.findViewById(R.id.toolbar);
         mFlexibleSpaceTitleLayout = mRootView.findViewById(R.id.rl_flexible_title_layout);
         mFlexibleSpaceTitleLayout.measure(0, 0);
+        smartRefreshLayout = mRootView.findViewById(R.id.refreshLayout);
+        smartRefreshLayout.setEnableRefresh(onRefreshListener != null);
+        smartRefreshLayout.setEnableLoadMore(onLoadMoreListener != null);
+
+        if (onLoadMoreListener != null) {
+            smartRefreshLayout.setOnLoadMoreListener(onLoadMoreListener);
+        }
+
+        if (onRefreshListener != null) {
+            smartRefreshLayout.setOnRefreshListener(onRefreshListener);
+        }
 
         if (mMainContentLayoutBg > 0) {
             mMainContentLayout = mRootView.findViewById(R.id.fl_main_content_layout);
@@ -222,7 +242,7 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
         return mFlexibleContentRc;
     }
 
-    public NestedScrollView getCustomFlexibleLayout(){
+    public NestedScrollView getCustomFlexibleLayout() {
         return mCustomFlexibleLayout;
     }
 
@@ -381,6 +401,8 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
         private int mCollapsingToolbarLayoutColor;
         private int mFlexibleTitleColor;
         private int mMainContentLayoutBg;
+        private OnRefreshListener onRefreshListener;
+        private OnLoadMoreListener onLoadMoreListener;
 
         public Builder(View rootView) {
             mRootView = rootView;
@@ -487,6 +509,16 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
 
         public Builder setFixedTitleBgColor(int colorRes) {
             mCommonTitleBarManagerBuilder.setBackgroundColor(colorRes);
+            return this;
+        }
+
+        public Builder setOnRefreshListener(OnRefreshListener onRefreshListener) {
+            this.onRefreshListener = onRefreshListener;
+            return this;
+        }
+
+        public Builder setOnLoadMoreListener(OnLoadMoreListener onLoadMoreListener) {
+            this.onLoadMoreListener = onLoadMoreListener;
             return this;
         }
     }
