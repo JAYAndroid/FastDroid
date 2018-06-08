@@ -42,6 +42,13 @@ import okhttp3.Response;
  * Created by JessYan on 17/07/2017 14:29
  * <a href="mailto:jess.yan.effort@gmail.com">Contact me</a>
  * <a href="https://github.com/JessYanCoding">Follow me</a>
+ * <p>
+ * 使用方法如下：
+ *   ' RetrofitBaseUrlManager.getInstance().putBaseUrl("test","http://www.baidu.com/");
+ *   '@Headers({RetrofitBaseUrlManager.BASE_URL_HEAD + "test"})
+ *   'POST(MedicineConstant.BASE_URL_SUFFIX) Observable<ResponseBody> getBook(@Body int id);
+ * <p>
+ * <p>
  * ================================================
  */
 public class RetrofitBaseUrlManager {
