@@ -4,10 +4,12 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.view.ViewGroup;
 import android.view.Window;
 
+import com.ylz.ehui.base_ui.R;
 import com.ylz.ehui.ui.dialog.BaseDialogFragment;
 import com.ylz.ehui.ui.dialog.WaitDialog;
 import com.ylz.ehui.ui.manager.AppManager;
@@ -38,7 +40,10 @@ public abstract class BaseActivity<T extends BasePresenter> extends AutoLayoutAc
 
     private BaseDialogFragment mDialog;
 
-    protected abstract int getLayoutResource();
+    @LayoutRes
+    protected  int getLayoutResource(){
+        return R.layout.fastdroid_common_activity_layout;
+    }
 
     protected abstract void onInitialization(Bundle bundle);
 
