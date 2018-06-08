@@ -13,8 +13,6 @@ import com.ylz.ehui.http.handler.IRequestHandler;
 import com.ylz.ehui.http.interceptor.HttpLoggingInterceptor;
 import com.ylz.ehui.http.interceptor.NetInterceptor;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.CookieJar;
@@ -23,7 +21,6 @@ import okhttp3.OkHttpClient;
 import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Author: yms
@@ -32,22 +29,16 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 final public class RetrofitManager {
     private static final long DEFAULT_TIME_OUT = 10 * 1000L;
-
     private INetParamsBuild sProvider = null;
-    private Map<String, INetParamsBuild> providerMap;
-    private Map<String, Retrofit> retrofitMap;
-    private Map<String, OkHttpClient> clientMap;
+    private Retrofit mRetrofit;
     private Gson mGson;
-    private String mBaseUrl;
     private Converter.Factory customConverterFactory;
+    private OkHttpClient mOkHttpClient;
+    private String mBaseUrl;
 
     private RetrofitManager() {
-        providerMap = new HashMap<>();
-        retrofitMap = new HashMap<>();
-        clientMap = new HashMap<>();
         sProvider = new DefaultNetParamsBuild();
         customConverterFactory = new DefaultInterceptBuild();
-
         mGson = new GsonBuilder()
                 .setDateFormat("yyyy-MM-dd HH:mm:ss")
                 .create();
@@ -75,21 +66,12 @@ final public class RetrofitManager {
         this.sProvider = provider;
     }
 
-    public void registerProvider(String baseUrl, INetParamsBuild provider) {
-        getInstance().providerMap.put(baseUrl, provider);
-    }
-
     public INetParamsBuild getCommonProvider() {
         return sProvider;
     }
 
-    public void clearCache() {
-        retrofitMap.clear();
-        clientMap.clear();
-    }
-
     public Retrofit getRetrofit() {
-        return getRetrofit(null);
+        return getRetrofit(sProvider);
     }
 
     public void setBaseUrl(String baseUrl) {
@@ -97,35 +79,31 @@ final public class RetrofitManager {
             baseUrl = baseUrl + "/";
         }
         mBaseUrl = baseUrl;
+        RetrofitBaseUrlManager.getInstance().setGlobalBaseUrl(mBaseUrl);
     }
 
-    private Retrofit getRetrofit(INetParamsBuild provider) {
-        if (empty(mBaseUrl)) {
-            throw new IllegalStateException("baseUrl can not be null");
+    public Retrofit getRetrofit(INetParamsBuild provider) {
+        if(empty(mBaseUrl)){
+            throw new RuntimeException("mBaseUrl为空，请先调用setBaseUrl");
         }
-        if (retrofitMap.get(mBaseUrl) != null) {
-            return retrofitMap.get(mBaseUrl);
+        if (mRetrofit != null) {
+            return mRetrofit;
         }
 
         if (provider == null) {
-            provider = providerMap.get(mBaseUrl);
-            if (provider == null) {
-                provider = sProvider;
-            }
+            provider = sProvider;
         }
+
         checkProvider(provider);
 
         Retrofit.Builder builder = new Retrofit.Builder()
                 .baseUrl(mBaseUrl)
-                .client(getClient(mBaseUrl, provider))
+                .client(getClient(provider))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(customConverterFactory);
 
-        Retrofit retrofit = builder.build();
-        retrofitMap.put(mBaseUrl, retrofit);
-        providerMap.put(mBaseUrl, provider);
-
-        return retrofit;
+        mRetrofit = builder.build();
+        return mRetrofit;
     }
 
     public Gson getGson() {
@@ -136,18 +114,13 @@ final public class RetrofitManager {
         return baseUrl == null || baseUrl.isEmpty();
     }
 
-    private OkHttpClient getClient(String baseUrl, INetParamsBuild provider) {
-        if (empty(baseUrl)) {
-            throw new IllegalStateException("baseUrl can not be null");
-        }
-        if (clientMap.get(baseUrl) != null) {
-            return clientMap.get(baseUrl);
+    private OkHttpClient getClient(INetParamsBuild provider) {
+        if (mOkHttpClient != null) {
+            return mOkHttpClient;
         }
 
         checkProvider(provider);
-
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-
         builder.connectTimeout(provider.configConnectTimeoutSecs() != 0
                 ? provider.configConnectTimeoutSecs()
                 : DEFAULT_TIME_OUT, TimeUnit.SECONDS);
@@ -192,11 +165,8 @@ final public class RetrofitManager {
             builder.addInterceptor(loggingInterceptor);
         }
 
-        OkHttpClient client = builder.build();
-        clientMap.put(baseUrl, client);
-        providerMap.put(baseUrl, provider);
-
-        return client;
+        mOkHttpClient = RetrofitBaseUrlManager.getInstance().with(builder).build();
+        return mOkHttpClient;
     }
 
     private boolean empty(Interceptor[] interceptors) {
@@ -208,13 +178,4 @@ final public class RetrofitManager {
             throw new IllegalStateException("must register provider first");
         }
     }
-
-    public Map<String, Retrofit> getRetrofitMap() {
-        return retrofitMap;
-    }
-
-    public Map<String, OkHttpClient> getClientMap() {
-        return clientMap;
-    }
-
 }
