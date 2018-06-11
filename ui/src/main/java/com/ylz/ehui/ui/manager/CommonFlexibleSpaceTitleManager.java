@@ -209,6 +209,13 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
         }
     }
 
+    public void setFlexibleTitle(String title) {
+        if (mFlexibleSpaceTitleView != null) {
+            mTitle = title;
+            mFlexibleSpaceTitleView.setText(TextUtils.isEmpty(title) ? "" : title);
+        }
+    }
+
     public void setCustomSubFlexibleViewVisibility(boolean isVisible) {
         mDoSubFlexibleViewAnim = isVisible;
         int base = mSubFlexibleSpaceContentHeight + SizeUtils.dp2px(10);
