@@ -39,6 +39,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AutoLayoutAc
     private boolean isDestroyed = false;
 
     private BaseDialogFragment mDialog;
+    private boolean isShowing;
 
     @LayoutRes
     protected  int getLayoutResource(){
@@ -124,14 +125,16 @@ public abstract class BaseActivity<T extends BasePresenter> extends AutoLayoutAc
     }
 
     protected void showDialog() {
-        if (mDialog != null) {
+        if (mDialog != null && !isShowing) {
             mDialog.show(this);
+            isShowing = true;
         }
     }
 
     protected void dismissDialog() {
-        if (mDialog != null) {
+        if (mDialog != null && isShowing) {
             mDialog.dismiss();
+            isShowing = false;
         }
     }
 
