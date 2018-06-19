@@ -3,13 +3,23 @@ package com.ylz.ehui.common.bean;
 import android.text.TextUtils;
 import android.util.Log;
 
-public class CommonUserInfos {
+import java.io.Serializable;
+
+public class CommonUserInfos implements Serializable{
     private String sex;
     private String sessionId;
     private String name;
+    private String phone;
 
     private CommonUserInfos() {
+    }
 
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public static CommonUserInfos getInstance() {
