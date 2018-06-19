@@ -55,9 +55,9 @@ public class SignUtils {
         map.put("deviceId", AppUtils.getUUid());
         map.put("appId", APP_ID);
         map.put("sessionId", CommonUserInfos.getInstance().getSessionId());
+        params.remove("serviceId");
 
         if (ENTRY) {
-            params.remove("serviceId");
             Gson gson = new Gson();
             map.put("isEncrypt", 1);
             //明文
