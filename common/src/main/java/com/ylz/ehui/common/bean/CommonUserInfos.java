@@ -5,13 +5,32 @@ import android.util.Log;
 
 import java.io.Serializable;
 
-public class CommonUserInfos implements Serializable{
+public class CommonUserInfos implements Serializable {
     private String sex;
     private String sessionId;
     private String name;
     private String phone;
+    private String patientId;// //病人id
+    private String cardNo;// 病人卡号
+
 
     private CommonUserInfos() {
+    }
+
+    public String getPatientId() {
+        return patientId;
+    }
+
+    public void setPatientId(String patientId) {
+        this.patientId = patientId;
+    }
+
+    public String getCardNo() {
+        return cardNo;
+    }
+
+    public void setCardNo(String cardNo) {
+        this.cardNo = cardNo;
     }
 
     public String getPhone() {
