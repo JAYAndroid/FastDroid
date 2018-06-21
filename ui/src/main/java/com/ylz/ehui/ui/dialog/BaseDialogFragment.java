@@ -54,6 +54,11 @@ public abstract class BaseDialogFragment<T extends BasePresenter> extends RxDial
         return build(builder).create();
     }
 
+    @Override
+    public void showToast(String msg) {
+
+    }
+
     private Class<T> getLogicClazz() {
         Class<T> entityClass = null;
         Type t = this.getClass().getGenericSuperclass();
