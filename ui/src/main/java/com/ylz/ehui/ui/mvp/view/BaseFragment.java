@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.trello.rxlifecycle2.components.support.RxFragment;
+import com.ylz.ehui.ui.dialog.BaseDialogFragment;
+import com.ylz.ehui.ui.dialog.WaitDialog;
 import com.ylz.ehui.ui.mvp.presenter.BasePresenter;
 import com.ylz.ehui.ui.proxy.LogicProxy;
 
@@ -32,6 +34,9 @@ public abstract class BaseFragment<T extends BasePresenter> extends RxFragment i
     private Unbinder bind;
     private List<Disposable> mSubscribers;
     private boolean isDestroyed = false;
+    private boolean isShowing;
+
+    private BaseDialogFragment mDialog;
 
     protected abstract int getLayoutResource();
 
@@ -73,8 +78,13 @@ public abstract class BaseFragment<T extends BasePresenter> extends RxFragment i
 
         bind = ButterKnife.bind(this, rootView);
         mSubscribers = new ArrayList<>();
+        mDialog = initDialog();
         onInitData2Remote();
         return rootView;
+    }
+
+    protected BaseDialogFragment initDialog() {
+        return new WaitDialog();
     }
 
     @Override
@@ -98,6 +108,20 @@ public abstract class BaseFragment<T extends BasePresenter> extends RxFragment i
         super.onDestroy();
         doDestroy();
         EventBus.getDefault().unregister(this);
+    }
+
+    protected void showDialog() {
+        if (mDialog != null && !isShowing) {
+            mDialog.show(getActivity());
+            isShowing = true;
+        }
+    }
+
+    protected void dismissDialog() {
+        if (mDialog != null && isShowing) {
+            mDialog.dismiss();
+            isShowing = false;
+        }
     }
 
     private void doDestroy() {
