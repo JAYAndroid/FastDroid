@@ -1,5 +1,6 @@
 package com.ylz.ehui.ui.dialog;
 
+import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.ColorRes;
 import android.view.View;
@@ -47,7 +48,7 @@ public class CountDownDialog extends BaseDialogFragment implements View.OnClickL
     }
 
     @Override
-    protected void doInit(View parent) {
+    protected void onInitialization(View parent, Bundle bundle) {
         String mTitle = mCreater.mTitle;
         String mMsg = mCreater.mMsg;
         String mPositiveMsg = mCreater.mPositiveMsg;

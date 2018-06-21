@@ -1,5 +1,6 @@
 package com.ylz.ehui.ui.dialog;
 
+import android.os.Bundle;
 import android.support.annotation.ColorRes;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,7 +59,7 @@ public class ConfirmDialog extends BaseDialogFragment implements View.OnClickLis
     }
 
     @Override
-    protected void doInit(View parent) {
+    protected void onInitialization(View parent, Bundle bundle) {
         this.mTitle = mCreater.mTitle;
         this.mMsg = mCreater.mMsg;
         this.mPositiveMsg = mCreater.mPositiveMsg;
