@@ -10,35 +10,130 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
+
+import com.trello.rxlifecycle2.components.support.RxDialogFragment;
+import com.ylz.ehui.ui.manager.AppManager;
+import com.ylz.ehui.ui.mvp.presenter.BasePresenter;
+import com.ylz.ehui.ui.mvp.view.BaseView;
+import com.ylz.ehui.ui.proxy.LogicProxy;
+
+import org.greenrobot.eventbus.EventBus;
+
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+
+import io.reactivex.disposables.Disposable;
 
 /**
  * Base dialog fragment for all your dialogs, styleable and same design on Android 2.2+.
  *
  * @author David Vávra (david@inmite.eu)
  */
-public abstract class BaseDialogFragment extends android.support.v4.app.DialogFragment {
+public abstract class BaseDialogFragment<T extends BasePresenter> extends RxDialogFragment implements BaseView {
     protected Context mContext;
     private Builder builder;
+    protected BasePresenter mPresenter;
+    private List<Disposable> mSubscribers;
+    private boolean isDestroyed = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mContext = getActivity();
         builder = new Builder(mContext, inflater, container);
         getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        mSubscribers = new ArrayList<>();
+        onInitData2Remote();
         return build(builder).create();
     }
 
+    private Class<T> getLogicClazz() {
+        Class<T> entityClass = null;
+        Type t = this.getClass().getGenericSuperclass();
+        if (t instanceof ParameterizedType) {
+            Type[] p = ((ParameterizedType) t).getActualTypeArguments();
+            entityClass = (Class) p[0];
+            return entityClass;
+        }
+
+        return null;
+    }
+
+    protected void onInitData2Remote() {
+        if (getLogicClazz() != null)
+            mPresenter = getLogicImpl();
+    }
+
+    protected T getPresenter() {
+        if (mPresenter != null) {
+            return (T) mPresenter;
+        }
+
+        return null;
+    }
+
+    //获得该页面的实例
+    public <T> T getLogicImpl() {
+        return LogicProxy.getInstance().bind(getLogicClazz(), this);
+    }
+
+    @Override
+    public void bind2Lifecycle(Disposable subscribe) {
+        // 管理生命周期, 防止内存泄露
+        if (!mSubscribers.contains(subscribe)) {
+            mSubscribers.add(subscribe);
+        }
+    }
+
+    @Override
+    public void onError(String msg) {
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (isDetached()) {
+            doDestroy();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        doDestroy();
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    private void doDestroy() {
+        if (isDestroyed) {
+            return;
+        }
+
+        for (Disposable subscriber : mSubscribers) {
+            if (!subscriber.isDisposed()) {
+                subscriber.dispose();
+            }
+        }
+
+        LogicProxy.getInstance().unbind(getLogicClazz(), this);
+        mSubscribers.clear();
+        isDestroyed = true;
+    }
+
+    protected abstract void onInitialization(View parentVie, Bundle bundle);
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        doInit(view);
+        super.onViewCreated(view, savedInstanceState);
+        onInitialization(view, savedInstanceState);
     }
 
     @Override
@@ -75,8 +170,6 @@ public abstract class BaseDialogFragment extends android.support.v4.app.DialogFr
     }
 
     protected abstract Builder build(Builder builder);
-
-    protected abstract void doInit(View parent);
 
     @Override
     public void onDestroyView() {

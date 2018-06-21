@@ -11,9 +11,18 @@ import com.trello.rxlifecycle2.components.support.RxFragment;
 import com.ylz.ehui.ui.mvp.presenter.BasePresenter;
 import com.ylz.ehui.ui.proxy.LogicProxy;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import io.reactivex.Observable;
+import io.reactivex.disposables.Disposable;
 
 public abstract class BaseFragment<T extends BasePresenter> extends RxFragment implements BaseView {
 
@@ -21,12 +30,22 @@ public abstract class BaseFragment<T extends BasePresenter> extends RxFragment i
     protected View rootView;
     protected Context mContext = null;//context
     private Unbinder bind;
+    private List<Disposable> mSubscribers;
+    private boolean isDestroyed = false;
 
     protected abstract int getLayoutResource();
 
     protected abstract void onInitView(Bundle savedInstanceState);
 
-    protected Class getLogicClazz() {
+    private Class<T> getLogicClazz() {
+        Class<T> entityClass = null;
+        Type t = this.getClass().getGenericSuperclass();
+        if (t instanceof ParameterizedType) {
+            Type[] p = ((ParameterizedType) t).getActualTypeArguments();
+            entityClass = (Class) p[0];
+            return entityClass;
+        }
+
         return null;
     }
 
@@ -53,19 +72,72 @@ public abstract class BaseFragment<T extends BasePresenter> extends RxFragment i
         }
 
         bind = ButterKnife.bind(this, rootView);
+        mSubscribers = new ArrayList<>();
         onInitData2Remote();
-        this.onInitView(savedInstanceState);
         return rootView;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
         mContext = getActivity();
+        onInitView(savedInstanceState);
     }
 
-    protected <T> void bindToLifecycle(Observable<T> observable) {
-        observable.compose(this.<T>bindToLifecycle());
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (isDetached()) {
+            doDestroy();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        doDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    private void doDestroy() {
+        if (isDestroyed) {
+            return;
+        }
+
+        // 资源回收
+        if (bind != null) {
+            bind.unbind();
+        }
+
+        for (Disposable subscriber : mSubscribers) {
+            if (!subscriber.isDisposed()) {
+                subscriber.dispose();
+            }
+        }
+
+        LogicProxy.getInstance().unbind(getLogicClazz(), this);
+        mSubscribers.clear();
+        isDestroyed = true;
+    }
+
+
+    @Override
+    public void bind2Lifecycle(Disposable subscribe) {
+        // 管理生命周期, 防止内存泄露
+        if (!mSubscribers.contains(subscribe)) {
+            mSubscribers.add(subscribe);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void handleEvent(Object event) {
+
+    }
+
+    @Override
+    public void onError(String msg) {
+
     }
 
     //获得该页面的实例
@@ -79,16 +151,5 @@ public abstract class BaseFragment<T extends BasePresenter> extends RxFragment i
             LogicProxy.getInstance().bind(getLogicClazz(), this);
         }
         super.onStart();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (bind != null) {
-            bind.unbind();
-        }
-
-        if (mPresenter != null)
-            mPresenter.detachView();
     }
 }
