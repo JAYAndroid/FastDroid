@@ -10,19 +10,19 @@ public class CommonUserInfos implements Serializable {
     private String sessionId;
     private String name;
     private String phone;
-    private String patientId;// //病人id
+    private String userId;// //病人id
     private String cardNo;// 病人卡号
 
 
     private CommonUserInfos() {
     }
 
-    public String getPatientId() {
-        return patientId;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setPatientId(String patientId) {
-        this.patientId = patientId;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getCardNo() {
