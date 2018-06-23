@@ -10,11 +10,19 @@ public class CommonUserInfos implements Serializable {
     private String sessionId;
     private String name;
     private String phone;
-    private String userId;// //病人id
+    private String userId;// //预约用户id
     private String cardNo;// 病人卡号
-
+    private String medicalCardId;//当前治疗人Id
 
     private CommonUserInfos() {
+    }
+
+    public String getMedicalCardId() {
+        return medicalCardId;
+    }
+
+    public void setMedicalCardId(String medicalCardId) {
+        this.medicalCardId = medicalCardId;
     }
 
     public String getUserId() {
