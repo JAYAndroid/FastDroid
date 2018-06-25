@@ -21,7 +21,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ylz.ehui.module_utils.R;
 
 import java.lang.ref.WeakReference;
 
@@ -199,13 +198,13 @@ public final class ToastUtils {
     }
 
     public static void showHint(CharSequence text) {
-        bgResource = R.drawable.toast_bg_blue;
+        bgResource = com.ylz.ehui.module_utils.R.drawable.toast_bg_blue;
         msgColor = Color.parseColor("#FF196FFA");
         show(text, Toast.LENGTH_SHORT);
     }
 
     public static void showWarn(CharSequence text) {
-        bgResource = R.drawable.toast_bg_red;
+        bgResource = com.ylz.ehui.module_utils.R.drawable.toast_bg_red;
         msgColor = Color.parseColor("#ef482c");
         show(text, Toast.LENGTH_SHORT);
     }
@@ -228,21 +227,14 @@ public final class ToastUtils {
             @Override
             public void run() {
                 cancel();
-                if (sToast == null || tvMessage == null) {
-                    sToast = Toast.makeText(Utils.getApp(), text, duration);
-                    defaultBackground = sToast.getView().getBackground();
-                    tvMessage = sToast.getView().findViewById(android.R.id.message);
-                    TextViewCompat.setTextAppearance(tvMessage, android.R.style.TextAppearance);
-                    tvMessage.setText(text);
-                    tvMessage.setGravity(Gravity.CENTER);
-                } else {
-                    tvMessage.setText(text);
-                }
-
-                sToast.setDuration(duration);
+                sToast = Toast.makeText(Utils.getApp(), text, duration);
+                defaultBackground = sToast.getView().getBackground();
+                tvMessage = sToast.getView().findViewById(android.R.id.message);
+                TextViewCompat.setTextAppearance(tvMessage, android.R.style.TextAppearance);
+                tvMessage.setText(text);
+                tvMessage.setTextColor(msgColor);
                 sToast.setGravity(gravity, xOffset, yOffset);
                 setBg();
-                tvMessage.setTextColor(msgColor);
                 sToast.show();
             }
         });
@@ -274,9 +266,7 @@ public final class ToastUtils {
             @Override
             public void run() {
                 cancel();
-                if (sToast == null) {
-                    sToast = new Toast(Utils.getApp());
-                }
+                sToast = new Toast(Utils.getApp());
 
                 sToast.setDuration(duration);
                 sToast.setView(view);
