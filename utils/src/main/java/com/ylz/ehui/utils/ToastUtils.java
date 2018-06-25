@@ -227,6 +227,7 @@ public final class ToastUtils {
         HANDLER.post(new Runnable() {
             @Override
             public void run() {
+                cancel();
                 if (sToast == null || tvMessage == null) {
                     sToast = Toast.makeText(Utils.getApp(), text, duration);
                     defaultBackground = sToast.getView().getBackground();
@@ -247,9 +248,31 @@ public final class ToastUtils {
     }
 
     private static void show(final View view, final int duration) {
+//        HANDLER.post(new Runnable() {
+//            @SuppressLint("ShowToast")
+//            @Override
+//            public void run() {
+//                cancel();
+//                sToast = Toast.makeText(Utils.getApp(), text, duration);
+//                final TextView tvMessage = sToast.getView().findViewById(android.R.id.message);
+//                if (sMsgColor != COLOR_DEFAULT) {
+//                    tvMessage.setTextColor(sMsgColor);
+//                }
+//                if (sMsgTextSize != -1) {
+//                    tvMessage.setTextSize(sMsgTextSize);
+//                }
+//                if (sGravity != -1 || sXOffset != -1 || sYOffset != -1) {
+//                    sToast.setGravity(sGravity, sXOffset, sYOffset);
+//                }
+//                setBg(tvMessage);
+//                showToast();
+//            }
+//        });
+
         HANDLER.post(new Runnable() {
             @Override
             public void run() {
+                cancel();
                 if (sToast == null) {
                     sToast = new Toast(Utils.getApp());
                     sToast.setDuration(duration);
@@ -273,7 +296,7 @@ public final class ToastUtils {
             } else {
                 ViewCompat.setBackground(sToastView, new ColorDrawable(bgColor));
             }
-        }else {
+        } else {
             ViewCompat.setBackground(sToastView, defaultBackground);
         }
     }
@@ -299,5 +322,11 @@ public final class ToastUtils {
     private static void reset() {
         bgResource = -1;
         msgColor = COLOR_DEFAULT;
+    }
+
+    private static void cancel() {
+        if (sToast != null) {
+            sToast.cancel();
+        }
     }
 }
