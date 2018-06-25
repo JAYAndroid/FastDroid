@@ -239,6 +239,7 @@ public final class ToastUtils {
                     tvMessage.setText(text);
                 }
 
+                sToast.setDuration(duration);
                 sToast.setGravity(gravity, xOffset, yOffset);
                 setBg();
                 tvMessage.setTextColor(msgColor);
@@ -275,8 +276,9 @@ public final class ToastUtils {
                 cancel();
                 if (sToast == null) {
                     sToast = new Toast(Utils.getApp());
-                    sToast.setDuration(duration);
                 }
+
+                sToast.setDuration(duration);
                 sToast.setView(view);
                 sToast.setGravity(gravity, xOffset, yOffset);
                 sToast.show();
