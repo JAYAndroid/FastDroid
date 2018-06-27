@@ -71,6 +71,19 @@ public class GlideUtils {
                 .into(targetImageView);
     }
 
+    public void loadRoundCornersNoCache(ImageView targetImageView, String url, int radius, int... defaultResId) {
+        RequestOptions options = createRoundCornersOptionsNoCache(radius);
+
+        if (defaultResId != null && defaultResId.length > 0) {
+            options.placeholder(defaultResId[0]).error(defaultResId[0]);
+        }
+
+        Glide.with(targetImageView.getContext())
+                .load(url)
+                .apply(options)
+                .into(targetImageView);
+    }
+
 
     private RequestOptions createRequestOptions(boolean isCircle) {
         RequestOptions options = new RequestOptions()
@@ -85,8 +98,12 @@ public class GlideUtils {
 
     private RequestOptions createRoundCornersOptions(int radius) {
         RequestOptions options =RequestOptions.bitmapTransform(new RoundedCornersTransformation(radius, 0));
-        options.diskCacheStrategy(DiskCacheStrategy.AUTOMATIC);
-        return options;
+        return options.diskCacheStrategy(DiskCacheStrategy.AUTOMATIC);
+    }
+
+    private RequestOptions createRoundCornersOptionsNoCache(int radius) {
+        RequestOptions options =RequestOptions.bitmapTransform(new RoundedCornersTransformation(radius, 0));
+        return options.diskCacheStrategy(DiskCacheStrategy.NONE);
     }
 
     private static class Singleton {
