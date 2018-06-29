@@ -110,14 +110,16 @@ public abstract class BaseFragment<T extends BasePresenter> extends RxFragment i
         EventBus.getDefault().unregister(this);
     }
 
-    protected void showDialog() {
+    @Override
+    public void showDialog() {
         if (mDialog != null && !isShowing) {
             mDialog.show(getActivity());
             isShowing = true;
         }
     }
 
-    protected void dismissDialog() {
+    @Override
+    public void dismissDialog() {
         if (mDialog != null && isShowing) {
             mDialog.dismiss();
             isShowing = false;
