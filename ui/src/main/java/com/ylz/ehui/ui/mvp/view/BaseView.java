@@ -8,4 +8,8 @@ public interface BaseView {
     void showToast(String msg);
 
     void onError(String msg);
+
+    void showDialog();
+
+    void dismissDialog();
 }

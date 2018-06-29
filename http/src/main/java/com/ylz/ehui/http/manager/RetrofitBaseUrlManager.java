@@ -19,6 +19,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.ylz.ehui.http.OnUrlChangeListener;
+import com.ylz.ehui.http.parser.DefaultUrlParser;
 import com.ylz.ehui.http.parser.UrlParser;
 
 import java.io.IOException;
@@ -82,7 +83,7 @@ public class RetrofitBaseUrlManager {
         if (!DEPENDENCY_OKHTTP) { //使用本管理器必须依赖 Okhttp
             throw new IllegalStateException("Must be dependency Okhttp");
         }
-        setUrlParser(new me.jessyan.RetrofitBaseUrlManager.parser.DefaultUrlParser());
+        setUrlParser(new DefaultUrlParser());
         this.mInterceptor = new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
