@@ -18,7 +18,6 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.trello.rxlifecycle2.components.support.RxDialogFragment;
-import com.ylz.ehui.ui.manager.AppManager;
 import com.ylz.ehui.ui.mvp.presenter.BasePresenter;
 import com.ylz.ehui.ui.mvp.view.BaseView;
 import com.ylz.ehui.ui.proxy.LogicProxy;
@@ -56,6 +55,16 @@ public abstract class BaseDialogFragment<T extends BasePresenter> extends RxDial
 
     @Override
     public void showToast(String msg) {
+
+    }
+
+    @Override
+    public void showDialog() {
+
+    }
+
+    @Override
+    public void dismissDialog() {
 
     }
 
