@@ -124,14 +124,16 @@ public abstract class BaseActivity<T extends BasePresenter> extends AutoLayoutAc
         ToastUtils.showHint(msg);
     }
 
-    protected void showDialog() {
+    @Override
+    public void showDialog() {
         if (mDialog != null && !isShowing) {
             mDialog.show(this);
             isShowing = true;
         }
     }
 
-    protected void dismissDialog() {
+    @Override
+    public void dismissDialog() {
         if (mDialog != null && isShowing) {
             mDialog.dismiss();
             isShowing = false;

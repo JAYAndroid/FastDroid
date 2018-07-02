@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package me.jessyan.RetrofitBaseUrlManager.parser;
+package com.ylz.ehui.http.parser;
 
 import com.ylz.ehui.http.parser.UrlParser;
 

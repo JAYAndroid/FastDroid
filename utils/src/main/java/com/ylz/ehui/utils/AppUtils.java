@@ -16,6 +16,8 @@ import android.util.TypedValue;
 import com.ylz.ehui.module_utils.R;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /********************
@@ -119,5 +121,28 @@ public class AppUtils {
 
         prefs.edit().putString(PREFS_DEVICE_ID, uuid.toString()).apply();
         return uuid.toString();
+    }
+
+    /**
+     * 检查手机是否安装了指定包名的app
+     *
+     * @param packageName 包名
+     * @return
+     */
+    public static boolean isInstalledApp(String packageName) {
+        //获取packageManager
+        final PackageManager packageManager = Utils.getApp().getPackageManager();
+        // 获取所有已安装程序的包信息
+        List<PackageInfo> packageInfos = packageManager.getInstalledPackages(0);
+        // 用于存储所有已安装程序的包名
+        List<String> packageNames = new ArrayList<>();
+        if (packageInfos != null) {
+            //将包信息转换成包名，一一加入数组
+            for (PackageInfo info : packageInfos) {
+                packageNames.add(info.packageName);
+            }
+        }
+        //返回是否存在该包名，如果存在，则证明安装，返回true。否则未安装，返回false。
+        return packageNames.contains(packageName);
     }
 }
