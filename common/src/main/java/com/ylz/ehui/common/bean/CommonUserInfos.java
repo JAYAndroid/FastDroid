@@ -88,4 +88,14 @@ public class CommonUserInfos implements Serializable {
         }
         return target;
     }
+
+    public void release() {
+        sessionId = "";
+        userId = "";
+        name = "";
+        phone = "";
+        cardNo = "";
+        medicalCardId = "";
+        sex = "";
+    }
 }
