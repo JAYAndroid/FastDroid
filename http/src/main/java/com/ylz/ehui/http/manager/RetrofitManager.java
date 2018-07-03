@@ -141,7 +141,7 @@ final public class RetrofitManager {
         builder.addInterceptor(new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
-                if (!NetworkUtils.isAvailableByPing()) {
+                if (!NetworkUtils.isConnected()) {
                     throw new RuntimeException("网络连接不可用");
                 }
                 return chain.proceed(chain.request());
