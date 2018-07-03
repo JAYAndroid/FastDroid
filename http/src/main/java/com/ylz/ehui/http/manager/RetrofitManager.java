@@ -12,12 +12,15 @@ import com.ylz.ehui.http.builder.INetParamsBuild;
 import com.ylz.ehui.http.handler.IRequestHandler;
 import com.ylz.ehui.http.interceptor.HttpLoggingInterceptor;
 import com.ylz.ehui.http.interceptor.NetInterceptor;
+import com.ylz.ehui.utils.NetworkUtils;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.CookieJar;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Response;
 import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
@@ -83,7 +86,7 @@ final public class RetrofitManager {
     }
 
     public Retrofit getRetrofit(INetParamsBuild provider) {
-        if(empty(mBaseUrl)){
+        if (empty(mBaseUrl)) {
             throw new RuntimeException("mBaseUrl为空，请先调用setBaseUrl");
         }
         if (mRetrofit != null) {
@@ -134,6 +137,16 @@ final public class RetrofitManager {
             builder.cookieJar(cookieJar);
         }
         provider.configHttps(builder);
+
+        builder.addInterceptor(new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                if (!NetworkUtils.isAvailableByPing()) {
+                    throw new RuntimeException("网络连接不可用");
+                }
+                return chain.proceed(chain.request());
+            }
+        });
 
         IRequestHandler handler = provider.configHandler();
         if (handler != null) {
