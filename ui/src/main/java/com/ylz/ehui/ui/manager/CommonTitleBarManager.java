@@ -1,5 +1,6 @@
 package com.ylz.ehui.ui.manager;
 
+import android.app.Activity;
 import android.content.Context;
 import android.text.TextUtils;
 import android.view.View;
@@ -19,7 +20,7 @@ import com.ylz.ehui.utils.SizeUtils;
  * Builder模式
  */
 
-public class CommonTitleBarManager implements View.OnAttachStateChangeListener {
+public class CommonTitleBarManager implements View.OnAttachStateChangeListener, View.OnClickListener {
 
     /**
      * 控制标题栏左侧是否隐藏
@@ -137,10 +138,7 @@ public class CommonTitleBarManager implements View.OnAttachStateChangeListener {
     }
 
     private void initListener() {
-        if (mLeftListener != null) {
-            ivLeftView.setOnClickListener(mLeftListener);
-        }
-
+        ivLeftView.setOnClickListener(this);
         if (mRightListener != null) {
             flRightView.setOnClickListener(mRightListener);
         }
@@ -260,6 +258,18 @@ public class CommonTitleBarManager implements View.OnAttachStateChangeListener {
 
         if (mRootView != null) {
             mRootView.removeOnAttachStateChangeListener(this);
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        int viewId = view.getId();
+        if (viewId == R.id.iv_title_left) {
+            if (mLeftListener != null) {
+                mLeftListener.onClick(view);
+            } else if (mContext instanceof Activity) {
+                ((Activity) mContext).finish();
+            }
         }
     }
 
