@@ -196,13 +196,17 @@ public abstract class BaseDialogFragment<T extends BasePresenter> extends RxDial
 
     public void showAllowingStateLoss(FragmentManager manager, String tag) {
         FragmentTransaction ft = manager.beginTransaction();
+        ft.remove(this);
         ft.add(this, tag);
         ft.commitAllowingStateLoss();
     }
 
 
     public void show(FragmentActivity activity) {
-        show(activity.getSupportFragmentManager(), getClass().getName());
+        FragmentManager supportFragmentManager = activity.getSupportFragmentManager();
+        if (!isAdded() && null == supportFragmentManager.findFragmentByTag(getClass().getName())) {
+            show(supportFragmentManager, getClass().getName());
+        }
     }
 
     /**
