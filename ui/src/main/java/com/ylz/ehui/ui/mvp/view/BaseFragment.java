@@ -34,7 +34,6 @@ public abstract class BaseFragment<T extends BasePresenter> extends RxFragment i
     private Unbinder bind;
     private List<Disposable> mSubscribers;
     private boolean isDestroyed = false;
-    private boolean isShowing;
 
     private BaseDialogFragment mDialog;
 
@@ -112,17 +111,15 @@ public abstract class BaseFragment<T extends BasePresenter> extends RxFragment i
 
     @Override
     public void showDialog() {
-        if (mDialog != null && !isShowing) {
+        if (mDialog != null) {
             mDialog.show(getActivity());
-            isShowing = true;
         }
     }
 
     @Override
     public void dismissDialog() {
-        if (mDialog != null && isShowing) {
+        if (mDialog != null) {
             mDialog.dismiss();
-            isShowing = false;
         }
     }
 

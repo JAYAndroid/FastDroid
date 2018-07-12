@@ -1,5 +1,6 @@
 package com.ylz.ehui.ui.dialog;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 
@@ -21,4 +22,9 @@ public class WaitDialog extends BaseDialogFragment {
                 .width(SizeUtils.dp2px(120));
     }
 
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        super.onCancel(dialog);
+
+    }
 }

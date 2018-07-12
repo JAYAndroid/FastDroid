@@ -1,7 +1,6 @@
 package com.ylz.ehui.ui.mvp.view;
 
 import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
@@ -39,10 +38,9 @@ public abstract class BaseActivity<T extends BasePresenter> extends AutoLayoutAc
     private boolean isDestroyed = false;
 
     private BaseDialogFragment mDialog;
-    private boolean isShowing;
 
     @LayoutRes
-    protected  int getLayoutResource(){
+    protected int getLayoutResource() {
         return R.layout.fastdroid_common_activity_layout;
     }
 
@@ -126,17 +124,15 @@ public abstract class BaseActivity<T extends BasePresenter> extends AutoLayoutAc
 
     @Override
     public void showDialog() {
-        if (mDialog != null && !isShowing) {
+        if (mDialog != null) {
             mDialog.show(this);
-            isShowing = true;
         }
     }
 
     @Override
     public void dismissDialog() {
-        if (mDialog != null && isShowing) {
+        if (mDialog != null) {
             mDialog.dismiss();
-            isShowing = false;
         }
     }
 
