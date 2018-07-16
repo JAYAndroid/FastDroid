@@ -1,14 +1,17 @@
 package com.ylz.ehui.http.builder;
 
+import com.alibaba.android.arouter.launcher.ARouter;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonWriter;
+import com.ylz.ehui.common.bean.CommonUserInfos;
 import com.ylz.ehui.http.base.BaseEntity;
 import com.ylz.ehui.utils.SecurityUtils;
 import com.ylz.ehui.utils.SignUtils;
+import com.ylz.ehui.utils.ToastUtils;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -32,6 +35,7 @@ import retrofit2.Retrofit;
  * 注释：拦截器，网络请求出入参处理
  ********************/
 public class DefaultInterceptBuild extends Converter.Factory {
+    private final static String errorCodeLogoff = "050073";//被迫下线
     private final Gson gson;
 
 
@@ -81,6 +85,16 @@ public class DefaultInterceptBuild extends Converter.Factory {
             String response = value.string();
             BaseEntity baseEntity = gson.fromJson(response, BaseEntity.class);
             try {
+                if (errorCodeLogoff.equals(baseEntity.getRespCode())) {
+                    ToastUtils.showWarn("账户已经在其他地方登录,请重新登录。");
+                    CommonUserInfos.getInstance().release();
+                    ARouter.getInstance()
+                            .build(CommonUserInfos.getInstance().getGroupPrefix() + "LoginActivity")
+                            .withBoolean("reLogin", true)
+                            .navigation();
+                    return null;
+                }
+
                 if (SignUtils.ENTRY) {
                     if (baseEntity.getEncryptData() == null) {
                         return adapter.read(gson.newJsonReader(new StringReader(JSON.toJSONString(baseEntity))));

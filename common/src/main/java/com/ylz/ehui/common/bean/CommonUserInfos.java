@@ -15,7 +15,17 @@ public class CommonUserInfos implements Serializable {
     private String cardNo;// 病人卡号
     private String medicalCardId;//当前治疗人Id
 
+    private String groupPrefix;// 主模块前缀名称
+
     private CommonUserInfos() {
+    }
+
+    public String getGroupPrefix() {
+        return groupPrefix;
+    }
+
+    public void setGroupPrefix(String groupPrefix) {
+        this.groupPrefix = groupPrefix;
     }
 
     public String getUserCardLinkDTOId() {
