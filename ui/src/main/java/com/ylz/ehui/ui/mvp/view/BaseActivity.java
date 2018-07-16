@@ -132,7 +132,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AutoLayoutAc
     @Override
     public void dismissDialog() {
         if (mDialog != null) {
-            mDialog.dismiss();
+            mDialog.dismiss(this);
         }
     }
 

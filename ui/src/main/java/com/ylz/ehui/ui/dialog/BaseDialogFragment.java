@@ -209,6 +209,14 @@ public abstract class BaseDialogFragment<T extends BasePresenter> extends RxDial
         }
     }
 
+    public void dismiss(FragmentActivity activity) {
+        FragmentManager supportFragmentManager = activity.getSupportFragmentManager();
+        if (isAdded() && null != supportFragmentManager.findFragmentByTag(getClass().getName())) {
+            dismiss();
+        }
+    }
+
+
     /**
      * Custom dialog builder
      */
