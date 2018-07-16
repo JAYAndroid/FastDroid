@@ -2,6 +2,7 @@ package com.ylz.ehui.ui.dialog;
 
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -41,7 +42,9 @@ public abstract class BaseDialogFragment<T extends BasePresenter> extends RxDial
     private Builder builder;
     protected BasePresenter mPresenter;
     private List<Disposable> mSubscribers;
-    private boolean isDestroyed = false;
+    private volatile boolean isDestroyed = false;
+    private volatile boolean isShowing = false;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -201,18 +204,31 @@ public abstract class BaseDialogFragment<T extends BasePresenter> extends RxDial
         ft.commitAllowingStateLoss();
     }
 
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        isShowing = false;
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        super.onCancel(dialog);
+        isShowing = false;
+    }
 
     public void show(FragmentActivity activity) {
         FragmentManager supportFragmentManager = activity.getSupportFragmentManager();
-        if (!isAdded() && null == supportFragmentManager.findFragmentByTag(getClass().getName())) {
+        if (!isShowing && !isAdded() && null == supportFragmentManager.findFragmentByTag(getClass().getName())) {
             show(supportFragmentManager, getClass().getName());
+            isShowing = true;
         }
     }
 
     public void dismiss(FragmentActivity activity) {
         FragmentManager supportFragmentManager = activity.getSupportFragmentManager();
-        if (isAdded() && null != supportFragmentManager.findFragmentByTag(getClass().getName())) {
+        if (isShowing && isAdded() && null != supportFragmentManager.findFragmentByTag(getClass().getName())) {
             dismiss();
+            isShowing = false;
         }
     }
 
