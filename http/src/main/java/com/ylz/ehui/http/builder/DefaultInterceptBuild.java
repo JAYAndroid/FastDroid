@@ -86,13 +86,12 @@ public class DefaultInterceptBuild extends Converter.Factory {
             BaseEntity baseEntity = gson.fromJson(response, BaseEntity.class);
             try {
                 if (errorCodeLogoff.equals(baseEntity.getRespCode())) {
-                    ToastUtils.showWarn("账户已经在其他地方登录,请重新登录。");
                     CommonUserInfos.getInstance().release();
                     ARouter.getInstance()
                             .build(CommonUserInfos.getInstance().getGroupPrefix() + "LoginActivity")
                             .withBoolean("reLogin", true)
                             .navigation();
-                    return null;
+                   throw new RuntimeException("账户已经在其他地方登录,请重新登录。");
                 }
 
                 if (SignUtils.ENTRY) {
