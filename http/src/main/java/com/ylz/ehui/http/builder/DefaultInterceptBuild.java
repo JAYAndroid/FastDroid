@@ -91,6 +91,7 @@ public class DefaultInterceptBuild extends Converter.Factory {
                             .build(CommonUserInfos.getInstance().getGroupPrefix() + "LoginActivity")
                             .withBoolean("reLogin", true)
                             .navigation();
+                    ToastUtils.showWarn("账户已经在其他地方登录,请重新登录。");
                    throw new RuntimeException("账户已经在其他地方登录,请重新登录。");
                 }
 
