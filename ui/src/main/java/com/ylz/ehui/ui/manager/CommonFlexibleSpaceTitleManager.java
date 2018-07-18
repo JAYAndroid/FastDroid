@@ -70,6 +70,7 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
 
     private int mPadding;
     private boolean mDoSubFlexibleViewAnim = true;
+    private boolean isFixed; // true-标题固定不可上下滑动
 
     private CommonFlexibleSpaceTitleManager(Builder builder) {
         this.mContext = builder.mContext;
@@ -90,6 +91,7 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
         this.mMainContentLayoutBg = builder.mMainContentLayoutBg;
         this.onLoadMoreListener = builder.onLoadMoreListener;
         this.onRefreshListener = builder.onRefreshListener;
+        this.isFixed = builder.isFixed;
 
         initView();
         initListener();
@@ -100,7 +102,9 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
             mRootView.addOnAttachStateChangeListener(this);
         }
 
-        mAppBarLayout.addOnOffsetChangedListener(this);
+        if(!isFixed){
+            mAppBarLayout.addOnOffsetChangedListener(this);
+        }
     }
 
     private void initView() {
@@ -138,7 +142,7 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
 
         mFlexibleSpaceSubTitleView = mRootView.findViewById(R.id.tv_flexible_sub_title);
         mFlexibleSpaceSubTitleView.measure(0, 0);
-        if (!mHidenLocationView) {
+        if (!mHidenLocationView && !isFixed) {
             mFlexibleSpaceSubTitleView.setVisibility(View.VISIBLE);
             mFlexibleSpaceSubTitleView.setText(TextUtils.isEmpty(mSubTitle) ? "" : mSubTitle);
             mFlexibleSpaceSubTitleView.setCompoundDrawablesWithIntrinsicBounds(mSubTitleResId, 0, 0, 0);
@@ -410,6 +414,7 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
         private int mMainContentLayoutBg;
         private OnRefreshListener onRefreshListener;
         private OnLoadMoreListener onLoadMoreListener;
+        private boolean isFixed = false;
 
         public Builder(View rootView) {
             mRootView = rootView;
@@ -526,6 +531,11 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
 
         public Builder setOnLoadMoreListener(OnLoadMoreListener onLoadMoreListener) {
             this.onLoadMoreListener = onLoadMoreListener;
+            return this;
+        }
+
+        public Builder isFixed(boolean isFixed) {
+            this.isFixed = isFixed;
             return this;
         }
     }
