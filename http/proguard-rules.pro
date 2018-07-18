@@ -86,3 +86,7 @@ public static <fields>;
 
 # Ignore JSR 305 annotations for embedding nullability information.
 -dontwarn javax.annotation.**
+#缺省页框架start
+-dontwarn com.kingja.loadsir.**
+-keep class com.kingja.loadsir.** {*;}
+#缺省页框架end
