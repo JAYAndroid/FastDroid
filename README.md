@@ -23,7 +23,7 @@ allprojects {
 2.在模块目录下的build.gradle配置
 ```
 dependencies {
-	        implementation 'com.gitee.onlyyouandroid:medicineRemind:xxxx'
+	         implementation 'com.github.JAYAndroid.FastDroid:api:xxxx'
 	}
 ```
 说明:xxxx表示appointment当前发布版本,请使用最新版本号.
