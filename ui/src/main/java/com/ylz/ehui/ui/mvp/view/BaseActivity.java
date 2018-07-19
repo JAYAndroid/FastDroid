@@ -79,7 +79,11 @@ public abstract class BaseActivity<T extends BasePresenter> extends AutoLayoutAc
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         checkResource();
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        StatusBarManager.setStatusBarColor(this, initStatusBarColor());
+        if (isShowStatusBar()) {
+            StatusBarManager.setStatusBarColor(this, initStatusBarColor());
+        } else {
+            StatusBarManager.translucentStatusBar(this, true);
+        }
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
         setRequestedOrientation(initOrientation());
@@ -90,6 +94,10 @@ public abstract class BaseActivity<T extends BasePresenter> extends AutoLayoutAc
         mDialog = initDialog();
         this.onInitData2Remote();
         this.onInitialization(savedInstanceState);
+    }
+
+    protected boolean isShowStatusBar() {
+        return true;
     }
 
     protected int initOrientation() {
