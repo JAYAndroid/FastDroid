@@ -23,6 +23,7 @@ import com.ylz.ehui.base_ui.R;
 public class StatusBarManager {
     private static final String TAG_FAKE_STATUS_BAR_VIEW = "statusBarView";
     private static final String TAG_MARGIN_ADDED = "marginAdded";
+
     /**
      * 透明状态栏
      *
@@ -83,6 +84,13 @@ public class StatusBarManager {
      * @param statusColor
      */
     public static void setStatusBarColor(Activity activity, int statusColor) {
+        try {
+            statusColor = activity.getResources().getColor(statusColor);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             Window window = activity.getWindow();
             //设置Window为全透明
