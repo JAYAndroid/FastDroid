@@ -57,6 +57,4 @@ dependencies {
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     api 'com.zhy:autolayout:1.4.5'
-    // 缺省页框架
-    api 'com.kingja.loadsir:loadsir:1.3.6'
 }
