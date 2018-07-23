@@ -79,8 +79,13 @@ public abstract class BaseFragment<T extends BasePresenter> extends RxFragment i
             rootView = super.onCreateView(inflater, container, savedInstanceState);
         }
 
+        bind = ButterKnife.bind(this, rootView);
+        mSubscribers = new ArrayList<>();
+        mDialog = initDialog();
+        onInitData2Remote();
+
         //缺省页
-        mLoadService = LoadSir.getDefault().register(rootView, new Callback.OnReloadListener() {
+        mLoadService = LoadSir.getDefault().register(registerTarget(), new Callback.OnReloadListener() {
             @Override
             public void onReload(View v) {
                 // 重新加载逻辑
@@ -88,12 +93,11 @@ public abstract class BaseFragment<T extends BasePresenter> extends RxFragment i
             }
         });
         mLoadService.showSuccess();
-
-        bind = ButterKnife.bind(this, rootView);
-        mSubscribers = new ArrayList<>();
-        mDialog = initDialog();
-        onInitData2Remote();
         return mLoadService.getLoadLayout();
+    }
+
+    protected Object registerTarget() {
+        return rootView;
     }
 
     protected void onLoadRefresh() {

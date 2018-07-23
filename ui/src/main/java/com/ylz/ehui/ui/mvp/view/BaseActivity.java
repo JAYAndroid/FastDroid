@@ -92,7 +92,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AutoLayoutAc
         super.onCreate(savedInstanceState);
 
         //缺省页
-        mLoadService = LoadSir.getDefault().register(this, new Callback.OnReloadListener() {
+        mLoadService = LoadSir.getDefault().register(registerTarget(), new Callback.OnReloadListener() {
             @Override
             public void onReload(View v) {
                 // 重新加载逻辑
@@ -110,6 +110,10 @@ public abstract class BaseActivity<T extends BasePresenter> extends AutoLayoutAc
         mDialog = initDialog();
         this.onInitData2Remote();
         this.onInitialization(savedInstanceState);
+    }
+
+    protected Object registerTarget() {
+        return this;
     }
 
     /**
