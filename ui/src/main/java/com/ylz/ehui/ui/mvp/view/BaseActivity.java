@@ -5,9 +5,13 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 
+import com.kingja.loadsir.callback.Callback;
+import com.kingja.loadsir.core.LoadService;
+import com.kingja.loadsir.core.LoadSir;
 import com.ylz.ehui.base_ui.R;
 import com.ylz.ehui.ui.dialog.BaseDialogFragment;
 import com.ylz.ehui.ui.dialog.WaitDialog;
@@ -38,6 +42,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AutoLayoutAc
     private boolean isDestroyed = false;
 
     private BaseDialogFragment mDialog;
+    protected LoadService mLoadService;
 
     @LayoutRes
     protected int getLayoutResource() {
@@ -85,6 +90,17 @@ public abstract class BaseActivity<T extends BasePresenter> extends AutoLayoutAc
             StatusBarManager.translucentStatusBar(this, true);
         }
         super.onCreate(savedInstanceState);
+
+        //缺省页
+        mLoadService = LoadSir.getDefault().register(this, new Callback.OnReloadListener() {
+            @Override
+            public void onReload(View v) {
+                // 重新加载逻辑
+                onLoadRefresh();
+            }
+        });
+        mLoadService.showSuccess();
+
         EventBus.getDefault().register(this);
         setRequestedOrientation(initOrientation());
         setContentView(getLayoutResource());
@@ -94,6 +110,12 @@ public abstract class BaseActivity<T extends BasePresenter> extends AutoLayoutAc
         mDialog = initDialog();
         this.onInitData2Remote();
         this.onInitialization(savedInstanceState);
+    }
+
+    /**
+     * 网络数据刷新
+     */
+    protected void onLoadRefresh() {
     }
 
     protected boolean isShowStatusBar() {

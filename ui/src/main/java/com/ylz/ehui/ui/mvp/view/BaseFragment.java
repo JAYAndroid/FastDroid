@@ -7,6 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.kingja.loadsir.callback.Callback;
+import com.kingja.loadsir.core.LoadService;
+import com.kingja.loadsir.core.LoadSir;
 import com.trello.rxlifecycle2.components.support.RxFragment;
 import com.ylz.ehui.ui.dialog.BaseDialogFragment;
 import com.ylz.ehui.ui.dialog.WaitDialog;
@@ -36,6 +39,7 @@ public abstract class BaseFragment<T extends BasePresenter> extends RxFragment i
     private boolean isDestroyed = false;
 
     private BaseDialogFragment mDialog;
+    protected LoadService mLoadService;
 
     protected abstract int getLayoutResource();
 
@@ -75,11 +79,24 @@ public abstract class BaseFragment<T extends BasePresenter> extends RxFragment i
             rootView = super.onCreateView(inflater, container, savedInstanceState);
         }
 
+        //缺省页
+        mLoadService = LoadSir.getDefault().register(rootView, new Callback.OnReloadListener() {
+            @Override
+            public void onReload(View v) {
+                // 重新加载逻辑
+                onLoadRefresh();
+            }
+        });
+        mLoadService.showSuccess();
+
         bind = ButterKnife.bind(this, rootView);
         mSubscribers = new ArrayList<>();
         mDialog = initDialog();
         onInitData2Remote();
-        return rootView;
+        return mLoadService.getLoadLayout();
+    }
+
+    protected void onLoadRefresh() {
     }
 
     protected BaseDialogFragment initDialog() {
