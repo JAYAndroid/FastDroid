@@ -90,6 +90,15 @@ public abstract class BaseActivity<T extends BasePresenter> extends AutoLayoutAc
             StatusBarManager.translucentStatusBar(this, true);
         }
         super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
+        setRequestedOrientation(initOrientation());
+        setContentView(getLayoutResource());
+        AppManager.getInstance().addActivity(this);
+        bind = ButterKnife.bind(this);
+        mSubscribers = new ArrayList<>();
+        mDialog = initDialog();
+        this.onInitData2Remote();
+        this.onInitialization(savedInstanceState);
 
         //缺省页
         mLoadService = LoadSir.getDefault().register(registerTarget(), new Callback.OnReloadListener() {
@@ -100,16 +109,6 @@ public abstract class BaseActivity<T extends BasePresenter> extends AutoLayoutAc
             }
         });
         mLoadService.showSuccess();
-
-        EventBus.getDefault().register(this);
-        setRequestedOrientation(initOrientation());
-        setContentView(getLayoutResource());
-        AppManager.getInstance().addActivity(this);
-        bind = ButterKnife.bind(this);
-        mSubscribers = new ArrayList<>();
-        mDialog = initDialog();
-        this.onInitData2Remote();
-        this.onInitialization(savedInstanceState);
     }
 
     protected Object registerTarget() {
