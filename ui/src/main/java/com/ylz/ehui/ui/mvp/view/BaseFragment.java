@@ -7,12 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.kingja.loadsir.callback.Callback;
-import com.kingja.loadsir.core.LoadService;
-import com.kingja.loadsir.core.LoadSir;
 import com.trello.rxlifecycle2.components.support.RxFragment;
 import com.ylz.ehui.ui.dialog.BaseDialogFragment;
 import com.ylz.ehui.ui.dialog.WaitDialog;
+import com.ylz.ehui.ui.loadSir.LoadService;
+import com.ylz.ehui.ui.loadSir.LoadSir;
+import com.ylz.ehui.ui.loadSir.callback.Callback;
 import com.ylz.ehui.ui.mvp.presenter.BasePresenter;
 import com.ylz.ehui.ui.proxy.LogicProxy;
 

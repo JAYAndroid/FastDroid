@@ -5,9 +5,9 @@ import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.FrameLayout;
 
-
 import com.ylz.ehui.ui.loadSir.callback.Callback;
 import com.ylz.ehui.ui.loadSir.callback.SuccessCallback;
+import com.ylz.ehui.utils.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -58,16 +58,25 @@ public class LoadLayout extends FrameLayout {
     }
 
     public void showCallback(final Class<? extends Callback> callback) {
-        showCallback(callback,"");
+        showCallback(callback, "");
     }
 
     public void showCallback(final Class<? extends Callback> callback, String msg) {
         checkCallbackExist(callback);
+        msg = checkMsgEmpty(msg);
         if (LoadSirUtil.isMainThread()) {
             showCallbackView(callback, msg);
         } else {
             postToMainThread(callback, msg);
         }
+    }
+
+    private String checkMsgEmpty(String msg) {
+        if (StringUtils.isEmpty(msg)) {
+            return "";
+        }
+
+        return msg;
     }
 
     public Class<? extends Callback> getCurrentCallback() {

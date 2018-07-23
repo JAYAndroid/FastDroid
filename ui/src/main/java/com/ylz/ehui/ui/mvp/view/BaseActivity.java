@@ -9,12 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 
-import com.kingja.loadsir.callback.Callback;
-import com.kingja.loadsir.core.LoadService;
-import com.kingja.loadsir.core.LoadSir;
 import com.ylz.ehui.base_ui.R;
 import com.ylz.ehui.ui.dialog.BaseDialogFragment;
 import com.ylz.ehui.ui.dialog.WaitDialog;
+import com.ylz.ehui.ui.loadSir.LoadService;
+import com.ylz.ehui.ui.loadSir.LoadSir;
+import com.ylz.ehui.ui.loadSir.callback.Callback;
 import com.ylz.ehui.ui.manager.AppManager;
 import com.ylz.ehui.ui.manager.StatusBarManager;
 import com.ylz.ehui.ui.mvp.presenter.BasePresenter;
