@@ -102,7 +102,7 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
             mRootView.addOnAttachStateChangeListener(this);
         }
 
-        if(!isFixed){
+        if (!isFixed) {
             mAppBarLayout.addOnOffsetChangedListener(this);
         }
     }
