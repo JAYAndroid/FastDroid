@@ -45,6 +45,7 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
     private SmartRefreshLayout smartRefreshLayout;
     private OnRefreshListener onRefreshListener;
     private OnLoadMoreListener onLoadMoreListener;
+    private View.OnClickListener mSubTitleListener;
 
     private NestedScrollView mCustomFlexibleLayout;
     private View mCustomFlexibleView;
@@ -92,6 +93,7 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
         this.onLoadMoreListener = builder.onLoadMoreListener;
         this.onRefreshListener = builder.onRefreshListener;
         this.isFixed = builder.isFixed;
+        this.mSubTitleListener = builder.mSubTitleListener;
 
         initView();
         initListener();
@@ -146,6 +148,10 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
             mFlexibleSpaceSubTitleView.setVisibility(View.VISIBLE);
             mFlexibleSpaceSubTitleView.setText(TextUtils.isEmpty(mSubTitle) ? "" : mSubTitle);
             mFlexibleSpaceSubTitleView.setCompoundDrawablesWithIntrinsicBounds(mSubTitleResId, 0, 0, 0);
+        }
+
+        if (mSubTitleListener != null) {
+            mFlexibleSpaceSubTitleView.setOnClickListener(mSubTitleListener);
         }
 
         mFlexibleSpaceRightView = mRootView.findViewById(R.id.iv_flexible_right);
@@ -409,6 +415,7 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
         private View mCustomSubFlexibleView;
         private int mFlexibleRightViewResId;
         private View.OnClickListener mRightListener;
+        private View.OnClickListener mSubTitleListener;
         private int mCollapsingToolbarLayoutColor;
         private int mFlexibleTitleColor;
         private int mMainContentLayoutBg;
@@ -460,6 +467,11 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
         public Builder setRightClickListener(View.OnClickListener onClickListener) {
             mRightListener = onClickListener;
             mCommonTitleBarManagerBuilder.setRightClickListener(onClickListener);
+            return this;
+        }
+
+        public Builder setSubTitleClickListener(View.OnClickListener onClickListener) {
+            mSubTitleListener = onClickListener;
             return this;
         }
 
