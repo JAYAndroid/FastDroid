@@ -92,6 +92,9 @@ public abstract class BaseFragment<T extends BasePresenter> extends RxFragment i
                 onLoadRefresh();
             }
         });
+
+        onInitView(savedInstanceState);
+
         mLoadService.showSuccess();
         return mLoadService.getLoadLayout();
     }
@@ -112,7 +115,6 @@ public abstract class BaseFragment<T extends BasePresenter> extends RxFragment i
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
         mContext = getActivity();
-        onInitView(savedInstanceState);
     }
 
     @Override
