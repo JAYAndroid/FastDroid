@@ -2,6 +2,7 @@ package com.ylz.ehui.utils;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -260,9 +261,9 @@ public class SignatureUtils {
             } else if (value instanceof JSONArray) {
                 JSONArray ar = (JSONArray) value;
                 jsonArray.add(i, treeJsonArray(ar));
-            } else if ("".equals(value)) {
-                // flatParams.put(key, "");
-            } else if (value != null && value.getClass().getPackage().getName().startsWith("com.ylzinfo.onepay.sdk.domain")) { // 实体类
+            } else if (!(value instanceof String)) {
+                jsonArray.add(i, new Gson().toJson(value));
+            } else if (value.getClass().getPackage().getName().startsWith("com.ylzinfo.onepay.sdk.domain")) { // 实体类
                 jsonArray.add(i, treeParams(null));
             } else {
                 jsonArray.add(i, value.toString());
