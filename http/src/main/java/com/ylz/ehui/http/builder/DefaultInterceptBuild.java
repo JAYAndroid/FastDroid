@@ -21,6 +21,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.nio.charset.Charset;
 import java.util.Map;
+import java.util.TreeMap;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -92,7 +93,7 @@ public class DefaultInterceptBuild extends Converter.Factory {
                             .withBoolean("reLogin", true)
                             .navigation();
                     ToastUtils.showWarn("账户已经在其他地方登录,请重新登录。");
-                   throw new RuntimeException("账户已经在其他地方登录,请重新登录。");
+                    throw new RuntimeException("账户已经在其他地方登录,请重新登录。");
                 }
 
                 if (SignUtils.ENTRY) {
@@ -132,7 +133,19 @@ public class DefaultInterceptBuild extends Converter.Factory {
 
         @Override
         public RequestBody convert(T value) throws IOException {
-            Map rawRequestParams = (Map) value;
+            Map<String, Object> rawRequestParams = (Map) value;
+
+            if (SignUtils.ENTRY && !(rawRequestParams instanceof TreeMap)) {
+                TreeMap<String,Object>  treeMap = new TreeMap<>();
+                for (Map.Entry<String, Object> entry : rawRequestParams.entrySet()) {
+                    treeMap.put(entry.getKey(), entry.getValue());
+                }
+
+                rawRequestParams.clear();
+                rawRequestParams = treeMap;
+            }
+
+
             Map resultRequestParams = SignUtils.getRequest(rawRequestParams, String.valueOf(rawRequestParams.get("serviceId")));
 
             Buffer buffer = new Buffer();

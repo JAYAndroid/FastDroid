@@ -3,15 +3,9 @@ package com.ylz.ehui.utils;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.ArrayMap;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.ylz.ehui.common.bean.CommonUserInfos;
-import com.ylz.ehui.utils.AppUtils;
-import com.ylz.ehui.utils.MD5Utils;
-import com.ylz.ehui.utils.SecurityUtils;
-import com.ylz.ehui.utils.SignatureUtils;
-import com.ylz.ehui.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,10 +55,10 @@ public class SignUtils {
             Gson gson = new Gson();
             map.put("isEncrypt", 1);
             //明文
-            map.put("param", SignatureUtils.getValue(params));            //加密，签名
+            map.put("param", gson.toJson(params).replace("\\", ""));            //加密，签名
             map.put("sign", getSign(map, APP_SECRET));
             try {
-                map.put("encryptData", SecurityUtils.encryptByAES(gson.toJson(params), APP_SECRET, APP_ID));
+                map.put("encryptData", SecurityUtils.encryptByAES(String.valueOf(map.get("param")), APP_SECRET, APP_ID));
             } catch (Exception e) {
                 e.printStackTrace();
             }
