@@ -135,7 +135,7 @@ public class DefaultInterceptBuild extends Converter.Factory {
         public RequestBody convert(T value) throws IOException {
             Map<String, Object> rawRequestParams = (Map) value;
 
-            if (SignUtils.ENTRY && !(rawRequestParams instanceof TreeMap)) {
+            if (SignUtils.ENTRY) {
                 TreeMap<String, Object> treeMap = new TreeMap<>();
                 for (Map.Entry<String, Object> entry : rawRequestParams.entrySet()) {
                     try {
