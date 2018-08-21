@@ -136,9 +136,13 @@ public class DefaultInterceptBuild extends Converter.Factory {
             Map<String, Object> rawRequestParams = (Map) value;
 
             if (SignUtils.ENTRY && !(rawRequestParams instanceof TreeMap)) {
-                TreeMap<String,Object>  treeMap = new TreeMap<>();
+                TreeMap<String, Object> treeMap = new TreeMap<>();
                 for (Map.Entry<String, Object> entry : rawRequestParams.entrySet()) {
-                    treeMap.put(entry.getKey(), entry.getValue());
+                    try {
+                        treeMap.put(entry.getKey(), String.valueOf(entry.getValue()));
+                    } catch (Exception e) {
+                        treeMap.put(entry.getKey(), entry.getValue());
+                    }
                 }
 
                 rawRequestParams.clear();
