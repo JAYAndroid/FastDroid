@@ -1335,4 +1335,47 @@ public final class TimeUtils {
         }
         return sb.toString();
     }
+
+    /**
+     * 获得某月第一天
+     *
+     * @return
+     */
+    public static String getFirstDayOfMonth(Date date, DateFormat... format) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        //获取某月最小天数
+        int firstDay = cal.getActualMinimum(Calendar.DAY_OF_MONTH);
+        //设置日历中月份的最小天数
+        cal.set(Calendar.DAY_OF_MONTH, firstDay);
+        //格式化日期
+        DateFormat dateFormat = DEFAULT_FORMAT;
+        if (format != null && format.length > 0) {
+            dateFormat = format[0];
+        }
+
+        return dateFormat.format(cal.getTime());
+    }
+
+    /**
+     * 获得该月最后一天
+     *
+     * @return
+     */
+    public static String getLastDayOfMonth(Date date, DateFormat... format) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        //获取某月最大天数
+        int lastDay = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+        //设置日历中月份的最大天数
+        cal.set(Calendar.DAY_OF_MONTH, lastDay);
+        //格式化日期
+        //格式化日期
+        DateFormat dateFormat = DEFAULT_FORMAT;
+        if (format != null && format.length > 0) {
+            dateFormat = format[0];
+        }
+
+        return dateFormat.format(cal.getTime());
+    }
 }
