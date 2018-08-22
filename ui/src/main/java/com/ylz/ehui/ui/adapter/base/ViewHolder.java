@@ -22,7 +22,7 @@ import android.widget.TextView;
 
 import com.ylz.ehui.image.utils.GlideUtils;
 import com.ylz.ehui.utils.StringUtils;
-import com.zhy.autolayout.utils.AutoUtils;
+import com.module.autolayout.utils.AutoUtils;
 
 public class ViewHolder extends RecyclerView.ViewHolder {
     private SparseArray<View> mViews;

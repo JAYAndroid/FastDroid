@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.zhy.autolayout.AutoRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.module.autolayout.AutoRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tool="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.zhy.autolayout.AutoLinearLayout
+    <com.module.autolayout.AutoLinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
@@ -28,7 +28,7 @@
             android:textColor="#999999"
             android:textSize="36px"
             tool:text="暂无账单" />
-    </com.zhy.autolayout.AutoLinearLayout>
+    </com.module.autolayout.AutoLinearLayout>
 
 
-</com.zhy.autolayout.AutoRelativeLayout>
+</com.module.autolayout.AutoRelativeLayout>

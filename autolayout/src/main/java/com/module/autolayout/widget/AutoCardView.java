@@ -1,29 +1,32 @@
-package com.ylz.ehui.ui.widget;
+package com.module.autolayout.widget;
 
 import android.content.Context;
-import android.support.v4.widget.NestedScrollView;
+import android.support.v7.widget.CardView;
 import android.util.AttributeSet;
 
 import com.module.autolayout.AutoFrameLayout;
 import com.module.autolayout.utils.AutoLayoutHelper;
 
-/**
- * Created by yons on 2018/4/25.
- */
 
-public class MyNestedScrollView extends NestedScrollView {
+/**
+ * Created by zhy on 15/12/8.
+ */
+public class AutoCardView extends CardView
+{
     private final AutoLayoutHelper mHelper = new AutoLayoutHelper(this);
 
-
-    public MyNestedScrollView(Context context) {
+    public AutoCardView(Context context)
+    {
         super(context);
     }
 
-    public MyNestedScrollView(Context context, AttributeSet attrs) {
+    public AutoCardView(Context context, AttributeSet attrs)
+    {
         super(context, attrs);
     }
 
-    public MyNestedScrollView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public AutoCardView(Context context, AttributeSet attrs, int defStyleAttr)
+    {
         super(context, attrs, defStyleAttr);
     }
 
@@ -42,4 +45,6 @@ public class MyNestedScrollView extends NestedScrollView {
         }
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
+
+
 }

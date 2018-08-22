@@ -45,15 +45,7 @@ android {
 }
 
 dependencies {
-    api fileTree(include: ['*.jar'], dir: 'libs')
-    api project(':common')
-    api 'com.nineoldandroids:library:2.4.0'
-    annotationProcessor 'com.alibaba:arouter-compiler:1.1.4'
-    api project(':utils')
-    api project(path: ':image')
-    //下拉刷新，加载更多
-    api 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-4'
-    implementation 'com.jakewharton:butterknife:8.8.1'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
-    implementation project(':autolayout')
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation rootProject.ext.fastdroid_dependencies.cardview
+    implementation project(':common')
 }

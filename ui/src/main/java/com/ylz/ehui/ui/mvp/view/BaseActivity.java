@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 
+import com.module.autolayout.AutoLayoutActivity;
 import com.ylz.ehui.base_ui.R;
 import com.ylz.ehui.ui.dialog.BaseDialogFragment;
 import com.ylz.ehui.ui.dialog.WaitDialog;
@@ -20,7 +21,6 @@ import com.ylz.ehui.ui.manager.StatusBarManager;
 import com.ylz.ehui.ui.mvp.presenter.BasePresenter;
 import com.ylz.ehui.ui.proxy.LogicProxy;
 import com.ylz.ehui.utils.ToastUtils;
-import com.zhy.autolayout.AutoLayoutActivity;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
