@@ -102,15 +102,18 @@ public abstract class BaseActivity<T extends BasePresenter> extends AutoLayoutAc
         this.onInitData2Remote();
         this.onInitialization(savedInstanceState);
 
-        //缺省页
-        mLoadService = LoadSir.getDefault().register(registerTarget(), new Callback.OnReloadListener() {
-            @Override
-            public void onReload(View v) {
-                // 重新加载逻辑
-                onLoadRefresh();
-            }
-        });
-        mLoadService.showSuccess();
+        if (!isIgnoreRegister()) {
+            //缺省页加载管理
+            mLoadService = LoadSir.getDefault().register(registerTarget(), new Callback.OnReloadListener() {
+                @Override
+                public void onReload(View v) {
+                    // 重新加载逻辑
+                    onLoadRefresh();
+                }
+            });
+
+            mLoadService.showSuccess();
+        }
     }
 
     protected Object registerTarget() {
@@ -242,5 +245,9 @@ public abstract class BaseActivity<T extends BasePresenter> extends AutoLayoutAc
 
     protected int initStatusBarColor() {
         return Color.parseColor("#196FFA");
+    }
+
+    protected boolean isIgnoreRegister() {
+        return false;
     }
 }
