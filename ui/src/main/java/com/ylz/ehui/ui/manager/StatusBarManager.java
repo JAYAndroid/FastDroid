@@ -107,7 +107,7 @@ public class StatusBarManager {
             //添加一个View来作为状态栏的填充
             addFakeStatusBarView(activity, statusColor, statusBarHeight);
             //设置子控件到状态栏的间距
-            addMarginTopToContentChild(mContentChild, statusBarHeight);
+            addMarginTopToContentChild(mContentChild, statusBarHeight / 2);
             //不预留系统栏位置
             if (mContentChild != null) {
                 mContentChild.setFitsSystemWindows(false);
