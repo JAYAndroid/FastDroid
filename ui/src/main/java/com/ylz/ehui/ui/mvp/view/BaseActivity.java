@@ -84,15 +84,17 @@ public abstract class BaseActivity<T extends BasePresenter> extends AutoLayoutAc
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         checkResource();
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
+        setRequestedOrientation(initOrientation());
+        setContentView(getLayoutResource());
+
         if (isShowStatusBar()) {
             StatusBarManager.setStatusBarColor(this, initStatusBarColor());
         } else {
             StatusBarManager.translucentStatusBar(this, true);
         }
-        super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
-        setRequestedOrientation(initOrientation());
-        setContentView(getLayoutResource());
+
         AppManager.getInstance().addActivity(this);
         bind = ButterKnife.bind(this);
         mSubscribers = new ArrayList<>();
