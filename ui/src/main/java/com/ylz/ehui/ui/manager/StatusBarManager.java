@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.ViewCompat;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -12,8 +13,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-
-import com.ylz.ehui.base_ui.R;
 
 /**
  * Author: yms
@@ -99,15 +98,20 @@ public class StatusBarManager {
             ViewGroup mContentView = window.findViewById(Window.ID_ANDROID_CONTENT);
             //获取父布局
             View mContentChild = mContentView.getChildAt(0);
+
             //获取状态栏高度
             int statusBarHeight = getStatusBarHeight(activity);
+            int marginTop = statusBarHeight / 2;
+            if (mContentChild instanceof CoordinatorLayout) {
+                marginTop = 0;
+            }
 
             //如果已经存在假状态栏则移除，防止重复添加
             removeFakeStatusBarViewIfExist(activity);
             //添加一个View来作为状态栏的填充
             addFakeStatusBarView(activity, statusColor, statusBarHeight);
             //设置子控件到状态栏的间距
-            addMarginTopToContentChild(mContentChild, statusBarHeight / 2);
+            addMarginTopToContentChild(mContentChild, marginTop);
             //不预留系统栏位置
             if (mContentChild != null) {
                 mContentChild.setFitsSystemWindows(false);
@@ -118,7 +122,7 @@ public class StatusBarManager {
             View view = activity.findViewById(action_bar_id);
             if (view != null) {
                 TypedValue typedValue = new TypedValue();
-                if (activity.getTheme().resolveAttribute(R.attr.actionBarSize, typedValue, true)) {
+                if (activity.getTheme().resolveAttribute(com.ylz.ehui.base_ui.R.attr.actionBarSize, typedValue, true)) {
                     int actionBarHeight = TypedValue.complexToDimensionPixelSize(typedValue.data, activity.getResources().getDisplayMetrics());
                     setContentTopPadding(activity, actionBarHeight);
                 }
@@ -195,14 +199,14 @@ public class StatusBarManager {
         return result;
     }
 
-    private static void addMarginTopToContentChild(View mContentChild, int statusBarHeight) {
+    private static void addMarginTopToContentChild(View mContentChild, int marginTop) {
         if (mContentChild == null) {
             return;
         }
 
         if (!TAG_MARGIN_ADDED.equals(mContentChild.getTag())) {
             FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) mContentChild.getLayoutParams();
-            lp.topMargin += statusBarHeight;
+            lp.topMargin = marginTop;
             mContentChild.setLayoutParams(lp);
             mContentChild.setTag(TAG_MARGIN_ADDED);
         }
