@@ -20,6 +20,7 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.ylz.ehui.base_ui.R;
+import com.ylz.ehui.ui.widget.MySmartRefreshLayout;
 import com.ylz.ehui.utils.AppUtils;
 import com.ylz.ehui.utils.SizeUtils;
 
@@ -42,7 +43,7 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
     private int mCollapsingToolbarLayoutColor;
     private View mFlexibleSpaceRightView;
 
-    private SmartRefreshLayout smartRefreshLayout;
+    private MySmartRefreshLayout smartRefreshLayout;
     private OnRefreshListener onRefreshListener;
     private OnLoadMoreListener onLoadMoreListener;
     private View.OnClickListener mSubTitleListener;
