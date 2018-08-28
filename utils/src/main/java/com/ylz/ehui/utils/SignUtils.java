@@ -9,6 +9,7 @@ import com.ylz.ehui.common.bean.CommonUserInfos;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -52,10 +53,13 @@ public class SignUtils {
         params.remove("serviceId");
 
         if (ENTRY) {
+            params = filterNullParams(params);
             Gson gson = new Gson();
             map.put("isEncrypt", 1);
             //明文
             map.put("param", gson.toJson(params).replace("\\", ""));            //加密，签名
+
+
             map.put("sign", getSign(map, APP_SECRET));
             try {
                 map.put("encryptData", SecurityUtils.encryptByAES(String.valueOf(map.get("param")), APP_SECRET, APP_ID));
@@ -98,6 +102,28 @@ public class SignUtils {
             map.put("pageParam", pageMap);
         }
         return map;
+    }
+
+    private static Map<String, Object> filterNullParams(Map<String, Object> params) {
+        List<String> removeSummary = null;
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            Object value = entry.getValue();
+            if (value == null || value == "") {
+                if (removeSummary == null) {
+                    removeSummary = new ArrayList<>();
+                }
+
+                removeSummary.add(entry.getKey());
+            }
+        }
+
+        if (removeSummary != null && removeSummary.size() > 0) {
+            for (String key : removeSummary) {
+                params.remove(key);
+            }
+        }
+
+        return params;
     }
 
     /**
