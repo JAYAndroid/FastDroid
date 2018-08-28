@@ -102,8 +102,14 @@ public class StatusBarManager {
             //获取状态栏高度
             int statusBarHeight = getStatusBarHeight(activity);
             int marginTop = statusBarHeight / 2;
-            if (mContentChild instanceof CoordinatorLayout) {
-                marginTop = 0;
+
+
+            if (mContentChild instanceof ViewGroup) {
+                ViewGroup parent = (ViewGroup) mContentChild;
+                View firstView = parent.getChildAt(0);
+                if (firstView instanceof CoordinatorLayout) {
+                    marginTop = 0;
+                }
             }
 
             //如果已经存在假状态栏则移除，防止重复添加
