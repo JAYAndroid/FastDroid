@@ -20,6 +20,7 @@ import java.io.Writer;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.nio.charset.Charset;
+import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -138,10 +139,20 @@ public class DefaultInterceptBuild extends Converter.Factory {
             if (SignUtils.ENTRY) {
                 TreeMap<String, Object> treeMap = new TreeMap<>();
                 for (Map.Entry<String, Object> entry : rawRequestParams.entrySet()) {
+                    Object tempValue = entry.getValue();
+
+                    if (tempValue == null || "".equals(tempValue)) {
+                        continue;
+                    }
+
                     try {
-                        treeMap.put(entry.getKey(), String.valueOf(entry.getValue()));
+                        if (!(tempValue instanceof Collection)) {
+                            treeMap.put(entry.getKey(), String.valueOf(tempValue));
+                        } else {
+                            treeMap.put(entry.getKey(), tempValue);
+                        }
                     } catch (Exception e) {
-                        treeMap.put(entry.getKey(), entry.getValue());
+                        treeMap.put(entry.getKey(), tempValue);
                     }
                 }
 
