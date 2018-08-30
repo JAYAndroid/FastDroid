@@ -101,17 +101,6 @@ public class StatusBarManager {
 
             //获取状态栏高度
             int statusBarHeight = getStatusBarHeight(activity);
-            int marginTop = statusBarHeight / 2;
-
-
-//            if (mContentChild instanceof ViewGroup) {
-//                ViewGroup parent = (ViewGroup) mContentChild;
-//                View firstView = parent.getChildAt(0);
-//                if (firstView instanceof CoordinatorLayout) {
-//                    marginTop = 0;
-//                }
-//            }
-
             //如果已经存在假状态栏则移除，防止重复添加
             removeFakeStatusBarViewIfExist(activity);
             //添加一个View来作为状态栏的填充
@@ -211,11 +200,12 @@ public class StatusBarManager {
         }
 
         if (!TAG_MARGIN_ADDED.equals(mContentChild.getTag())) {
-            ((ViewGroup) mContentChild).getChildAt(0).setPadding(0, marginTop, 0, 0);
             mContentChild.setTag(TAG_MARGIN_ADDED);
         }
 
         if (mContentChild instanceof DrawerLayout) {
+            ((ViewGroup) mContentChild).getChildAt(0).setPadding(0, marginTop, 0, 0);
+
             View drawerLayout = ((DrawerLayout) mContentChild).getChildAt(1);
             DrawerLayout.MarginLayoutParams lp = (DrawerLayout.MarginLayoutParams) drawerLayout.getLayoutParams();
             lp.topMargin = marginTop;

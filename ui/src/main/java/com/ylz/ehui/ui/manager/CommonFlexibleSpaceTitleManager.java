@@ -16,7 +16,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nineoldandroids.view.ViewHelper;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.ylz.ehui.base_ui.R;
@@ -549,6 +548,11 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
 
         public Builder isFixed(boolean isFixed) {
             this.isFixed = isFixed;
+            return this;
+        }
+
+        public Builder hidenLeftView() {
+            mCommonTitleBarManagerBuilder.hidenLeftView();
             return this;
         }
     }
