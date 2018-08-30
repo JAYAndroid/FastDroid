@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.ViewCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -104,23 +104,23 @@ public class StatusBarManager {
             int marginTop = statusBarHeight / 2;
 
 
-            if (mContentChild instanceof ViewGroup) {
-                ViewGroup parent = (ViewGroup) mContentChild;
-                View firstView = parent.getChildAt(0);
-                if (firstView instanceof CoordinatorLayout) {
-                    marginTop = 0;
-                }
-            }
+//            if (mContentChild instanceof ViewGroup) {
+//                ViewGroup parent = (ViewGroup) mContentChild;
+//                View firstView = parent.getChildAt(0);
+//                if (firstView instanceof CoordinatorLayout) {
+//                    marginTop = 0;
+//                }
+//            }
 
             //如果已经存在假状态栏则移除，防止重复添加
             removeFakeStatusBarViewIfExist(activity);
             //添加一个View来作为状态栏的填充
             addFakeStatusBarView(activity, statusColor, statusBarHeight);
             //设置子控件到状态栏的间距
-            addMarginTopToContentChild(mContentChild, marginTop);
+            addMarginTopToContentChild(mContentChild, statusBarHeight);
             //不预留系统栏位置
             if (mContentChild != null) {
-                mContentChild.setFitsSystemWindows(false);
+                mContentChild.setFitsSystemWindows(true);
             }
 
             //如果在Activity中使用了ActionBar则需要再将布局与状态栏的高度跳高一个ActionBar的高度，否则内容会被ActionBar遮挡
@@ -211,10 +211,15 @@ public class StatusBarManager {
         }
 
         if (!TAG_MARGIN_ADDED.equals(mContentChild.getTag())) {
-            FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) mContentChild.getLayoutParams();
-            lp.topMargin = marginTop;
-            mContentChild.setLayoutParams(lp);
+            ((ViewGroup) mContentChild).getChildAt(0).setPadding(0, marginTop, 0, 0);
             mContentChild.setTag(TAG_MARGIN_ADDED);
+        }
+
+        if (mContentChild instanceof DrawerLayout) {
+            View drawerLayout = ((DrawerLayout) mContentChild).getChildAt(1);
+            DrawerLayout.MarginLayoutParams lp = (DrawerLayout.MarginLayoutParams) drawerLayout.getLayoutParams();
+            lp.topMargin = marginTop;
+            drawerLayout.setLayoutParams(lp);
         }
     }
 
