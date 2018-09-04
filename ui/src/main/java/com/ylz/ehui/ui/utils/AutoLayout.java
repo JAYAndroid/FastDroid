@@ -3,9 +3,14 @@ package com.ylz.ehui.ui.utils;
 import android.app.Activity;
 import android.app.Application;
 import android.content.ComponentCallbacks;
+import android.content.Context;
 import android.content.res.Configuration;
 import android.support.annotation.NonNull;
 import android.util.DisplayMetrics;
+import android.view.Display;
+import android.view.WindowManager;
+
+import java.lang.reflect.Method;
 
 /**
  * Author: yms
@@ -15,12 +20,12 @@ import android.util.DisplayMetrics;
 public class AutoLayout {
     private static int designWidth;
     private static int designHeight;
+    private static final int DEFAULT_DESIGN_HEIGHT = 667;
 
     private static float sNoncompatDensity;
     private static float sNoncompatScaleDensity;
 
     private AutoLayout() {
-
     }
 
     private static class Singleton {
@@ -44,6 +49,11 @@ public class AutoLayout {
      *
      * @param height
      * @return
+     */
+
+    /**
+     * 是否有虚拟导航栏，没有设宽度适配
+     * 有，高度适配，是否显示，显示减去虚拟导航栏高度，隐藏加上虚拟导航栏高度
      */
     public static AutoLayout designHeight(int height) {
         designWidth = 0;
@@ -78,10 +88,16 @@ public class AutoLayout {
         }
 
         final float targetDensity;
-        if (designWidth > 0) {
-            targetDensity = appDisplayMetrics.widthPixels / (float) designWidth;
+
+        // 如果设备有虚拟导航键，则使用高度维度做适配
+        if (getVirtualBarHeight(activity) > 0) {
+            targetDensity = appDisplayMetrics.heightPixels / (float) DEFAULT_DESIGN_HEIGHT;
         } else {
-            targetDensity = appDisplayMetrics.heightPixels / (float) designHeight;
+            if (designWidth > 0) {
+                targetDensity = appDisplayMetrics.widthPixels / (float) designWidth;
+            } else {
+                targetDensity = appDisplayMetrics.heightPixels / (float) designHeight;
+            }
         }
 
 
@@ -95,6 +111,28 @@ public class AutoLayout {
         displayMetrics.density = targetDensity;
         displayMetrics.scaledDensity = targetScaledDensity;
         displayMetrics.densityDpi = targetDensityDpi;
+    }
+
+    private int getVirtualBarHeight(Context context) {
+        int vh = 0;
+        WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        if (windowManager == null) {
+            return vh;
+        }
+
+        Display display = windowManager.getDefaultDisplay();
+        DisplayMetrics dm = new DisplayMetrics();
+        try {
+            @SuppressWarnings("rawtypes")
+            Class c = Class.forName("android.view.Display");
+            @SuppressWarnings("unchecked")
+            Method method = c.getMethod("getRealMetrics", DisplayMetrics.class);
+            method.invoke(display, dm);
+            vh = dm.heightPixels - display.getHeight();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return vh;
     }
 
 
