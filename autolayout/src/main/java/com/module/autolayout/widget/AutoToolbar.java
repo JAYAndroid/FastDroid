@@ -8,7 +8,7 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.widget.TextView;
 
-import com.module.autolayout.AutoLayoutInfo;
+import LayoutInfo;
 import com.module.autolayout.utils.AutoLayoutHelper;
 import com.module.autolayout.utils.AutoUtils;
 import com.module.autolayout.utils.DimenUtils;

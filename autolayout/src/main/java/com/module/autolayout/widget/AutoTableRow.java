@@ -5,7 +5,7 @@ import android.util.AttributeSet;
 import android.view.ViewGroup;
 import android.widget.TableRow;
 
-import com.module.autolayout.AutoLayoutInfo;
+import LayoutInfo;
 import com.module.autolayout.utils.AutoLayoutHelper;
 
 

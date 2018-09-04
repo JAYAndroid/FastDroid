@@ -5,11 +5,11 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 
-import com.module.autolayout.AutoLayoutActivity;
 import com.ylz.ehui.base_ui.R;
 import com.ylz.ehui.ui.dialog.BaseDialogFragment;
 import com.ylz.ehui.ui.dialog.WaitDialog;
@@ -20,6 +20,7 @@ import com.ylz.ehui.ui.manager.AppManager;
 import com.ylz.ehui.ui.manager.StatusBarManager;
 import com.ylz.ehui.ui.mvp.presenter.BasePresenter;
 import com.ylz.ehui.ui.proxy.LogicProxy;
+import com.ylz.ehui.ui.utils.AutoLayout;
 import com.ylz.ehui.utils.ToastUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -35,7 +36,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import io.reactivex.disposables.Disposable;
 
-public abstract class BaseActivity<T extends BasePresenter> extends AutoLayoutActivity implements BaseView {
+public abstract class BaseActivity<T extends BasePresenter> extends AppCompatActivity implements BaseView {
     private BasePresenter mPresenter;
     private Unbinder bind;
     private List<Disposable> mSubscribers;
@@ -87,6 +88,15 @@ public abstract class BaseActivity<T extends BasePresenter> extends AutoLayoutAc
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
         setRequestedOrientation(initOrientation());
+
+        // 新自动适配方案
+        if (initDesignHeight() > 0) {
+            AutoLayout.designHeight(initDesignHeight()).auto(this);
+        } else {
+            // 默认适配宽度
+            AutoLayout.designWidth(initDesignWidth()).auto(this);
+        }
+
         setContentView(getLayoutResource());
 
         if (isShowStatusBar()) {
@@ -114,6 +124,24 @@ public abstract class BaseActivity<T extends BasePresenter> extends AutoLayoutAc
 
             mLoadService.showSuccess();
         }
+    }
+
+    /**
+     * 初始化设计稿宽度，单位dp
+     *
+     * @return XHDPI——设计稿宽度为375dp
+     */
+    protected int initDesignWidth() {
+        return 375;
+    }
+
+    /**
+     * 初始化设计稿高度，单位dp
+     *
+     * @return 例如 XHDPI——设计稿高度为667dp
+     */
+    protected int initDesignHeight() {
+        return 0;
     }
 
     protected Object registerTarget() {

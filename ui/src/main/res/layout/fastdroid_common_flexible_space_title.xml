@@ -35,7 +35,7 @@
                 android:layout_height="match_parent"
                 android:visibility="visible" />
 
-            <com.ylz.ehui.ui.widget.MyNestedScrollView
+            <android.support.v4.widget.NestedScrollView
                 android:id="@+id/ns_custom_flexible_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

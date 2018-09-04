@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.module.autolayout.AutoRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tool="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.module.autolayout.AutoLinearLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
@@ -13,7 +13,7 @@
         <ImageView
             android:id="@+id/iv_load_bg"
             android:layout_width="match_parent"
-            android:layout_height="374px" />
+            android:layout_height="187dp" />
 
         <TextView
             android:id="@+id/tv_load_tip"
@@ -26,9 +26,9 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="#999999"
-            android:textSize="36px"
+            android:textSize="18sp"
             tool:text="暂无账单" />
-    </com.module.autolayout.AutoLinearLayout>
+    </LinearLayout>
 
 
-</com.module.autolayout.AutoRelativeLayout>
+</RelativeLayout>

@@ -7,7 +7,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.module.autolayout.AutoLayoutInfo;
+import LayoutInfo;
 import com.module.autolayout.utils.AutoLayoutHelper;
 import com.module.autolayout.utils.AutoUtils;
 import com.module.test.autolayout.R;
