@@ -6,13 +6,18 @@ import android.graphics.Color;
 import android.os.Build;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+
+import java.lang.reflect.Method;
+
 
 /**
  * Author: yms
@@ -173,10 +178,11 @@ public class StatusBarManager {
     }
 
     private static void addFakeStatusBarView(Activity activity, int statusBarColor, int statusBarHeight) {
+        int height = getVirtualBarHeight(activity) > 0 ? statusBarHeight + statusBarHeight / 3 : statusBarHeight;
         Window window = activity.getWindow();
         ViewGroup mDecorView = (ViewGroup) window.getDecorView();
         View mStatusBarView = new View(activity);
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, statusBarHeight);
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height);
         layoutParams.gravity = Gravity.TOP;
         mStatusBarView.setLayoutParams(layoutParams);
         mStatusBarView.setBackgroundColor(statusBarColor);
@@ -211,6 +217,34 @@ public class StatusBarManager {
             lp.topMargin = marginTop;
             drawerLayout.setLayoutParams(lp);
         }
+    }
+
+    /**
+     * 虚拟状态栏高度
+     *
+     * @param context
+     * @return
+     */
+    private static int getVirtualBarHeight(Context context) {
+        int vh = 0;
+        WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        if (windowManager == null) {
+            return vh;
+        }
+
+        Display display = windowManager.getDefaultDisplay();
+        DisplayMetrics dm = new DisplayMetrics();
+        try {
+            @SuppressWarnings("rawtypes")
+            Class c = Class.forName("android.view.Display");
+            @SuppressWarnings("unchecked")
+            Method method = c.getMethod("getRealMetrics", DisplayMetrics.class);
+            method.invoke(display, dm);
+            vh = dm.heightPixels - display.getHeight();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return vh;
     }
 
 }
