@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.ComponentCallbacks;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.support.annotation.NonNull;
 import android.util.DisplayMetrics;
@@ -20,50 +22,61 @@ import java.lang.reflect.Method;
 public class AutoLayout {
     private static int designWidth;
     private static int designHeight;
-    private static final int DEFAULT_DESIGN_HEIGHT = 667;
-
+    private static final String KEY_DESIGN_WIDTH = "auto_design_width";
+    private static final String KEY_DESIGN_HEIGHT = "auto_design_height";
     private static float sNoncompatDensity;
     private static float sNoncompatScaleDensity;
+    private static AutoBase mAutoBase;
 
     private AutoLayout() {
+    }
+
+    /**
+     * 设计稿初始化方式一，建议在application的oncreate初始化
+     *
+     * @param width
+     * @param height
+     */
+    public static void initDesignWH(int width, int height) {
+        designWidth = width;
+        designHeight = height;
+    }
+
+    /**
+     * 设计稿初始化方式二，manifest中初始化
+     */
+    private void getMetaDesignWH(Context context) {
+        PackageManager packageManager = context.getPackageManager();
+        ApplicationInfo applicationInfo;
+        try {
+            applicationInfo = packageManager.getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
+            if (applicationInfo != null && applicationInfo.metaData != null) {
+                designWidth = (int) applicationInfo.metaData.get(KEY_DESIGN_WIDTH);
+                designHeight = (int) applicationInfo.metaData.get(KEY_DESIGN_HEIGHT);
+
+                if (designWidth == 0 || designHeight == 0) {
+                    String tip = "需要在manifest配置设计稿宽度 " + KEY_DESIGN_WIDTH + " 和高度 " + KEY_DESIGN_HEIGHT
+                            + " ,或者在application的onCreate中调用AutoLayout.initDesignWH()";
+                    throw new RuntimeException(tip);
+                }
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     private static class Singleton {
         private static AutoLayout instance = new AutoLayout();
     }
 
-    /**
-     * 适配设计稿宽度，单位dp
-     *
-     * @param width
-     * @return
-     */
-    public static AutoLayout designWidth(int width) {
-        designWidth = width;
-        designHeight = 0;
-        return Singleton.instance;
-    }
-
-    /**
-     * 适配设计稿高度，单位dp
-     *
-     * @param height
-     * @return
-     */
-
-    /**
-     * 是否有虚拟导航栏，没有设宽度适配
-     * 有，高度适配，是否显示，显示减去虚拟导航栏高度，隐藏加上虚拟导航栏高度
-     */
-    public static AutoLayout designHeight(int height) {
-        designWidth = 0;
-        designHeight = height;
+    public static AutoLayout base(@NonNull AutoBase autoBase) {
+        mAutoBase = autoBase;
         return Singleton.instance;
     }
 
     public void auto(@NonNull Activity activity) {
-        if (designHeight == 0 && designWidth == 0) {
-            throw new RuntimeException("必须初始化设计稿的宽或高");
+        if (designHeight == 0 || designWidth == 0) {
+            getMetaDesignWH(activity);
         }
 
         final Application application = activity.getApplication();
@@ -89,17 +102,13 @@ public class AutoLayout {
 
         final float targetDensity;
 
-        // 如果设备有虚拟导航键，则使用高度维度做适配
-        if (getVirtualBarHeight(activity) > 0) {
-            targetDensity = appDisplayMetrics.heightPixels / (float) DEFAULT_DESIGN_HEIGHT;
+        // 如果设备有虚拟导航键，则使用高度维度做适配；
+        // 或者用户指定高度适配，也使用高度作为适配维度
+        if (getVirtualBarHeight(activity) > 0 || mAutoBase.ordinal() == AutoBase.BASE_HEIGHT.ordinal()) {
+            targetDensity = appDisplayMetrics.heightPixels / (float) designHeight;
         } else {
-            if (designWidth > 0) {
-                targetDensity = appDisplayMetrics.widthPixels / (float) designWidth;
-            } else {
-                targetDensity = appDisplayMetrics.heightPixels / (float) designHeight;
-            }
+            targetDensity = appDisplayMetrics.widthPixels / (float) designWidth;
         }
-
 
         final float targetScaledDensity = targetDensity * (sNoncompatScaleDensity / sNoncompatDensity);
         final int targetDensityDpi = (int) (160 * targetDensity);
