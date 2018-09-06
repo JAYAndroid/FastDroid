@@ -20,8 +20,6 @@ import com.ylz.ehui.ui.manager.AppManager;
 import com.ylz.ehui.ui.manager.StatusBarManager;
 import com.ylz.ehui.ui.mvp.presenter.BasePresenter;
 import com.ylz.ehui.ui.proxy.LogicProxy;
-import com.ylz.ehui.ui.utils.AutoBase;
-import com.ylz.ehui.ui.utils.AutoLayout;
 import com.ylz.ehui.utils.ToastUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -89,9 +87,6 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
         setRequestedOrientation(initOrientation());
-
-        // 新自动适配方案
-        AutoLayout.base(initAutoBase()).auto(this);
         setContentView(getLayoutResource());
 
         if (isShowStatusBar()) {
@@ -119,24 +114,6 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
 
             mLoadService.showSuccess();
         }
-    }
-
-    /**
-     * 初始化适配维度，默认宽度作为适配维度
-     *
-     * @return
-     */
-    protected AutoBase initAutoBase() {
-        return AutoBase.BASE_WIDTH;
-    }
-
-    /**
-     * 初始化设计稿宽度，单位dp
-     *
-     * @return XHDPI——设计稿宽度为375dp
-     */
-    protected int initDesignWidth() {
-        return 375;
     }
 
     protected Object registerTarget() {
