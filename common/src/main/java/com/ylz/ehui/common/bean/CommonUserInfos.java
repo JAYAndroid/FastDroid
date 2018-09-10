@@ -85,7 +85,10 @@ public class CommonUserInfos implements Serializable {
     }
 
     public String getSessionId() {
-        return checkStrNotNull(sessionId, "sessionId");
+        if (TextUtils.isEmpty(sessionId)) {
+            return "";
+        }
+        return sessionId;
     }
 
     public void setSessionId(String sessionId) {
