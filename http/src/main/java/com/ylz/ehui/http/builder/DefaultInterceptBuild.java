@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import com.ylz.ehui.common.bean.CommonUserInfos;
 import com.ylz.ehui.http.base.BaseEntity;
@@ -86,6 +87,16 @@ public class DefaultInterceptBuild extends Converter.Factory {
         public T convert(ResponseBody value) throws IOException {
             String response = value.string();
             BaseEntity baseEntity = gson.fromJson(response, BaseEntity.class);
+
+            if (baseEntity == null || baseEntity.getParam() == null) {
+                JsonReader jsonReader = gson.newJsonReader(value.charStream());
+                try {
+                    return adapter.read(jsonReader);
+                } finally {
+                    value.close();
+                }
+            }
+
             try {
                 if (errorCodeLogoff.equals(baseEntity.getRespCode())) {
                     CommonUserInfos.getInstance().release();
@@ -135,6 +146,14 @@ public class DefaultInterceptBuild extends Converter.Factory {
         @Override
         public RequestBody convert(T value) throws IOException {
             Map<String, Object> rawRequestParams = (Map) value;
+            if (rawRequestParams.get("rawConvert") != null && ((boolean) rawRequestParams.get("rawConvert"))) {
+                Buffer buffer = new Buffer();
+                Writer writer = new OutputStreamWriter(buffer.outputStream(), UTF_8);
+                JsonWriter jsonWriter = gson.newJsonWriter(writer);
+                adapter.write(jsonWriter, value);
+                jsonWriter.close();
+                return RequestBody.create(MEDIA_TYPE, buffer.readByteString());
+            }
 
             if (SignUtils.ENTRY) {
                 TreeMap<String, Object> treeMap = new TreeMap<>();
