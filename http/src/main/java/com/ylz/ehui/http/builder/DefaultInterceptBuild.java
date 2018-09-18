@@ -147,10 +147,11 @@ public class DefaultInterceptBuild extends Converter.Factory {
         public RequestBody convert(T value) throws IOException {
             Map<String, Object> rawRequestParams = (Map) value;
             if (rawRequestParams.get("rawConvert") != null && ((boolean) rawRequestParams.get("rawConvert"))) {
+                rawRequestParams.remove("rawConvert");
                 Buffer buffer = new Buffer();
                 Writer writer = new OutputStreamWriter(buffer.outputStream(), UTF_8);
                 JsonWriter jsonWriter = gson.newJsonWriter(writer);
-                adapter.write(jsonWriter, value);
+                adapter.write(jsonWriter, (T) rawRequestParams);
                 jsonWriter.close();
                 return RequestBody.create(MEDIA_TYPE, buffer.readByteString());
             }
