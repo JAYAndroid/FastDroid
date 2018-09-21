@@ -93,36 +93,40 @@ public class DefaultInterceptBuild extends Converter.Factory {
                 try {
                     return adapter.read(jsonReader);
                 } finally {
+                    try {
+                        value.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else {
+                try {
+                    if (errorCodeLogoff.equals(baseEntity.getRespCode())) {
+                        CommonUserInfos.getInstance().release();
+                        ARouter.getInstance()
+                                .build(CommonUserInfos.getInstance().getGroupPrefix() + "LoginActivity")
+                                .withBoolean("reLogin", true)
+                                .navigation();
+                        ToastUtils.showWarn("账户已经在其他地方登录,请重新登录。");
+                        throw new RuntimeException("账户已经在其他地方登录,请重新登录。");
+                    }
+
+                    if (SignUtils.ENTRY) {
+                        if (baseEntity.getEncryptData() == null) {
+                            return adapter.read(gson.newJsonReader(new StringReader(JSON.toJSONString(baseEntity))));
+                        }
+                        String data = SecurityUtils.decryptByAES(baseEntity.getEncryptData(), SignUtils.APP_SECRET, SignUtils.APP_ID);
+                        baseEntity.setParam(JSONObject.parse(data));
+                    }
+                    return adapter.read(gson.newJsonReader(new StringReader(JSON.toJSONString(baseEntity))));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
                     value.close();
                 }
-            }
 
-            try {
-                if (errorCodeLogoff.equals(baseEntity.getRespCode())) {
-                    CommonUserInfos.getInstance().release();
-                    ARouter.getInstance()
-                            .build(CommonUserInfos.getInstance().getGroupPrefix() + "LoginActivity")
-                            .withBoolean("reLogin", true)
-                            .navigation();
-                    ToastUtils.showWarn("账户已经在其他地方登录,请重新登录。");
-                    throw new RuntimeException("账户已经在其他地方登录,请重新登录。");
-                }
-
-                if (SignUtils.ENTRY) {
-                    if (baseEntity.getEncryptData() == null) {
-                        return adapter.read(gson.newJsonReader(new StringReader(JSON.toJSONString(baseEntity))));
-                    }
-                    String data = SecurityUtils.decryptByAES(baseEntity.getEncryptData(), SignUtils.APP_SECRET, SignUtils.APP_ID);
-                    baseEntity.setParam(JSONObject.parse(data));
-                }
                 return adapter.read(gson.newJsonReader(new StringReader(JSON.toJSONString(baseEntity))));
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                value.close();
             }
-
-            return adapter.read(gson.newJsonReader(new StringReader(JSON.toJSONString(baseEntity))));
         }
     }
 
