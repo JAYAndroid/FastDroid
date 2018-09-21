@@ -11,6 +11,7 @@ import com.ylz.ehui.common.bean.CommonUserInfos;
 import com.ylz.ehui.http.base.BaseEntity;
 import com.ylz.ehui.utils.SecurityUtils;
 import com.ylz.ehui.utils.SignUtils;
+import com.ylz.ehui.utils.StringUtils;
 import com.ylz.ehui.utils.ToastUtils;
 
 import java.io.IOException;
@@ -86,6 +87,10 @@ public class DefaultInterceptBuild extends Converter.Factory {
         public T convert(ResponseBody value) throws IOException {
             String response = value.string();
             BaseEntity baseEntity = gson.fromJson(response, BaseEntity.class);
+
+            if (baseEntity == null || StringUtils.isEmpty(baseEntity.getRespCode()) && StringUtils.isEmpty(baseEntity.getRespMsg())) {
+                return adapter.read(gson.newJsonReader(new StringReader(response)));
+            }
 
             try {
                 if (errorCodeLogoff.equals(baseEntity.getRespCode())) {
