@@ -83,7 +83,7 @@ public abstract class BaseFragment<T extends BasePresenter> extends RxFragment i
         mSubscribers = new ArrayList<>();
         mDialog = initDialog();
         onInitData2Remote();
-
+        onInitView(savedInstanceState);
         //缺省页
         mLoadService = LoadSir.getDefault().register(registerTarget(), new Callback.OnReloadListener() {
             @Override
@@ -92,8 +92,6 @@ public abstract class BaseFragment<T extends BasePresenter> extends RxFragment i
                 onLoadRefresh();
             }
         });
-
-        onInitView(savedInstanceState);
 
         mLoadService.showSuccess();
         return mLoadService.getLoadLayout();
