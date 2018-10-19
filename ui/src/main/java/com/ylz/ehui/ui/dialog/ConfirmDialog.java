@@ -3,7 +3,6 @@ package com.ylz.ehui.ui.dialog;
 import android.os.Bundle;
 import android.support.annotation.ColorRes;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -38,6 +37,7 @@ public class ConfirmDialog extends BaseDialogFragment implements View.OnClickLis
     private Button mPositiveVew;
 
     private Creater mCreater;
+    private boolean isCustomClosed;
 
     @Override
     protected Builder build(Builder builder) {
@@ -70,6 +70,7 @@ public class ConfirmDialog extends BaseDialogFragment implements View.OnClickLis
         this.mCustomView = mCreater.mCustomView;
         this.mHidenPositiveButton = mCreater.mHidenPositiveButton;
         this.mHidenNegativeButton = mCreater.mHidenNegativeButton;
+        this.isCustomClosed = mCreater.isCustomClosed;
 
         mTitleView = parent.findViewById(R.id.tv_confirm_dialog_title);
         mMsgView = parent.findViewById(R.id.tv_confirm_dialog_msg);
@@ -120,14 +121,19 @@ public class ConfirmDialog extends BaseDialogFragment implements View.OnClickLis
     @Override
     public void onClick(View view) {
         int viewId = view.getId();
-        dismiss();
 
         if (viewId == R.id.btn_confirm_dialog_negative) {
+            if (!isCustomClosed) {
+                dismiss();
+            }
+
             if (mNegativeListener != null) {
                 mNegativeListener.onClick(view);
             }
 
         } else if (viewId == R.id.btn_confirm_dialog_positive) {
+            dismiss();
+
             if (mPositiveListener != null) {
                 mPositiveListener.onClick(view);
             }
@@ -136,6 +142,7 @@ public class ConfirmDialog extends BaseDialogFragment implements View.OnClickLis
     }
 
     public static class Creater implements Serializable {
+        public boolean isCustomClosed;
         private String mTitle;
         private String mMsg;
         private String mPositiveMsg;
@@ -180,6 +187,11 @@ public class ConfirmDialog extends BaseDialogFragment implements View.OnClickLis
 
         public Creater hidenNegativeButton(boolean hiden) {
             this.mHidenNegativeButton = hiden;
+            return this;
+        }
+
+        public Creater customClose(){
+            isCustomClosed = true;
             return this;
         }
 
