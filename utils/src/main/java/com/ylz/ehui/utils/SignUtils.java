@@ -57,7 +57,7 @@ public class SignUtils {
             Gson gson = new Gson();
             map.put("isEncrypt", 1);
             //明文
-            map.put("param", gson.toJson(params).replace("\\", ""));            //加密，签名
+//            map.put("param", gson.toJson(params).replace("\\", ""));            //加密，签名
 
 
             map.put("sign", getSign(map, APP_SECRET));
