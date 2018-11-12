@@ -56,6 +56,7 @@ public final class ToastUtils {
 
 
         sToast.setGravity(sCurrentStyle.getGravity(), sCurrentStyle.getXOffset(), sCurrentStyle.getYOffset());
+        sToast.setView(createTextView(application));
     }
 
     /**
