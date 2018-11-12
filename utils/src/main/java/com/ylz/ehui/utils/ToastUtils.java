@@ -1,323 +1,295 @@
 package com.ylz.ehui.utils;
 
+import android.app.AppOpsManager;
+import android.app.Application;
+import android.app.NotificationManager;
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.os.Handler;
-import android.os.Looper;
-import android.support.annotation.ColorInt;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.StringRes;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.widget.TextViewCompat;
-import android.view.Gravity;
-import android.view.LayoutInflater;
+import android.content.pm.ApplicationInfo;
+import android.content.res.Resources;
+import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
+import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ylz.ehui.module_utils.R;
 
-import java.lang.ref.WeakReference;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
- * <pre>
- *     author: Blankj
- *     blog  : http://blankj.com
- *     time  : 2016/09/29
- *     desc  : 吐司相关工具类
- * </pre>
+ * author : HJQ
+ * github : https://github.com/getActivity/ToastUtils
+ * time   : 2018/09/01
+ * desc   : Toast工具类
  */
 public final class ToastUtils {
-    private static final int COLOR_DEFAULT = 0xFEFFFFFF;
-    private static final Handler HANDLER = new Handler(Looper.getMainLooper());
+    private static int TOAST_STYLE_DEFAULT = 1;
+    private static int TOAST_STYLE_HINT = 2;
+    private static int TOAST_STYLE_WARN = 3;
+
+    private static int TOAST_STYLE_CURRENT = TOAST_STYLE_DEFAULT;
+    private static IToastStyle sCurrentStyle;
+
     private static Toast sToast;
-    private static WeakReference<View> sViewWeakReference;
-    private static int sLayoutId = -1;
-    private static int gravity = Gravity.CENTER;
-    private static int xOffset = 0;
-    private static int yOffset = (int) (64 * Utils.getApp().getResources().getDisplayMetrics().density + 0.5);
-    private static int bgColor = COLOR_DEFAULT;
-    private static int bgResource = -1;
-    private static int msgColor = COLOR_DEFAULT;
-    private static TextView tvMessage;
-    private static Drawable defaultBackground;
-
-    private ToastUtils() {
-        throw new UnsupportedOperationException("u can't instantiate me...");
-    }
 
     /**
-     * 设置吐司位置
+     * 初始化ToastUtils，建议在Application中初始化
      *
-     * @param gravity 位置
-     * @param xOffset x 偏移
-     * @param yOffset y 偏移
+     * @param application 应用的上下文
      */
-    public static void setGravity(final int gravity, final int xOffset, final int yOffset) {
-        ToastUtils.gravity = gravity;
-        ToastUtils.xOffset = xOffset;
-        ToastUtils.yOffset = yOffset;
+    public static void init(Application application) {
+        // 检查默认样式是否为空，如果是就创建一个默认样式
+        if (sCurrentStyle == null) {
+            sCurrentStyle = new ToastBlackStyle();
+        }
+
+        // 判断有没有通知栏权限
+        if (isNotificationEnabled(application)) {
+            sToast = new XToast(application);
+        } else {
+            sToast = new SupportToast(application);
+        }
+
+
+        sToast.setGravity(sCurrentStyle.getGravity(), sCurrentStyle.getXOffset(), sCurrentStyle.getYOffset());
     }
 
     /**
-     * 设置背景颜色
+     * 显示一个对象的吐司
      *
-     * @param backgroundColor 背景色
+     * @param object 对象
      */
-    public static void setBgColor(@ColorInt final int backgroundColor) {
-        ToastUtils.bgColor = backgroundColor;
+    public static void show(Object object) {
+        show(object != null ? object.toString() : "null");
     }
 
     /**
-     * 设置背景资源
+     * 显示一个吐司
      *
-     * @param bgResource 背景资源
+     * @param id 如果传入的是正确的string id就显示对应字符串
+     *           如果不是则显示一个整数的string
      */
-    public static void setBgResource(@DrawableRes final int bgResource) {
-        ToastUtils.bgResource = bgResource;
-    }
+    public static void show(int id) {
 
-    /**
-     * 设置消息颜色
-     *
-     * @param msgColor 颜色
-     */
-    public static void setMsgColor(@ColorInt final int msgColor) {
-        ToastUtils.msgColor = msgColor;
-    }
+        checkToastState();
 
-    /**
-     * 安全地显示短时吐司
-     *
-     * @param text 文本
-     */
-    public static void showShort(@NonNull final CharSequence text) {
-        reset();
-        show(text, Toast.LENGTH_SHORT);
-    }
+        try {
+            if (TOAST_STYLE_CURRENT != TOAST_STYLE_DEFAULT) {
+                sCurrentStyle = new ToastBlackStyle();
+                initStyle(sCurrentStyle);
+            }
+            // 如果这是一个资源id
+            show(sToast.getView().getContext().getResources().getText(id));
+        } catch (Resources.NotFoundException ignored) {
+            // 如果这是一个int类型
+            show(String.valueOf(id));
+        }
 
-    /**
-     * 安全地显示短时吐司
-     *
-     * @param resId 资源 Id
-     */
-    public static void showShort(@StringRes final int resId) {
-        reset();
-        show(resId, Toast.LENGTH_SHORT);
-    }
-
-    /**
-     * 安全地显示短时吐司
-     *
-     * @param resId 资源 Id
-     * @param args  参数
-     */
-    public static void showShort(@StringRes final int resId, final Object... args) {
-        reset();
-        show(resId, Toast.LENGTH_SHORT, args);
-    }
-
-    /**
-     * 安全地显示短时吐司
-     *
-     * @param format 格式
-     * @param args   参数
-     */
-    public static void showShort(final String format, final Object... args) {
-        reset();
-        show(format, Toast.LENGTH_SHORT, args);
-    }
-
-    /**
-     * 安全地显示长时吐司
-     *
-     * @param text 文本
-     */
-    public static void showLong(@NonNull final CharSequence text) {
-        reset();
-        show(text, Toast.LENGTH_LONG);
-    }
-
-    /**
-     * 安全地显示长时吐司
-     *
-     * @param resId 资源 Id
-     */
-    public static void showLong(@StringRes final int resId) {
-        reset();
-        show(resId, Toast.LENGTH_LONG);
-    }
-
-    /**
-     * 安全地显示长时吐司
-     *
-     * @param resId 资源 Id
-     * @param args  参数
-     */
-    public static void showLong(@StringRes final int resId, final Object... args) {
-        reset();
-        show(resId, Toast.LENGTH_LONG, args);
-    }
-
-    /**
-     * 安全地显示长时吐司
-     *
-     * @param format 格式
-     * @param args   参数
-     */
-    public static void showLong(final String format, final Object... args) {
-        reset();
-        show(format, Toast.LENGTH_LONG, args);
-    }
-
-    /**
-     * 安全地显示短时自定义吐司
-     */
-    public static View showCshustomShort(@LayoutRes final int layoutId) {
-        reset();
-        final View view = getView(layoutId);
-        show(view, Toast.LENGTH_SHORT);
-        return view;
-    }
-
-    /**
-     * 安全地显示长时自定义吐司
-     */
-    public static View showCustomLong(@LayoutRes final int layoutId) {
-        reset();
-        final View view = getView(layoutId);
-        show(view, Toast.LENGTH_LONG);
-        return view;
+        TOAST_STYLE_CURRENT = TOAST_STYLE_DEFAULT;
     }
 
     public static void showHint(CharSequence text) {
-        bgResource = com.ylz.ehui.module_utils.R.drawable.toast_bg_blue;
-        msgColor = Color.parseColor("#FF196FFA");
-        show(text, Toast.LENGTH_SHORT);
+        if (TOAST_STYLE_CURRENT != TOAST_STYLE_HINT) {
+            sCurrentStyle = new ToastHintStyle();
+            initStyle(sCurrentStyle);
+        }
+        show(text);
+        TOAST_STYLE_CURRENT = TOAST_STYLE_HINT;
     }
 
     public static void showWarn(CharSequence text) {
-        bgResource = com.ylz.ehui.module_utils.R.drawable.toast_bg_red;
-        msgColor = Color.parseColor("#ef482c");
-        show(text, Toast.LENGTH_SHORT);
+        if (TOAST_STYLE_CURRENT != TOAST_STYLE_WARN) {
+            sCurrentStyle = new ToastWarnStyle();
+            initStyle(sCurrentStyle);
+        }
+        show(text);
+        TOAST_STYLE_CURRENT = TOAST_STYLE_WARN;
     }
 
 
-    private static void show(@StringRes final int resId, final int duration) {
-        show(Utils.getApp().getResources().getText(resId).toString(), duration);
+    /**
+     * 显示一个吐司
+     *
+     * @param text 需要显示的文本
+     */
+    public static void show(CharSequence text) {
+
+        checkToastState();
+
+        if (text == null || text.equals("")) return;
+
+        if (TOAST_STYLE_CURRENT != TOAST_STYLE_DEFAULT) {
+            sCurrentStyle = new ToastBlackStyle();
+            initStyle(sCurrentStyle);
+        }
+        // 如果显示的文字超过了10个就显示长吐司，否则显示短吐司
+        if (text.length() > 20) {
+            sToast.setDuration(Toast.LENGTH_LONG);
+        } else {
+            sToast.setDuration(Toast.LENGTH_SHORT);
+        }
+
+        sToast.setText(text);
+        sToast.show();
+        TOAST_STYLE_CURRENT = TOAST_STYLE_DEFAULT;
     }
 
-    private static void show(@StringRes final int resId, final int duration, final Object... args) {
-        show(String.format(Utils.getApp().getResources().getString(resId), args), duration);
+    /**
+     * 取消吐司的显示
+     */
+    public void cancel() {
+        checkToastState();
+        sToast.cancel();
     }
 
-    private static void show(final String format, final int duration, final Object... args) {
-        show(String.format(format, args), duration);
+    /**
+     * 获取当前Toast对象
+     */
+    public static Toast getToast() {
+        return sToast;
     }
 
-    private static void show(final CharSequence text, final int duration) {
-        HANDLER.post(new Runnable() {
-            @Override
-            public void run() {
-                cancel();
-                sToast = Toast.makeText(Utils.getApp(), text, duration);
-                defaultBackground = sToast.getView().getBackground();
-                tvMessage = sToast.getView().findViewById(android.R.id.message);
-                tvMessage.setGravity(gravity);
-                TextViewCompat.setTextAppearance(tvMessage, android.R.style.TextAppearance);
-                tvMessage.setText(text);
-                tvMessage.setTextColor(msgColor);
-                sToast.setGravity(gravity, xOffset, yOffset);
-                setBg();
-                sToast.show();
-            }
-        });
+    /**
+     * 给当前Toast设置新的布局，具体实现可看{@link XToast#setView(View)}
+     */
+    public static void setView(Context context, int layoutId) {
+        if (context != context.getApplicationContext()) {
+            context = context.getApplicationContext();
+        }
+        setView(View.inflate(context, layoutId, null));
     }
 
-    private static void show(final View view, final int duration) {
-//        HANDLER.post(new Runnable() {
-//            @SuppressLint("ShowToast")
-//            @Override
-//            public void run() {
-//                cancel();
-//                sToast = Toast.makeText(Utils.getApp(), text, duration);
-//                final TextView tvMessage = sToast.getView().findViewById(android.R.id.message);
-//                if (sMsgColor != COLOR_DEFAULT) {
-//                    tvMessage.setTextColor(sMsgColor);
-//                }
-//                if (sMsgTextSize != -1) {
-//                    tvMessage.setTextSize(sMsgTextSize);
-//                }
-//                if (sGravity != -1 || sXOffset != -1 || sYOffset != -1) {
-//                    sToast.setGravity(sGravity, sXOffset, sYOffset);
-//                }
-//                setBg(tvMessage);
-//                showToast();
-//            }
-//        });
+    public static void setView(View view) {
 
-        HANDLER.post(new Runnable() {
-            @Override
-            public void run() {
-                cancel();
-                sToast = new Toast(Utils.getApp());
+        checkToastState();
 
-                sToast.setDuration(duration);
-                sToast.setView(view);
-                sToast.setGravity(gravity, xOffset, yOffset);
-                sToast.show();
-            }
-        });
+        if (view == null) {
+            throw new IllegalArgumentException("Views cannot be empty");
+        }
+
+        // 如果吐司已经创建，就重新初始化吐司
+        if (sToast != null) {
+            //取消原有吐司的显示
+            sToast.cancel();
+            sToast.setView(view);
+        }
     }
 
-    private static void setBg() {
-        View sToastView = sToast.getView();
+    /**
+     * 统一全局的Toast样式，建议在{@link Application#onCreate()}中初始化
+     *
+     * @param style 样式实现类，框架已经实现三种不同的样式
+     *              黑色样式：{@link ToastBlackStyle}
+     */
+    public static void initStyle(IToastStyle style) {
+        ToastUtils.sCurrentStyle = style;
+        // 如果吐司已经创建，就重新初始化吐司
+        if (sToast != null) {
+            //取消原有吐司的显示
+            sToast.cancel();
+            sToast.setView(createTextView(sToast.getView().getContext().getApplicationContext()));
+        }
+    }
 
-        if (bgResource != -1) {
-            sToastView.setBackgroundResource(bgResource);
-        } else if (bgColor != COLOR_DEFAULT) {
-            Drawable background = sToastView.getBackground();
-            if (background != null) {
-                background.setColorFilter(new PorterDuffColorFilter(bgColor, PorterDuff.Mode.SRC_IN));
-            } else {
-                ViewCompat.setBackground(sToastView, new ColorDrawable(bgColor));
+    /**
+     * 检查吐司状态，如果未初始化请先调用{@link ToastUtils#init(Application)}
+     */
+    private static void checkToastState() {
+        //吐司工具类还没有被初始化，必须要先调用init方法进行初始化
+        if (sToast == null) {
+            throw new IllegalStateException("ToastUtils has not been initialized");
+        }
+    }
+
+    /**
+     * 生成默认的 TextView 对象
+     */
+    private static TextView createTextView(Context context) {
+
+        GradientDrawable drawable = new GradientDrawable();
+        drawable.setColor(sCurrentStyle.getBackgroundColor()); // 设置背景色
+        drawable.setCornerRadius(dp2px(context, sCurrentStyle.getCornerRadius())); // 设置圆角
+
+        TextView textView = new TextView(context);
+        textView.setId(R.id.toast_main_text_view_id);
+        textView.setTextColor(sCurrentStyle.getTextColor());
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, sp2px(context, sCurrentStyle.getTextSize()));
+        textView.setPadding(dp2px(context, sCurrentStyle.getPaddingLeft()), dp2px(context, sCurrentStyle.getPaddingTop()),
+                dp2px(context, sCurrentStyle.getPaddingRight()), dp2px(context, sCurrentStyle.getPaddingBottom()));
+        textView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        // setBackground API版本兼容
+
+        if (sCurrentStyle.getBackgroundDrawable() != 0) {
+            textView.setBackgroundResource(sCurrentStyle.getBackgroundDrawable());
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            textView.setBackground(drawable);
+        } else {
+            textView.setBackgroundDrawable(drawable);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            textView.setZ(sCurrentStyle.getZ()); // 设置 Z 轴阴影
+        }
+
+        if (sCurrentStyle.getMaxLines() > 0) {
+            textView.setMaxLines(sCurrentStyle.getMaxLines()); // 设置最大显示行数
+        }
+
+        return textView;
+    }
+
+    /**
+     * dp转px
+     *
+     * @param context 上下文
+     * @param dpValue dp值
+     * @return px值
+     */
+    private static int dp2px(Context context, float dpValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dpValue * scale + 0.5f);
+    }
+
+    /**
+     * sp转px
+     *
+     * @param context 上下文
+     * @param spValue sp值
+     * @return px值
+     */
+    private static int sp2px(Context context, float spValue) {
+        final float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
+        return (int) (spValue * fontScale + 0.5f);
+    }
+
+    /**
+     * 检查通知栏权限有没有开启
+     * 参考SupportCompat包中的： NotificationManagerCompat.from(context).areNotificationsEnabled();
+     */
+    private static boolean isNotificationEnabled(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return ((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE)).areNotificationsEnabled();
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            AppOpsManager appOps = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
+            ApplicationInfo appInfo = context.getApplicationInfo();
+            String pkg = context.getApplicationContext().getPackageName();
+            int uid = appInfo.uid;
+
+            try {
+                Class<?> appOpsClass = Class.forName(AppOpsManager.class.getName());
+                Method checkOpNoThrowMethod = appOpsClass.getMethod("checkOpNoThrow", Integer.TYPE, Integer.TYPE, String.class);
+                Field opPostNotificationValue = appOpsClass.getDeclaredField("OP_POST_NOTIFICATION");
+                int value = (Integer) opPostNotificationValue.get(Integer.class);
+                return (Integer) checkOpNoThrowMethod.invoke(appOps, value, uid, pkg) == 0;
+            } catch (NoSuchMethodException | NoSuchFieldException | InvocationTargetException | IllegalAccessException | RuntimeException | ClassNotFoundException ignored) {
+                return true;
             }
         } else {
-            ViewCompat.setBackground(sToastView, defaultBackground);
-        }
-    }
-
-    private static View getView(@LayoutRes final int layoutId) {
-        if (sLayoutId == layoutId) {
-            if (sViewWeakReference != null) {
-                final View toastView = sViewWeakReference.get();
-                if (toastView != null) {
-                    return toastView;
-                }
-            }
-        }
-        LayoutInflater inflate =
-                (LayoutInflater) Utils.getApp().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if (inflate == null) return null;
-        final View toastView = inflate.inflate(layoutId, null);
-        sViewWeakReference = new WeakReference<>(toastView);
-        sLayoutId = layoutId;
-        return toastView;
-    }
-
-    private static void reset() {
-        bgResource = -1;
-        msgColor = COLOR_DEFAULT;
-    }
-
-    private static void cancel() {
-        if (sToast != null) {
-            sToast.cancel();
+            return true;
         }
     }
 }

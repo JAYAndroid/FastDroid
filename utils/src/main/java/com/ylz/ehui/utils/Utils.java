@@ -1,16 +1,9 @@
 package com.ylz.ehui.utils;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.Application;
-import android.app.Application.ActivityLifecycleCallbacks;
 import android.content.Context;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
-
-import java.lang.ref.WeakReference;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * <pre>
@@ -32,13 +25,14 @@ public final class Utils {
     /**
      * 初始化工具类
      */
-    public static void init(@NonNull final Context context) {
-        init(context, false);
+    public static void init(@NonNull final Application application) {
+        init(application, false);
     }
 
-    public static void init(@NonNull final Context context, boolean debug) {
-        mApplicationContext = context.getApplicationContext();
+    public static void init(@NonNull final Application application, boolean debug) {
+        mApplicationContext = application.getApplicationContext();
         isDebug = debug;
+        ToastUtils.init(application);
     }
 
     /**
