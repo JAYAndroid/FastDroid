@@ -8,6 +8,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.res.Resources;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
+import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -28,14 +29,12 @@ import java.lang.reflect.Method;
  * desc   : Toast工具类
  */
 public final class ToastUtils {
-    private static int TOAST_STYLE_DEFAULT = 1;
-    private static int TOAST_STYLE_HINT = 2;
-    private static int TOAST_STYLE_WARN = 3;
 
-    private static int TOAST_STYLE_CURRENT = TOAST_STYLE_DEFAULT;
     private static IToastStyle sCurrentStyle;
 
     private static Toast sToast;
+
+    private static boolean isDefaultStyle = true;
 
     /**
      * 初始化ToastUtils，建议在Application中初始化
@@ -54,7 +53,6 @@ public final class ToastUtils {
         } else {
             sToast = new SupportToast(application);
         }
-
 
         sToast.setGravity(sCurrentStyle.getGravity(), sCurrentStyle.getXOffset(), sCurrentStyle.getYOffset());
         sToast.setView(createTextView(application));
@@ -76,81 +74,125 @@ public final class ToastUtils {
      *           如果不是则显示一个整数的string
      */
     public static void show(int id) {
-
-        checkToastState();
-
-        try {
-            if (TOAST_STYLE_CURRENT == TOAST_STYLE_DEFAULT) {
-                sCurrentStyle = new ToastBlackStyle();
-            } else if (TOAST_STYLE_CURRENT == TOAST_STYLE_HINT) {
-                sCurrentStyle = new ToastHintStyle();
-            } else if (TOAST_STYLE_CURRENT == TOAST_STYLE_WARN) {
-                sCurrentStyle = new ToastWarnStyle();
-            }
-
-            initStyle(sCurrentStyle);
-
-            // 如果这是一个资源id
-            show(sToast.getView().getContext().getResources().getText(id));
-        } catch (Resources.NotFoundException ignored) {
-            // 如果这是一个int类型
-            show(String.valueOf(id));
-        }
-
-        TOAST_STYLE_CURRENT = TOAST_STYLE_DEFAULT;
+        show(id, Toast.LENGTH_SHORT);
     }
 
     /**
      * 显示一个吐司
      *
-     * @param text 需要显示的文本
+     * @param id      如果传入的是正确的string id就显示对应字符串
+     *                如果不是则显示一个整数的string
+     */
+    public static void showLong(int id) {
+        show(id, Toast.LENGTH_LONG);
+    }
+
+    /**
+     * 显示一个吐司
+     *
+     * @param id      如果传入的是正确的string id就显示对应字符串
+     *                如果不是则显示一个整数的string
+     * @param duration  显示时长
+     */
+    public static void show(int id, int duration) {
+
+        checkToastState();
+
+        try {
+            if (isDefaultStyle) {
+                initStyle(new ToastBlackStyle());
+            }
+
+            // 如果这是一个资源id
+            show(sToast.getView().getContext().getResources().getText(id), duration);
+        } catch (Resources.NotFoundException ignored) {
+            // 如果这是一个int类型
+            show(String.valueOf(id));
+        }
+
+        isDefaultStyle = true;
+    }
+
+    /**
+     * 显示一个吐司
+     *
+     * @param text      需要显示的文本
      */
     public static void show(CharSequence text) {
+        show(text, Toast.LENGTH_SHORT);
+    }
+
+    /**
+     * 显示一个吐司
+     *
+     * @param text      需要显示的文本
+     */
+    public static void showLong(CharSequence text) {
+        show(text, Toast.LENGTH_LONG);
+    }
+
+    /**
+     * 显示一个吐司
+     *
+     * @param text      需要显示的文本
+     * @param duration  显示时长
+     */
+    public static void show(CharSequence text, int duration) {
 
         checkToastState();
 
         if (text == null || text.equals("")) return;
 
-        if (TOAST_STYLE_CURRENT == TOAST_STYLE_DEFAULT) {
-            sCurrentStyle = new ToastBlackStyle();
-        } else if (TOAST_STYLE_CURRENT == TOAST_STYLE_HINT) {
-            sCurrentStyle = new ToastHintStyle();
-        } else if (TOAST_STYLE_CURRENT == TOAST_STYLE_WARN) {
-            sCurrentStyle = new ToastWarnStyle();
+        if (isDefaultStyle) {
+            initStyle(new ToastBlackStyle());
         }
 
-        initStyle(sCurrentStyle);
-
-        // 如果显示的文字超过了10个就显示长吐司，否则显示短吐司
-        if (text.length() > 20) {
-            sToast.setDuration(Toast.LENGTH_LONG);
-        } else {
-            sToast.setDuration(Toast.LENGTH_SHORT);
-        }
+        sToast.setDuration(duration);
 
         sToast.setText(text);
         sToast.show();
-        TOAST_STYLE_CURRENT = TOAST_STYLE_DEFAULT;
+
+        isDefaultStyle = true;
     }
 
     public static void showHint(CharSequence text) {
-        TOAST_STYLE_CURRENT = TOAST_STYLE_HINT;
+        initStyle(new ToastHintStyle());
         show(text);
     }
 
     public static void showWarn(CharSequence text) {
-        TOAST_STYLE_CURRENT = TOAST_STYLE_WARN;
+        initStyle(new ToastWarnStyle());
         show(text);
     }
 
+    public static void showLongHint(CharSequence text) {
+        initStyle(new ToastHintStyle());
+        show(text, Toast.LENGTH_LONG);
+    }
+
+    public static void showLongWarn(CharSequence text) {
+        initStyle(new ToastWarnStyle());
+        show(text, Toast.LENGTH_LONG);
+    }
+
     public static void showHint(int id) {
-        TOAST_STYLE_CURRENT = TOAST_STYLE_HINT;
+        initStyle(new ToastHintStyle());
         show(id);
     }
 
     public static void showWarn(int id) {
-        TOAST_STYLE_CURRENT = TOAST_STYLE_WARN;
+        initStyle(new ToastWarnStyle());
         show(id);
+    }
+
+    public static void showLongHint(int id) {
+        initStyle(new ToastHintStyle());
+        show(id, Toast.LENGTH_LONG);
+    }
+
+    public static void showLongWarn(int id) {
+        initStyle(new ToastWarnStyle());
+        show(id, Toast.LENGTH_LONG);
     }
 
     /**
@@ -172,6 +214,8 @@ public final class ToastUtils {
      * 给当前Toast设置新的布局，具体实现可看{@link XToast#setView(View)}
      */
     public static void setView(Context context, int layoutId) {
+        isDefaultStyle = false;
+
         if (context != context.getApplicationContext()) {
             context = context.getApplicationContext();
         }
@@ -195,13 +239,24 @@ public final class ToastUtils {
     }
 
     /**
-     * 统一全局的Toast样式，建议在{@link Application#onCreate()}中初始化
+     * 统一全局的Toast样式，建议在{@link android.app.Application#onCreate()}中初始化
      *
      * @param style 样式实现类，框架已经实现三种不同的样式
      *              黑色样式：{@link ToastBlackStyle}
      */
     public static void initStyle(IToastStyle style) {
-        ToastUtils.sCurrentStyle = style;
+        if (isDefaultStyle(style)) {
+            isDefaultStyle = true;
+        } else {
+            isDefaultStyle = false;
+        }
+
+        if (isDefaultStyle) {
+            ToastUtils.sCurrentStyle = new ToastBlackStyle();
+        } else {
+            ToastUtils.sCurrentStyle = style;
+        }
+
         // 如果吐司已经创建，就重新初始化吐司
         if (sToast != null) {
             //取消原有吐司的显示
@@ -238,7 +293,6 @@ public final class ToastUtils {
                 dp2px(context, sCurrentStyle.getPaddingRight()), dp2px(context, sCurrentStyle.getPaddingBottom()));
         textView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         // setBackground API版本兼容
-
         if (sCurrentStyle.getBackgroundDrawable() != 0) {
             textView.setBackgroundResource(sCurrentStyle.getBackgroundDrawable());
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -306,6 +360,14 @@ public final class ToastUtils {
             }
         } else {
             return true;
+        }
+    }
+
+    private static boolean isDefaultStyle(IToastStyle style) {
+        if (TextUtils.equals(style.getClass().getSimpleName(), ToastBlackStyle.class.getSimpleName())) {
+            return true;
+        } else {
+            return false;
         }
     }
 }
