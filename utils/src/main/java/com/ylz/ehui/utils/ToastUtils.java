@@ -9,6 +9,7 @@ import android.content.res.Resources;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -79,10 +80,16 @@ public final class ToastUtils {
         checkToastState();
 
         try {
-            if (TOAST_STYLE_CURRENT != TOAST_STYLE_DEFAULT) {
+            if (TOAST_STYLE_CURRENT == TOAST_STYLE_DEFAULT) {
                 sCurrentStyle = new ToastBlackStyle();
-                initStyle(sCurrentStyle);
+            } else if (TOAST_STYLE_CURRENT == TOAST_STYLE_HINT) {
+                sCurrentStyle = new ToastHintStyle();
+            } else if (TOAST_STYLE_CURRENT == TOAST_STYLE_WARN) {
+                sCurrentStyle = new ToastWarnStyle();
             }
+
+            initStyle(sCurrentStyle);
+
             // 如果这是一个资源id
             show(sToast.getView().getContext().getResources().getText(id));
         } catch (Resources.NotFoundException ignored) {
@@ -92,25 +99,6 @@ public final class ToastUtils {
 
         TOAST_STYLE_CURRENT = TOAST_STYLE_DEFAULT;
     }
-
-    public static void showHint(CharSequence text) {
-        if (TOAST_STYLE_CURRENT != TOAST_STYLE_HINT) {
-            sCurrentStyle = new ToastHintStyle();
-            initStyle(sCurrentStyle);
-        }
-        show(text);
-        TOAST_STYLE_CURRENT = TOAST_STYLE_HINT;
-    }
-
-    public static void showWarn(CharSequence text) {
-        if (TOAST_STYLE_CURRENT != TOAST_STYLE_WARN) {
-            sCurrentStyle = new ToastWarnStyle();
-            initStyle(sCurrentStyle);
-        }
-        show(text);
-        TOAST_STYLE_CURRENT = TOAST_STYLE_WARN;
-    }
-
 
     /**
      * 显示一个吐司
@@ -123,10 +111,16 @@ public final class ToastUtils {
 
         if (text == null || text.equals("")) return;
 
-        if (TOAST_STYLE_CURRENT != TOAST_STYLE_DEFAULT) {
+        if (TOAST_STYLE_CURRENT == TOAST_STYLE_DEFAULT) {
             sCurrentStyle = new ToastBlackStyle();
-            initStyle(sCurrentStyle);
+        } else if (TOAST_STYLE_CURRENT == TOAST_STYLE_HINT) {
+            sCurrentStyle = new ToastHintStyle();
+        } else if (TOAST_STYLE_CURRENT == TOAST_STYLE_WARN) {
+            sCurrentStyle = new ToastWarnStyle();
         }
+
+        initStyle(sCurrentStyle);
+
         // 如果显示的文字超过了10个就显示长吐司，否则显示短吐司
         if (text.length() > 20) {
             sToast.setDuration(Toast.LENGTH_LONG);
@@ -137,6 +131,26 @@ public final class ToastUtils {
         sToast.setText(text);
         sToast.show();
         TOAST_STYLE_CURRENT = TOAST_STYLE_DEFAULT;
+    }
+
+    public static void showHint(CharSequence text) {
+        TOAST_STYLE_CURRENT = TOAST_STYLE_HINT;
+        show(text);
+    }
+
+    public static void showWarn(CharSequence text) {
+        TOAST_STYLE_CURRENT = TOAST_STYLE_WARN;
+        show(text);
+    }
+
+    public static void showHint(int id) {
+        TOAST_STYLE_CURRENT = TOAST_STYLE_HINT;
+        show(id);
+    }
+
+    public static void showWarn(int id) {
+        TOAST_STYLE_CURRENT = TOAST_STYLE_WARN;
+        show(id);
     }
 
     /**
@@ -217,6 +231,7 @@ public final class ToastUtils {
 
         TextView textView = new TextView(context);
         textView.setId(R.id.toast_main_text_view_id);
+        textView.setGravity(Gravity.CENTER);
         textView.setTextColor(sCurrentStyle.getTextColor());
         textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, sp2px(context, sCurrentStyle.getTextSize()));
         textView.setPadding(dp2px(context, sCurrentStyle.getPaddingLeft()), dp2px(context, sCurrentStyle.getPaddingTop()),
