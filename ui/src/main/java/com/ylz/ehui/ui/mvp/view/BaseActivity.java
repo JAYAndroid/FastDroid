@@ -230,9 +230,11 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
             bind.unbind();
         }
 
-        for (Disposable subscriber : mSubscribers) {
-            if (!subscriber.isDisposed()) {
-                subscriber.dispose();
+        if (mSubscribers != null && mSubscribers.size() > 0) {
+            for (Disposable subscriber : mSubscribers) {
+                if (!subscriber.isDisposed()) {
+                    subscriber.dispose();
+                }
             }
         }
 
