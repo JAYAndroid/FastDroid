@@ -217,18 +217,26 @@ public abstract class BaseDialogFragment<T extends BasePresenter> extends RxDial
     }
 
     public void show(FragmentActivity activity) {
-        FragmentManager supportFragmentManager = activity.getSupportFragmentManager();
-        if (!isShowing && !isAdded() && null == supportFragmentManager.findFragmentByTag(getClass().getName())) {
-            show(supportFragmentManager, getClass().getName());
-            isShowing = true;
+        try {
+            FragmentManager supportFragmentManager = activity.getSupportFragmentManager();
+            if (!isShowing && !isAdded() && null == supportFragmentManager.findFragmentByTag(getClass().getName())) {
+                show(supportFragmentManager, getClass().getName());
+                isShowing = true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     public void dismiss(FragmentActivity activity) {
-        FragmentManager supportFragmentManager = activity.getSupportFragmentManager();
-        if (isShowing && isAdded() && null != supportFragmentManager.findFragmentByTag(getClass().getName())) {
-            dismiss();
-            isShowing = false;
+        try {
+            FragmentManager supportFragmentManager = activity.getSupportFragmentManager();
+            if (isShowing && isAdded() && null != supportFragmentManager.findFragmentByTag(getClass().getName())) {
+                dismiss();
+                isShowing = false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
