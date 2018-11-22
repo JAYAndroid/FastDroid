@@ -40,10 +40,10 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile project(':common')
+    api fileTree(include: ['*.jar'], dir: 'libs')
+    api project(':common')
 
     annotationProcessor "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflow_version}"
     // RXJava 2 support
-    compile "com.github.Raizlabs.DBFlow:dbflow-rx2:${dbflow_version}"
+    api "com.github.Raizlabs.DBFlow:dbflow-rx2:${dbflow_version}"
 }
