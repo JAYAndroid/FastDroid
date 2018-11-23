@@ -44,6 +44,7 @@ public abstract class BaseDialogFragment<T extends BasePresenter> extends RxDial
     private List<Disposable> mSubscribers;
     private volatile boolean isDestroyed = false;
     private volatile boolean isShowing = false;
+    private BaseDialogFragment mDialog;
 
 
     @Override
@@ -52,8 +53,13 @@ public abstract class BaseDialogFragment<T extends BasePresenter> extends RxDial
         builder = new Builder(mContext, inflater, container);
         getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         mSubscribers = new ArrayList<>();
+        mDialog = initDialog();
         onInitData2Remote();
         return build(builder).create();
+    }
+
+    protected BaseDialogFragment initDialog() {
+        return new WaitDialog();
     }
 
     @Override
