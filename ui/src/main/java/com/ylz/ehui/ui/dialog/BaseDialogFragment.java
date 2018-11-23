@@ -69,12 +69,16 @@ public abstract class BaseDialogFragment<T extends BasePresenter> extends RxDial
 
     @Override
     public void showDialog() {
-
+        if (mDialog != null && getActivity() != null) {
+            mDialog.show(getActivity());
+        }
     }
 
     @Override
     public void dismissDialog() {
-
+        if (mDialog != null && getActivity() != null) {
+            mDialog.dismiss(getActivity());
+        }
     }
 
     private Class<T> getLogicClazz() {
