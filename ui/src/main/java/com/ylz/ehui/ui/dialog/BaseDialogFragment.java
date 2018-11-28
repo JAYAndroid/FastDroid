@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.MyDialogFragment;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,7 +38,7 @@ import io.reactivex.disposables.Disposable;
  *
  * @author David Vávra (david@inmite.eu)
  */
-public abstract class BaseDialogFragment<T extends BasePresenter> extends RxDialogFragment implements BaseView {
+public abstract class BaseDialogFragment<T extends BasePresenter> extends MyDialogFragment implements BaseView {
     protected Context mContext;
     private Builder builder;
     protected BasePresenter mPresenter;
@@ -242,7 +243,7 @@ public abstract class BaseDialogFragment<T extends BasePresenter> extends RxDial
         try {
             FragmentManager supportFragmentManager = activity.getSupportFragmentManager();
             if (isShowing && isAdded() && null != supportFragmentManager.findFragmentByTag(getClass().getName())) {
-                dismiss();
+                dismissAllowingStateLoss();
                 isShowing = false;
             }
         } catch (Exception e) {
