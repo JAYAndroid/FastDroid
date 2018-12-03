@@ -72,6 +72,7 @@ public class ConfirmDialog extends BaseDialogFragment implements View.OnClickLis
         this.mHidenPositiveButton = mCreater.mHidenPositiveButton;
         this.mHidenNegativeButton = mCreater.mHidenNegativeButton;
         this.isCustomClosed = mCreater.isCustomClosed;
+        this.mHidenTitle = mCreater.mHidenTitle;
 
         mTitleView = parent.findViewById(R.id.tv_confirm_dialog_title);
         mMsgView = parent.findViewById(R.id.tv_confirm_dialog_msg);
