@@ -27,6 +27,7 @@ public class ConfirmDialog extends BaseDialogFragment implements View.OnClickLis
 
     private boolean mHidenPositiveButton;
     private boolean mHidenNegativeButton;
+    private boolean mHidenTitle;
 
     private View mCustomView;
     private int mResColor;
@@ -81,7 +82,9 @@ public class ConfirmDialog extends BaseDialogFragment implements View.OnClickLis
         mNegativeView.setOnClickListener(this);
         mPositiveVew.setOnClickListener(this);
 
-        if (!StringUtils.isEmpty(mTitle)) {
+        if (mHidenTitle) {
+            mTitleView.setVisibility(View.GONE);
+        } else if (!StringUtils.isEmpty(mTitle)) {
             mTitleView.setText(mTitle);
         }
 
@@ -152,6 +155,7 @@ public class ConfirmDialog extends BaseDialogFragment implements View.OnClickLis
         private int mResColor;
         private boolean mHidenPositiveButton;
         private boolean mHidenNegativeButton;
+        private boolean mHidenTitle;
 
         public Creater setTitle(String title) {
             mTitle = title;
@@ -184,12 +188,17 @@ public class ConfirmDialog extends BaseDialogFragment implements View.OnClickLis
             return this;
         }
 
+        public Creater hidenTitle(boolean hiden) {
+            this.mHidenTitle = hiden;
+            return this;
+        }
+
         public Creater hidenNegativeButton(boolean hiden) {
             this.mHidenNegativeButton = hiden;
             return this;
         }
 
-        public Creater customClose(){
+        public Creater customClose() {
             isCustomClosed = true;
             return this;
         }
