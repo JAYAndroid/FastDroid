@@ -35,7 +35,6 @@ public class DataFormater {
 
     /**
      * unsigned int 转 byte 数组
-     * @param i int
      * @return 4位 byte 数组
      * 数组0位存储int最高位信息，3位存贮最低位信息
      */
