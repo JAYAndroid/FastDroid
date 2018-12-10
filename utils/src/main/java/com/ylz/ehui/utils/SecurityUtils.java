@@ -1,5 +1,8 @@
 package com.ylz.ehui.utils;
 
+import com.sm.crypto.cryptolib.DataFormater;
+import com.sm.crypto.cryptolib.sm4.SM4Utils;
+
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
@@ -18,14 +21,12 @@ public class SecurityUtils {
     /**
      * 通过公钥完成加密，再通过Base64Utils加密
      *
-     * @author sun
-     * @date 2014年6月20日
-     * @param data
-     *            待加密的数据
-     * @param publicKeyFile
-     *            公钥路径
+     * @param data          待加密的数据
+     * @param publicKeyFile 公钥路径
      * @return 公钥加密后的Base64Utils字符串
      * @throws Exception
+     * @author sun
+     * @date 2014年6月20日
      */
     public static String encryptByPublicKey(String data, String publicKeyFile) throws Exception {
         PublicKey publicKey = FileUtils.getPublicKey(publicKeyFile);
@@ -37,35 +38,31 @@ public class SecurityUtils {
     }
 
     /**
-     *
      * 通过私钥完成密文解密
      *
-     * @author sun
-     * @date 2014年6月20日
-     * @param data
-     *            待解密的Base64Utils密文
-     * @param privateKeyFile
-     *            私钥文件路径
+     * @param data           待解密的Base64Utils密文
+     * @param privateKeyFile 私钥文件路径
      * @return
      * @throws Exception
+     * @author sun
+     * @date 2014年6月20日
      */
     public static String decryptByPrivateKey(String data, String privateKeyFile) throws Exception {
         PrivateKey privateKey = FileUtils.getPrivateKey(privateKeyFile);
         Cipher cipher = Cipher.getInstance(privateKey.getAlgorithm());
         cipher.init(Cipher.DECRYPT_MODE, privateKey);
         byte[] byteData = cipher.doFinal(Base64Utils.decode(data));
-        return new String(byteData,"UTF-8");
+        return new String(byteData, "UTF-8");
     }
 
     /**
      * 通过AES加密方式完成文本加密
      *
-     * @author sun
-     * @date 2014年6月20日
-     * @param data
-     *            待加密文本
+     * @param data 待加密文本
      * @return 加密后文本
      * @throws Exception
+     * @author sun
+     * @date 2014年6月20日
      */
     public static String encryptByAES(String data, String appSecret, String appId) throws Exception {
         String newPassword = AESUtils.encrypt(appSecret, appId);
@@ -75,8 +72,7 @@ public class SecurityUtils {
     /**
      * 通过DES加密方式完成文本加密
      *
-     * @param data
-     *            待加密文本
+     * @param data 待加密文本
      * @return 加密后文本
      * @throws Exception
      */
@@ -89,8 +85,7 @@ public class SecurityUtils {
     /**
      * 通过DES解密方式完成密文解密
      *
-     * @param data
-     *            待解密文本
+     * @param data 待解密文本
      * @return
      * @throws Exception
      */
@@ -105,10 +100,8 @@ public class SecurityUtils {
     /**
      * 通过AES解密方式完成密文解密
      *
-     * @param data
-     *            待解密文本
-     * @param appSecret
-     *            平台号
+     * @param data      待解密文本
+     * @param appSecret 平台号
      * @return
      * @throws Exception
      */
@@ -148,9 +141,9 @@ public class SecurityUtils {
     /**
      * 通过map获取签名摘要
      *
+     * @return
      * @author sun
      * @date 2014年6月20日
-     * @return
      */
     // @SuppressWarnings({ "unchecked", "rawtypes" })
     // private static String getDigestStr(Map<String, Object> map) {
@@ -229,5 +222,16 @@ public class SecurityUtils {
             return SecurityUtils.decryptByDES(text, appSecret, appId);
         else
             return text;
+    }
+
+    public static String decryptByType(String encryptType, String encryptData) throws Exception {
+        if ("AES".equals(encryptType)) {
+            return decryptByAES(encryptData, SignUtils.APP_SECRET, SignUtils.APP_ID);
+        } else if ("SM4".equals(encryptType)) {
+            String sm4Key = DataFormater.byte2hex(Utils.getApp().getPackageName().getBytes()).substring(0, 16);
+            return new SM4Utils(sm4Key).decryptData_CBC(encryptData);
+        } else {
+            return encryptData;
+        }
     }
 }

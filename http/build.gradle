@@ -40,7 +40,7 @@ android {
 
 dependencies {
     api fileTree(include: ['*.jar'], dir: 'libs')
-    api project(':common')
+    api project(path: ':common')
 
     api "com.squareup.retrofit2:retrofit:2.3.0"
     api "com.squareup.okhttp3:okhttp:3.9.0"

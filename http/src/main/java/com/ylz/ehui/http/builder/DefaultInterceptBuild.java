@@ -4,7 +4,6 @@ import com.alibaba.android.arouter.launcher.ARouter;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonWriter;
@@ -109,7 +108,7 @@ public class DefaultInterceptBuild extends Converter.Factory {
                     if (baseEntity.getEncryptData() == null) {
                         return adapter.read(gson.newJsonReader(new StringReader(JSON.toJSONString(baseEntity))));
                     }
-                    String data = SecurityUtils.decryptByAES(baseEntity.getEncryptData(), SignUtils.APP_SECRET, SignUtils.APP_ID);
+                    String data = SecurityUtils.decryptByType(baseEntity.getEncryptType(), baseEntity.getEncryptData());
                     baseEntity.setParam(JSONObject.parse(data));
                 }
                 return adapter.read(gson.newJsonReader(new StringReader(JSON.toJSONString(baseEntity))));

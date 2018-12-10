@@ -5,6 +5,7 @@ import android.text.format.DateFormat;
 import android.util.ArrayMap;
 
 import com.google.gson.Gson;
+import com.sm.crypto.cryptolib.sm3.SM3Utils;
 import com.ylz.ehui.common.bean.CommonUserInfos;
 
 import java.util.ArrayList;
@@ -22,6 +23,9 @@ import java.util.TreeMap;
 public class SignUtils {
     public static String APP_SECRET = "SKnYwGwnwh3LI56mMwJgDw==";
     public static String APP_ID = "Android";
+    public static String SIGN_TYPE = "MD5";
+    public static String ENCRYPT_TYPE = "AES";
+
     public static boolean ENTRY = !Utils.isDebug();
 
     public static Map getRequest(Map<String, Object> params, String service) {
@@ -44,8 +48,8 @@ public class SignUtils {
 
         map.put("serviceId", service);
         map.put("timestamp", new DateFormat().format("yyyyMMddHHmmssSSS", System.currentTimeMillis()));
-        map.put("signType", "MD5");
-        map.put("encryptType", "AES");
+        map.put("signType", SIGN_TYPE);
+        map.put("encryptType", ENCRYPT_TYPE);
         map.put("version", AppUtils.getVersionCode());
         map.put("deviceId", AppUtils.getUUid());
         map.put("appId", APP_ID);
@@ -159,8 +163,9 @@ public class SignUtils {
         String signType = (String) map.get("signType");
         if (StringUtils.isEmpty(signType) || "MD5".equals(signType)) {
             result = MD5Utils.getMD5String(result).toUpperCase();
-        } else if ("RSA".equals(signType)) {
+        } else if ("SM3".equals(signType)) {
             // RSA 签名
+            result = SM3Utils.encrypt(result);
         }
 
         return result;
