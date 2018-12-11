@@ -64,7 +64,7 @@ public class SecurityUtils {
      * @author sun
      * @date 2014年6月20日
      */
-    public static String encryptByAES(String data, String appSecret, String appId) throws Exception {
+    private static String encryptByAES(String data, String appSecret, String appId) throws Exception {
         String newPassword = AESUtils.encrypt(appSecret, appId);
         return AESUtils.encrypt(data, newPassword);
     }
@@ -89,12 +89,23 @@ public class SecurityUtils {
      * @return
      * @throws Exception
      */
-    public static String decryptByDES(String data, String appSecret, String appId) throws Exception {
+    private static String decryptByDES(String data, String appSecret, String appId) throws Exception {
         // String appSecret = CommonConstant.propertiesMap.get("appSecret");
         String newPassword = DESUtil.encrypt(appSecret, appId.substring(0, 8));
         // 传输过程加号丢失问题
         data = data.replace(" ", "+");
         return DESUtil.decrypt(data, newPassword.substring(0, 8));
+    }
+
+    public static String encryptByType(String rawData, String encryptType) throws Exception {
+        if ("AES".equals(encryptType)) {
+            return encryptByAES(rawData, SignUtils.APP_SECRET, SignUtils.APP_ID);
+        } else if ("SM4".equals(encryptType)) {
+//            String sm4Key = DataFormater.byte2hex(Utils.getApp().getPackageName().getBytes()).substring(0, 16);
+            return new SM4Utils(SignUtils.APP_SECRET).encryptData_CBC(rawData);
+        } else {
+            return rawData;
+        }
     }
 
     /**
@@ -172,31 +183,6 @@ public class SecurityUtils {
     // return result;
     // }
 
-    /*
-     * 字符串加密
-     *
-     * @author sun
-     *
-     * @date 2016年10月13日
-     *
-     * @param text 待加密的字符串
-     *
-     * @param encryptType 加密类型
-     *
-     * @return
-     *
-     * @throws Exception
-     */
-    public static String encrypt(String text, String encryptType, String appSecret, String appId) throws Exception {
-        if (encryptType == null || "".equals(encryptType) || EncType.Plain.toString().equals(encryptType))
-            return text;
-        else if (EncType.AES.toString().equals(encryptType))
-            return SecurityUtils.encryptByAES(text, appSecret, appId);
-        else if (EncType.DES.toString().equals(encryptType))
-            return SecurityUtils.encryptByDES(text, appSecret, appId);
-        else
-            return text;
-    }
 
     /*
      * 字符串加密

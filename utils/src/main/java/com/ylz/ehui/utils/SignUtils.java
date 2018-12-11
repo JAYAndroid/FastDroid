@@ -67,7 +67,7 @@ public class SignUtils {
 
             map.put("sign", getSign(map, APP_SECRET));
             try {
-                map.put("encryptData", SecurityUtils.encryptByAES(String.valueOf(map.get("param")), APP_SECRET, APP_ID));
+                map.put("encryptData", SecurityUtils.encryptByType(String.valueOf(map.get("param")), ENCRYPT_TYPE));
             } catch (Exception e) {
                 e.printStackTrace();
             }
