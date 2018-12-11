@@ -25,6 +25,7 @@ public class SignUtils {
     public static String APP_ID = "Android";
     public static String SIGN_TYPE = "MD5";
     public static String ENCRYPT_TYPE = "AES";
+    public static String IV = "0102030405060708";
 
     public static boolean ENTRY = !Utils.isDebug();
 

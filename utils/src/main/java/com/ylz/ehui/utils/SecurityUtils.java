@@ -102,7 +102,7 @@ public class SecurityUtils {
             return encryptByAES(rawData, SignUtils.APP_SECRET, SignUtils.APP_ID);
         } else if ("SM4".equals(encryptType)) {
             String sm4Key = DataFormater.byte2hex(SignUtils.APP_SECRET.getBytes()).substring(0, 16);
-            return new SM4Utils(sm4Key).encryptData_CBC(rawData);
+            return new SM4Utils(sm4Key, SignUtils.IV).encryptData_CBC(rawData);
         } else {
             return rawData;
         }
