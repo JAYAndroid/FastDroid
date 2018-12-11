@@ -95,6 +95,7 @@ public class SecurityUtils {
         // 传输过程加号丢失问题
         data = data.replace(" ", "+");
         return DESUtil.decrypt(data, newPassword.substring(0, 8));
+
     }
 
     public static String encryptByType(String rawData, String encryptType) throws Exception {
