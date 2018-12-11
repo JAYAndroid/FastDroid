@@ -28,6 +28,7 @@ public class SignUtils {
 
     public static boolean ENTRY = !Utils.isDebug();
 
+
     public static Map getRequest(Map<String, Object> params, String service) {
         if (params == null) {
             params = new ArrayMap<>();
