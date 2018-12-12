@@ -20,6 +20,10 @@ public class SM4Utils {
 		this.secretKey = secretKey;
 	}
 
+	public void setSecretKey(String secretKey){
+		this.secretKey = secretKey;
+	}
+
 	public SM4Utils(String secretKey, String iv) {
 		super();
 		this.secretKey = secretKey;

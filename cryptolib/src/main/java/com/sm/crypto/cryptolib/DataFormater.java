@@ -236,7 +236,7 @@ public class DataFormater {
                 hs = hs + "";
             }
         }
-        return hs.toLowerCase();
+        return hs.toUpperCase();
     }
     
 

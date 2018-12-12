@@ -203,4 +203,27 @@ public final class StringUtils {
         String template = "PREFIX(SUFFIX)";
         return template.replace("PREFIX", prefix).replace("SUFFIX", suffix);
     }
+
+    public static String rightPad(String content, int size, String padStr) {
+
+        if (StringUtils.isEmpty(content)) {
+            return "";
+        }
+
+        int contentLen = content.length();
+        if (contentLen == size) {
+            return content;
+        }
+
+        if (contentLen > size) {
+            return content.substring(0, size);
+        }
+
+        StringBuilder result = new StringBuilder(content);
+        for (int index = 0; index < size - contentLen; index++) {
+            result.append(padStr);
+        }
+
+        return result.toString();
+    }
 }
