@@ -103,7 +103,7 @@ public class SecurityUtils {
             return encryptByAES(rawData, SignUtils.APP_SECRET, SignUtils.APP_ID);
         } else if ("SM4".equals(encryptType)) {
             SM4Utils sm4Utils = new SM4Utils(SignUtils.APP_ID, SignUtils.IV);
-            String sm4Key = StringUtils.rightPad(DataFormater.byte2hex(sm4Utils.encryptData_CBC(SignUtils.APP_SECRET).getBytes()), 16, "0");
+            String sm4Key = StringUtils.rightPad(sm4Utils.encryptData_CBC(SignUtils.APP_SECRET), 16, "0");
             sm4Utils.setSecretKey(sm4Key);
             return sm4Utils.encryptData_CBC(rawData);
         } else {
