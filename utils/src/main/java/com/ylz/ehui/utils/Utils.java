@@ -5,6 +5,8 @@ import android.app.Application;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.sm.crypto.cryptolib.utils.AuthorizeUtil;
+
 /**
  * <pre>
  *     author: Blankj
@@ -33,6 +35,7 @@ public final class Utils {
         mApplicationContext = application.getApplicationContext();
         isDebug = debug;
         ToastUtils.init(application);
+        AuthorizeUtil.readAuthFile(mApplicationContext);
     }
 
     /**

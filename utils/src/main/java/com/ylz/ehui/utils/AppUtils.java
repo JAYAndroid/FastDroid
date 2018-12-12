@@ -145,4 +145,16 @@ public class AppUtils {
         //返回是否存在该包名，如果存在，则证明安装，返回true。否则未安装，返回false。
         return packageNames.contains(packageName);
     }
+
+    public static String getAppName() {
+        try {
+            PackageManager packageManager = Utils.getApp().getPackageManager();
+            PackageInfo packageInfo = packageManager.getPackageInfo(
+                    Utils.getApp().getPackageName(), 0);
+            int labelRes = packageInfo.applicationInfo.labelRes;
+            return Utils.getApp().getResources().getString(labelRes);
+        } catch (Exception e) {
+            return "";
+        }
+    }
 }
