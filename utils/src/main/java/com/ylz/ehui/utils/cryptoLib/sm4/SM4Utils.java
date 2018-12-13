@@ -1,7 +1,8 @@
-package com.sm.crypto.cryptolib.sm4;
+package com.ylz.ehui.utils.cryptoLib.sm4;
 
 
-import com.sm.crypto.cryptolib.DataFormater;
+
+import com.ylz.ehui.utils.cryptoLib.DataFormater;
 
 import java.io.IOException;
 import java.util.regex.Matcher;

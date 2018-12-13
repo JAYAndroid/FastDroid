@@ -1,7 +1,7 @@
 package com.ylz.ehui.utils;
 
-import com.sm.crypto.cryptolib.DataFormater;
-import com.sm.crypto.cryptolib.sm4.SM4Utils;
+
+import com.ylz.ehui.utils.cryptoLib.sm4.SM4Utils;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;

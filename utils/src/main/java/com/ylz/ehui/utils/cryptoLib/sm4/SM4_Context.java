@@ -1,4 +1,4 @@
-package com.sm.crypto.cryptolib.sm4;
+package com.ylz.ehui.utils.cryptoLib.sm4;
 
 public class SM4_Context {
 	public int mode;

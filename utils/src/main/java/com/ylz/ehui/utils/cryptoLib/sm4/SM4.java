@@ -1,4 +1,4 @@
-package com.sm.crypto.cryptolib.sm4;
+package com.ylz.ehui.utils.cryptoLib.sm4;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

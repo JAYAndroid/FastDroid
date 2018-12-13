@@ -1,7 +1,8 @@
-package com.sm.crypto.cryptolib.sm3;
+package com.ylz.ehui.utils.cryptoLib.sm3;
 
 
-import com.sm.crypto.cryptolib.DataFormater;
+
+import com.ylz.ehui.utils.cryptoLib.DataFormater;
 
 import java.io.UnsupportedEncodingException;
 

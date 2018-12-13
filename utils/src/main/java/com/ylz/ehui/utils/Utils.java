@@ -5,7 +5,8 @@ import android.app.Application;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import com.sm.crypto.cryptolib.utils.AuthorizeUtil;
+import com.ylz.ehui.utils.cryptoLib.utils.AuthorizeUtil;
+
 
 /**
  * <pre>

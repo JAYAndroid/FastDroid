@@ -1,4 +1,4 @@
-package com.sm.crypto.cryptolib.sm3;
+package com.ylz.ehui.utils.cryptoLib.sm3;
  
 import java.math.BigInteger;
 

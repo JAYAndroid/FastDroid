@@ -1,4 +1,4 @@
-package com.sm.crypto.cryptolib.utils;
+package com.ylz.ehui.utils.cryptoLib.utils;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
@@ -7,13 +7,13 @@ import android.text.TextUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.sm.crypto.cryptolib.sm3.SM3Utils;
-import com.sm.crypto.cryptolib.sm4.SM4Utils;
 import com.ylz.ehui.utils.AppUtils;
 import com.ylz.ehui.utils.SignUtils;
 import com.ylz.ehui.utils.StringUtils;
 import com.ylz.ehui.utils.ToastUtils;
 import com.ylz.ehui.utils.Utils;
+import com.ylz.ehui.utils.cryptoLib.sm3.SM3Utils;
+import com.ylz.ehui.utils.cryptoLib.sm4.SM4Utils;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
