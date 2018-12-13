@@ -49,7 +49,11 @@ public class AuthorizeUtil {
                 .append(SignUtils.APP_SECRET);
 
         String appAuthCode = SM3Utils.encrypt(sm3Sb.toString());
-        return authCode.equals(appAuthCode);
+        boolean result = authCode.equals(appAuthCode);
+        if (!result) {
+            ToastUtils.showHint("验证失败，请注意非法请求");
+        }
+        return result;
     }
 
     public static void readAuthFile(final Context context) {
