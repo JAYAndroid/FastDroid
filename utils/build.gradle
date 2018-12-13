@@ -40,6 +40,4 @@ android {
 
 dependencies {
     api fileTree(include: ['*.jar'], dir: 'libs')
-    api project(':common')
-    implementation project(':cryptolib')
 }
