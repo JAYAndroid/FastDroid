@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -28,12 +29,14 @@ import io.reactivex.schedulers.Schedulers;
 public class AuthorizeUtil {
     private static String authFileContent;
 
-    public static boolean verifyAuth() {
+    public static boolean verifyAuth(String version) {
         if (TextUtils.isEmpty(authFileContent)) {
-            ToastUtils.showHint("验证失败，未找到授权文件");
+            ToastUtils.showHint("当前环境不安全，该功能暂不支持！");
+            Log.i("AuthorizeUtil","当前环境不安全，该功能暂不支持！");
             return false;
         }
 
+        Log.i("AuthorizeUtil","开始校验授权文件。。。");
         SM4Utils sm4 = new SM4Utils(SignUtils.APP_ID, SignUtils.IV);
         String sm4Key = StringUtils.rightPad(sm4.encryptData_CBC(SignUtils.APP_SECRET), 16, "0");
         sm4.setSecretKey(sm4Key);
@@ -45,14 +48,16 @@ public class AuthorizeUtil {
         sm3Sb.append(SignUtils.APP_ID)
                 .append(AppUtils.getAppName())
                 .append(Utils.getApp().getPackageName())
-                .append("1.0.6")
+                .append(AppUtils.getVersionName())
                 .append(SignUtils.APP_SECRET);
 
         String appAuthCode = SM3Utils.encrypt(sm3Sb.toString());
         boolean result = authCode.equals(appAuthCode);
         if (!result) {
-            ToastUtils.showHint("验证失败，请注意非法请求");
+            Log.i("AuthorizeUtil","当前环境不安全，该功能暂不支持！");
+            ToastUtils.showHint("当前环境不安全，该功能暂不支持！");
         }
+        Log.i("AuthorizeUtil","授权文件校验成功。。。");
         return result;
     }
 
