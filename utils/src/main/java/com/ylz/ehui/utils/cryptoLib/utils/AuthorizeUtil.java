@@ -29,7 +29,7 @@ import io.reactivex.schedulers.Schedulers;
 public class AuthorizeUtil {
     private static String authFileContent;
 
-    public static boolean verifyAuth(String version) {
+    public static boolean verifyAuth() {
         if (TextUtils.isEmpty(authFileContent)) {
             ToastUtils.showHint("当前环境不安全，该功能暂不支持！");
             Log.i("AuthorizeUtil","当前环境不安全，该功能暂不支持！");
