@@ -30,13 +30,17 @@ public class AuthorizeUtil {
     private static String authFileContent;
 
     public static boolean verifyAuth() {
+        if (Utils.isDebug()) {
+            return true;
+        }
+
         if (TextUtils.isEmpty(authFileContent)) {
             ToastUtils.showHint("当前环境不安全，该功能暂不支持！");
-            Log.i("AuthorizeUtil","当前环境不安全，该功能暂不支持！");
+            Log.i("AuthorizeUtil", "当前环境不安全，该功能暂不支持！");
             return false;
         }
 
-        Log.i("AuthorizeUtil","开始校验授权文件。。。");
+        Log.i("AuthorizeUtil", "开始校验授权文件。。。");
         SM4Utils sm4 = new SM4Utils(SignUtils.APP_ID, SignUtils.IV);
         String sm4Key = StringUtils.rightPad(sm4.encryptData_CBC(SignUtils.APP_SECRET), 16, "0");
         sm4.setSecretKey(sm4Key);
@@ -54,10 +58,10 @@ public class AuthorizeUtil {
         String appAuthCode = SM3Utils.encrypt(sm3Sb.toString());
         boolean result = authCode.equals(appAuthCode);
         if (!result) {
-            Log.i("AuthorizeUtil","当前环境不安全，该功能暂不支持！");
+            Log.i("AuthorizeUtil", "当前环境不安全，该功能暂不支持！");
             ToastUtils.showHint("当前环境不安全，该功能暂不支持！");
         }
-        Log.i("AuthorizeUtil","授权文件校验成功。。。");
+        Log.i("AuthorizeUtil", "授权文件校验成功。。。");
         return result;
     }
 
