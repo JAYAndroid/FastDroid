@@ -19,3 +19,83 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keep class com.blankj.utilcode.** { *; }
+-keepclassmembers class com.blankj.utilcode.** { *; }
+-dontwarn com.blankj.utilcode.**
+
+-keep public class com.alibaba.android.arouter.routes.**{*;}
+-keep class * implements com.alibaba.android.arouter.facade.template.ISyringe{*;}
+
+
+-optimizationpasses 5 # 指定代码的压缩级别
+-dontusemixedcaseclassnames # 是否使用大小写混合
+-dontpreverify # 混淆时是否做预校验
+-verbose # 混淆时是否记录日志
+-optimizations !code/simplification/arithmetic,!field/*,!class/merging/* # 混淆时所采用的算法
+-keep public class * extends android.app.Activity # 保持哪些类不被混淆
+-keep public class * extends android.app.Application # 保持哪些类不被混淆
+-keep public class * extends android.app.Service # 保持哪些类不被混淆
+-keep public class * extends android.content.BroadcastReceiver # 保持哪些类不被混淆
+-keep public class * extends android.content.ContentProvider # 保持哪些类不被混淆
+-keep public class * extends android.app.backup.BackupAgentHelper # 保持哪些类不被混淆
+-keep public class * extends android.preference.Preference # 保持哪些类不被混淆
+-keep public class com.android.vending.licensing.ILicensingService # 保持哪些类不被混淆
+-keepclasseswithmembernames class * { # 保持 native 方法不被混淆
+   native <methods>;
+}
+-keepclasseswithmembers class * { # 保持自定义控件类不被混淆
+   public <init>(android.content.Context, android.util.AttributeSet);
+}
+-keepclasseswithmembers class * {# 保持自定义控件类不被混淆
+   public <init>(android.content.Context, android.util.AttributeSet, int);
+}
+-keepclassmembers class * extends android.app.Activity { # 保持自定义控件类不被混淆
+   public void *(android.view.View);
+}
+-keepclassmembers enum * { # 保持枚举 enum 类不被混淆
+   public static **[] values();
+   public static ** valueOf(java.lang.String);
+}
+
+#不混淆资源类
+-keepclassmembers class **.R$* {
+public static <fields>;
+}
+
+-keep class * implements android.os.Parcelable {#保持Parcelable不被混淆
+   public static final android.os.Parcelable$Creator *;
+}
+# Explicitly preserve all serialization members. The Serializable interface
+# is only a marker interface, so it wouldn't save them.
+-keep public class * implements java.io.Serializable {*;}
+-keepclassmembers class * implements java.io.Serializable {
+   static final long serialVersionUID;
+   private static final java.io.ObjectStreamField[]   serialPersistentFields;
+   private void writeObject(java.io.ObjectOutputStream);
+   private void readObject(java.io.ObjectInputStream);
+   java.lang.Object writeReplace();
+   java.lang.Object readResolve();
+}
+-keepclassmembers class * {
+   public <init> (org.json.JSONObject);
+}
+
+-keepattributes Signature
+
+# Retain service method parameters when optimizing.
+-keepclassmembers,allowshrinking,allowobfuscation interface * {
+    @retrofit2.http.* <methods>;
+}
+
+# Ignore annotation used for build tooling.
+-dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+
+# Ignore JSR 305 annotations for embedding nullability information.
+-dontwarn javax.annotation.**
+#缺省页框架start
+-dontwarn com.kingja.loadsir.**
+-keep class com.kingja.loadsir.** {*;}
+#缺省页框架end
+
+
