@@ -57,7 +57,14 @@ public class SignUtils {
         map.put("timestamp", new DateFormat().format("yyyyMMddHHmmssSSS", System.currentTimeMillis()));
         map.put("signType", SIGN_TYPE);
         map.put("encryptType", ENCRYPT_TYPE);
-        map.put("version", AppUtils.getVersionCode());
+
+        if (!StringUtils.isEmpty(String.valueOf(params.get("version")))) {
+            map.put("version", String.valueOf(params.get("version")));
+            params.remove("version");
+        } else {
+            map.put("version", AppUtils.getVersionCode());
+        }
+
         map.put("deviceId", AppUtils.getUUid());
         map.put("appId", APP_ID);
         map.put("sessionId", CommonUserInfos.getInstance().getSessionId());
