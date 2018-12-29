@@ -67,12 +67,14 @@ public class RetrofitBaseUrlManager {
     private static final String BASE_URL = "baseUrl";
     private static final String APP_ID = "appId";
     private static final String SECRET = "secret";
+    private static final String SESSION_ID = "sessionId";
 
     private static final String BASE_RUL_KEY = "globalBaseUrl";
 
     public static final String BASE_URL_HEAD = BASE_URL + ": ";
     public static final String APP_ID_HEAD = APP_ID + ": ";
     public static final String SECRET_HEAD = SECRET + ": ";
+    public static final String SESSION_ID_HEAD = SESSION_ID + ": ";
 
     private static final String IDENTIFICATION_IGNORE = "#url_ignore";//如果在 Url 地址中加入此标识符, 管理器将不会对此 Url 进行任何切换 BaseUrl 的操作
 
@@ -81,6 +83,7 @@ public class RetrofitBaseUrlManager {
     private final Map<String, HttpUrl> mBaseUrlHub = new HashMap<>();
     private final Map<String, String> mAppIdHub = new HashMap<>();
     private final Map<String, String> mSecretHub = new HashMap<>();
+    private final Map<String, String> mSessionIdHub = new HashMap<>();
     private final Interceptor mInterceptor;
     private final List<OnUrlChangeListener> mListeners = new ArrayList<>();
     private UrlParser mUrlParser;
@@ -170,6 +173,7 @@ public class RetrofitBaseUrlManager {
         String domainName = obtainBaseUrlFromHeaders(request);
         String appIdName = obtainAppIdFromHeaders(request);
         String secretName = obtainAppSecretromHeaders(request);
+        String sessionIdName = obtainSessionIdFromHeaders(request);
 
         HttpUrl httpUrl;
 
@@ -198,6 +202,14 @@ public class RetrofitBaseUrlManager {
             }
 
             newBuilder.removeHeader(SECRET);
+        }
+
+        if (!TextUtils.isEmpty(sessionIdName) && mSessionIdHub.containsKey(sessionIdName)) {
+            if (newMap.containsKey("sessionId")) {
+                newMap.put("sessionId", mSessionIdHub.get(sessionIdName));
+            }
+
+            newBuilder.removeHeader(SESSION_ID);
         }
 
         if (null != httpUrl) {
@@ -349,6 +361,12 @@ public class RetrofitBaseUrlManager {
         }
     }
 
+    public void putSessionId(String sessionIdName, String sessionIdValue) {
+        if (!mSessionIdHub.containsKey(sessionIdName)) {
+            mSessionIdHub.put(sessionIdName, sessionIdValue);
+        }
+    }
+
     /**
      * 取出对应 {@code baeUrl} 的 Url(BaseUrl)
      *
@@ -469,6 +487,15 @@ public class RetrofitBaseUrlManager {
         if (headers.size() > 1)
             throw new IllegalArgumentException("Only one SECRET in the headers");
         return request.header(SECRET);
+    }
+
+    private String obtainSessionIdFromHeaders(Request request) {
+        List<String> headers = request.headers(SESSION_ID);
+        if (headers == null || headers.size() == 0)
+            return null;
+        if (headers.size() > 1)
+            throw new IllegalArgumentException("Only one SESSION_ID in the headers");
+        return request.header(SESSION_ID);
     }
 
     private HttpUrl checkUrl(String url) {
