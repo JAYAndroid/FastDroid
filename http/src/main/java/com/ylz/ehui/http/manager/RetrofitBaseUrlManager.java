@@ -362,9 +362,7 @@ public class RetrofitBaseUrlManager {
     }
 
     public void putSessionId(String sessionIdName, String sessionIdValue) {
-        if (!mSessionIdHub.containsKey(sessionIdName)) {
-            mSessionIdHub.put(sessionIdName, sessionIdValue);
-        }
+        mSessionIdHub.put(sessionIdName, sessionIdValue);
     }
 
     /**
