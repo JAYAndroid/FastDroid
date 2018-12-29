@@ -139,7 +139,7 @@ public class RetrofitBaseUrlManager {
      */
     public Request processRequest(Request request) {
         MediaType contentType = request.body().contentType();
-        TreeMap<String, String> newMap = new TreeMap<>();
+        TreeMap<String, Object> newMap = new TreeMap<>();
         newMap.clear();
         try {
             Buffer buffer = new Buffer();
@@ -151,8 +151,8 @@ public class RetrofitBaseUrlManager {
 
             String originalRequestParams = buffer.readString(charset);
 
-            TreeMap<String, String> originalMap = mGson.fromJson(originalRequestParams,
-                    new TypeToken<TreeMap<String, String>>() {
+            TreeMap<String, Object> originalMap = mGson.fromJson(originalRequestParams,
+                    new TypeToken<TreeMap<String, Object>>() {
                     }.getType());
             newMap.putAll(originalMap);
         } catch (IOException e) {
