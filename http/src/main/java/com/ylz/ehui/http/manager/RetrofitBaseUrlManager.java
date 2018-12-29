@@ -18,22 +18,28 @@ package com.ylz.ehui.http.manager;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.ylz.ehui.http.OnUrlChangeListener;
 import com.ylz.ehui.http.parser.DefaultUrlParser;
 import com.ylz.ehui.http.parser.UrlParser;
-import com.ylz.ehui.utils.SignUtils;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
+import okio.Buffer;
 
 /**
  * ================================================
@@ -54,6 +60,8 @@ import okhttp3.Response;
  * ================================================
  */
 public class RetrofitBaseUrlManager {
+    private Charset UTF8;
+    private Gson mGson;
     private static final String TAG = "RetrofitBaseUrlManager";
     private static final boolean DEPENDENCY_OKHTTP;
     private static final String BASE_URL = "baseUrl";
@@ -90,6 +98,7 @@ public class RetrofitBaseUrlManager {
 
 
     private RetrofitBaseUrlManager() {
+        mGson = new Gson();
         if (!DEPENDENCY_OKHTTP) { //使用本管理器必须依赖 Okhttp
             throw new IllegalStateException("Must be dependency Okhttp");
         }
@@ -129,6 +138,26 @@ public class RetrofitBaseUrlManager {
      * @return {@link Request}
      */
     public Request processRequest(Request request) {
+        MediaType contentType = request.body().contentType();
+        TreeMap<String, String> newMap = new TreeMap<>();
+        newMap.clear();
+        try {
+            Buffer buffer = new Buffer();
+            request.body().writeTo(buffer);
+            Charset charset = UTF8;
+            if (contentType != null) {
+                charset = contentType.charset(UTF8);
+            }
+
+            String originalRequestParams = buffer.readString(charset);
+
+            TreeMap<String, String> originalMap = mGson.fromJson(originalRequestParams,
+                    new TypeToken<TreeMap<String, String>>() {
+                    }.getType());
+            newMap.putAll(originalMap);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         Request.Builder newBuilder = request.newBuilder();
 
@@ -157,15 +186,18 @@ public class RetrofitBaseUrlManager {
         }
 
         if (!TextUtils.isEmpty(appIdName) && mAppIdHub.containsKey(appIdName)) {
-            SignUtils.APP_ID = mAppIdHub.get(appIdName);
-        } else {
-            SignUtils.APP_ID = SignUtils.DEFAULT_APP_ID;
+            if (newMap.containsKey("appId")) {
+                newMap.put("appId", mAppIdHub.get(appIdName));
+            }
+            newBuilder.removeHeader(APP_ID);
         }
 
         if (!TextUtils.isEmpty(secretName) && mSecretHub.containsKey(secretName)) {
-            SignUtils.APP_SECRET = mSecretHub.get(secretName);
-        } else {
-            SignUtils.APP_SECRET = SignUtils.DEFAULT_APP_SECRET;
+            if (newMap.containsKey("sign")) {
+                newMap.put("sign", mSecretHub.get(secretName));
+            }
+
+            newBuilder.removeHeader(SECRET);
         }
 
         if (null != httpUrl) {
@@ -180,10 +212,13 @@ public class RetrofitBaseUrlManager {
             }
             return newBuilder
                     .url(newUrl)
+                    .post(RequestBody.create(contentType, mGson.toJson(newMap)))
                     .build();
         }
 
-        return newBuilder.build();
+        return newBuilder
+                .post(RequestBody.create(contentType, mGson.toJson(newMap)))
+                .build();
 
     }
 
