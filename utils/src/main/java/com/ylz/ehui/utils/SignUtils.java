@@ -21,10 +21,15 @@ import java.util.TreeMap;
  * 注释：访问网络时，签名
  ********************/
 public class SignUtils {
-    public static String APP_SECRET = "SKnYwGwnwh3LI56mMwJgDw==";
-    public static String APP_ID = "Android";
+    public static String DEFAULT_APP_SECRET = "SKnYwGwnwh3LI56mMwJgDw==";
+    public static String DEFAULT_APP_ID = "Android";
+
+    public static String APP_SECRET = DEFAULT_APP_SECRET;
+    public static String APP_ID = DEFAULT_APP_ID;
+
     public static String SIGN_TYPE = "MD5";
     public static String ENCRYPT_TYPE = "AES";
+
     public static String IV = "0102030405060708";
 
     public static boolean ENTRY = !Utils.isDebug();

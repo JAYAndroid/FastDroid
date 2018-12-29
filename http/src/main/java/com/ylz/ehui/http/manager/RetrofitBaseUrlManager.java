@@ -21,6 +21,7 @@ import android.util.Log;
 import com.ylz.ehui.http.OnUrlChangeListener;
 import com.ylz.ehui.http.parser.DefaultUrlParser;
 import com.ylz.ehui.http.parser.UrlParser;
+import com.ylz.ehui.utils.SignUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,9 +46,9 @@ import okhttp3.Response;
  * <a href="https://github.com/JessYanCoding">Follow me</a>
  * <p>
  * 使用方法如下：
- *   ' RetrofitBaseUrlManager.getInstance().putBaseUrl("test","http://www.baidu.com/");
- *   '@Headers({RetrofitBaseUrlManager.BASE_URL_HEAD + "test"})
- *   'POST(MedicineConstant.BASE_URL_SUFFIX) Observable<ResponseBody> getBook(@Body int id);
+ * ' RetrofitBaseUrlManager.getInstance().putBaseUrl("test","http://www.baidu.com/");
+ * '@Headers({RetrofitBaseUrlManager.BASE_URL_HEAD + "test"})
+ * 'POST(MedicineConstant.BASE_URL_SUFFIX) Observable<ResponseBody> getBook(@Body int id);
  * <p>
  * <p>
  * ================================================
@@ -56,13 +57,22 @@ public class RetrofitBaseUrlManager {
     private static final String TAG = "RetrofitBaseUrlManager";
     private static final boolean DEPENDENCY_OKHTTP;
     private static final String BASE_URL = "baseUrl";
+    private static final String APP_ID = "appId";
+    private static final String SECRET = "secret";
+
     private static final String BASE_RUL_KEY = "globalBaseUrl";
+
     public static final String BASE_URL_HEAD = BASE_URL + ": ";
+    public static final String APP_ID_HEAD = APP_ID + ": ";
+    public static final String SECRET_HEAD = SECRET + ": ";
+
     private static final String IDENTIFICATION_IGNORE = "#url_ignore";//如果在 Url 地址中加入此标识符, 管理器将不会对此 Url 进行任何切换 BaseUrl 的操作
 
     private boolean isRun = true; //默认开始运行, 可以随时停止运行, 比如你在 App 启动后已经不需要再动态切换 BaseUrl 了
     private boolean debug = false;//在 Debug  模式下可以打印日志
     private final Map<String, HttpUrl> mBaseUrlHub = new HashMap<>();
+    private final Map<String, String> mAppIdHub = new HashMap<>();
+    private final Map<String, String> mSecretHub = new HashMap<>();
     private final Interceptor mInterceptor;
     private final List<OnUrlChangeListener> mListeners = new ArrayList<>();
     private UrlParser mUrlParser;
@@ -129,6 +139,8 @@ public class RetrofitBaseUrlManager {
         }
 
         String domainName = obtainBaseUrlFromHeaders(request);
+        String appIdName = obtainAppIdFromHeaders(request);
+        String secretName = obtainAppSecretromHeaders(request);
 
         HttpUrl httpUrl;
 
@@ -142,6 +154,18 @@ public class RetrofitBaseUrlManager {
         } else {
             notifyListener(request, BASE_RUL_KEY, listeners);
             httpUrl = getGlobalBaseUrl();
+        }
+
+        if (!TextUtils.isEmpty(appIdName) && mAppIdHub.containsKey(appIdName)) {
+            SignUtils.APP_ID = mAppIdHub.get(appIdName);
+        } else {
+            SignUtils.APP_ID = SignUtils.DEFAULT_APP_ID;
+        }
+
+        if (!TextUtils.isEmpty(secretName) && mSecretHub.containsKey(secretName)) {
+            SignUtils.APP_SECRET = mSecretHub.get(secretName);
+        } else {
+            SignUtils.APP_SECRET = SignUtils.DEFAULT_APP_SECRET;
         }
 
         if (null != httpUrl) {
@@ -278,6 +302,18 @@ public class RetrofitBaseUrlManager {
         }
     }
 
+    public void putAppId(String appIdName, String appIdValue) {
+        synchronized (mAppIdHub) {
+            mAppIdHub.put(appIdName, appIdValue);
+        }
+    }
+
+    public void putSecret(String secretName, String secretValue) {
+        synchronized (mSecretHub) {
+            mSecretHub.put(secretName, secretValue);
+        }
+    }
+
     /**
      * 取出对应 {@code baeUrl} 的 Url(BaseUrl)
      *
@@ -380,6 +416,24 @@ public class RetrofitBaseUrlManager {
         if (headers.size() > 1)
             throw new IllegalArgumentException("Only one Domain-Name in the headers");
         return request.header(BASE_URL);
+    }
+
+    private String obtainAppIdFromHeaders(Request request) {
+        List<String> headers = request.headers(APP_ID);
+        if (headers == null || headers.size() == 0)
+            return null;
+        if (headers.size() > 1)
+            throw new IllegalArgumentException("Only one APP_ID in the headers");
+        return request.header(APP_ID);
+    }
+
+    private String obtainAppSecretromHeaders(Request request) {
+        List<String> headers = request.headers(SECRET);
+        if (headers == null || headers.size() == 0)
+            return null;
+        if (headers.size() > 1)
+            throw new IllegalArgumentException("Only one SECRET in the headers");
+        return request.header(SECRET);
     }
 
     private HttpUrl checkUrl(String url) {
