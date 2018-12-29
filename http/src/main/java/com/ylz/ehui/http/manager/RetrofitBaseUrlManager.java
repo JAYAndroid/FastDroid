@@ -269,7 +269,7 @@ public class RetrofitBaseUrlManager {
      * @param url 全局 BaseUrl
      */
     public void setGlobalBaseUrl(String url) {
-        synchronized (mBaseUrlHub) {
+        if (!mBaseUrlHub.containsKey(url)) {
             mBaseUrlHub.put(BASE_RUL_KEY, checkUrl(url));
         }
     }
@@ -285,7 +285,7 @@ public class RetrofitBaseUrlManager {
      * 移除全局 BaseUrl
      */
     public void removeGlobalBaseUrl() {
-        synchronized (mBaseUrlHub) {
+        if (mBaseUrlHub.containsKey(BASE_RUL_KEY)) {
             mBaseUrlHub.remove(BASE_RUL_KEY);
         }
     }
@@ -297,19 +297,19 @@ public class RetrofitBaseUrlManager {
      * @param domainUrl
      */
     public void putBaseUrl(String domainName, String domainUrl) {
-        synchronized (mBaseUrlHub) {
+        if (!mBaseUrlHub.containsKey(domainName)) {
             mBaseUrlHub.put(domainName, checkUrl(domainUrl));
         }
     }
 
     public void putAppId(String appIdName, String appIdValue) {
-        synchronized (mAppIdHub) {
+        if (!mAppIdHub.containsKey(appIdName)) {
             mAppIdHub.put(appIdName, appIdValue);
         }
     }
 
     public void putSecret(String secretName, String secretValue) {
-        synchronized (mSecretHub) {
+        if (!mSecretHub.containsKey(secretName)) {
             mSecretHub.put(secretName, secretValue);
         }
     }
@@ -330,7 +330,7 @@ public class RetrofitBaseUrlManager {
      * @param domainName {@code domainName}
      */
     public void removeBaseUrl(String domainName) {
-        synchronized (mBaseUrlHub) {
+        if (mBaseUrlHub.containsKey(domainName)) {
             mBaseUrlHub.remove(domainName);
         }
     }
@@ -376,7 +376,7 @@ public class RetrofitBaseUrlManager {
      * @param listener 监听器列表
      */
     public void registerUrlChangeListener(OnUrlChangeListener listener) {
-        synchronized (mListeners) {
+        if (!mListeners.contains(listener)) {
             mListeners.add(listener);
         }
     }
@@ -387,7 +387,7 @@ public class RetrofitBaseUrlManager {
      * @param listener 监听器列表
      */
     public void unregisterUrlChangeListener(OnUrlChangeListener listener) {
-        synchronized (mListeners) {
+        if (mListeners.contains(listener)) {
             mListeners.remove(listener);
         }
     }
