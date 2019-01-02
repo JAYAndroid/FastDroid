@@ -1,19 +1,16 @@
 package com.ylz.ehui.utils;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
-
-import com.ylz.ehui.module_utils.R;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -157,4 +154,23 @@ public class AppUtils {
             return "";
         }
     }
+
+    /**
+     * 获取app签名md5值,与“keytool -list -keystore D:\Desktop\app_key”‘keytool -printcert     *file D:\Desktop\CERT.RSA’获取的md5值一样
+     */
+    public static String getSignMd5Str() {
+        try {
+            PackageInfo packageInfo = Utils.getApp().getPackageManager().getPackageInfo(
+                    Utils.getApp().getPackageName(), PackageManager.GET_SIGNATURES);
+            Signature[] signs = packageInfo.signatures;
+            Signature sign = signs[0];
+            return EncryptUtils.encryptMD5ToString(sign.toByteArray());
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return "";
+    }
+
+
 }

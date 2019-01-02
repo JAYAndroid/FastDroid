@@ -1,270 +1,609 @@
 package com.ylz.ehui.utils.cryptoLib.sm2;
 
+import com.ylz.ehui.utils.cryptoLib.sm2.BCECUtil;
+import com.ylz.ehui.utils.cryptoLib.sm2.GMBaseUtil;
+import com.ylz.ehui.utils.cryptoLib.sm2.SM2Cipher;
+import com.ylz.ehui.utils.cryptoLib.sm3.Util;
 
-import org.bouncycastle.crypto.DerivationFunction;
-import org.bouncycastle.crypto.digests.SHA256Digest;
-import org.bouncycastle.crypto.digests.ShortenedDigest;
-import org.bouncycastle.crypto.generators.KDF1BytesGenerator;
-import org.bouncycastle.crypto.params.ISO18033KDFParameters;
-import org.bouncycastle.math.ec.ECCurve;
+import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1Encoding;
+import org.bouncycastle.asn1.ASN1Integer;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
+import org.bouncycastle.crypto.CipherParameters;
+import org.bouncycastle.crypto.CryptoException;
+import org.bouncycastle.crypto.InvalidCipherTextException;
+import org.bouncycastle.crypto.engines.SM2Engine;
+import org.bouncycastle.crypto.params.ECDomainParameters;
+import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
+import org.bouncycastle.crypto.params.ECPublicKeyParameters;
+import org.bouncycastle.crypto.params.ParametersWithID;
+import org.bouncycastle.crypto.params.ParametersWithRandom;
+import org.bouncycastle.crypto.signers.SM2Signer;
+import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPrivateKey;
+import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPublicKey;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.jce.spec.ECParameterSpec;
 import org.bouncycastle.math.ec.ECPoint;
+import org.bouncycastle.math.ec.custom.gm.SM2P256V1Curve;
+import org.bouncycastle.util.encoders.Hex;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
-import java.security.SecureRandom;
-import java.util.Arrays;
+import java.security.*;
+import java.security.spec.ECFieldFp;
+import java.security.spec.EllipticCurve;
+import java.security.spec.InvalidKeySpecException;
 
-/**
- * Author: yms
- * Time: 2018/12/27 13:55
- * Describe:
- */
-public class SM2Util {
-    /**
-     * 素数p
+public class SM2Util extends GMBaseUtil {
+    //////////////////////////////////////////////////////////////////////////////////////
+    /*
+     * 以下为SM2推荐曲线参数
      */
-    private static final BigInteger p = new BigInteger("FFFFFFFE" + "FFFFFFFF"
-            + "FFFFFFFF" + "FFFFFFFF" + "FFFFFFFF" + "00000000" + "FFFFFFFF"
-            + "FFFFFFFF", 16);
+    public static final SM2P256V1Curve CURVE = new SM2P256V1Curve();
+    public final static BigInteger SM2_ECC_P = CURVE.getQ();
+    public final static BigInteger SM2_ECC_A = CURVE.getA().toBigInteger();
+    public final static BigInteger SM2_ECC_B = CURVE.getB().toBigInteger();
+    public final static BigInteger SM2_ECC_N = CURVE.getOrder();
+    public final static BigInteger SM2_ECC_H = CURVE.getCofactor();
+    public final static BigInteger SM2_ECC_GX = new BigInteger(
+            "32C4AE2C1F1981195F9904466A39C9948FE30BBFF2660BE1715A4589334C74C7", 16);
+    public final static BigInteger SM2_ECC_GY = new BigInteger(
+            "BC3736A2F4F6779C59BDCEE36B692153D0A9877CC62A474002DF32E52139F0A0", 16);
+    public static final ECPoint G_POINT = CURVE.createPoint(SM2_ECC_GX, SM2_ECC_GY);
+    public static final ECDomainParameters DOMAIN_PARAMS = new ECDomainParameters(CURVE, G_POINT,
+            SM2_ECC_N, SM2_ECC_H);
+    //////////////////////////////////////////////////////////////////////////////////////
+
+    public static final EllipticCurve JDK_CURVE = new EllipticCurve(new ECFieldFp(SM2_ECC_P), SM2_ECC_A, SM2_ECC_B);
+    public static final java.security.spec.ECPoint JDK_G_POINT = new java.security.spec.ECPoint(
+            G_POINT.getAffineXCoord().toBigInteger(), G_POINT.getAffineYCoord().toBigInteger());
+    public static final java.security.spec.ECParameterSpec JDK_EC_SPEC = new java.security.spec.ECParameterSpec(
+            JDK_CURVE, JDK_G_POINT, SM2_ECC_N, SM2_ECC_H.intValue());
+
+    //////////////////////////////////////////////////////////////////////////////////////
+
+    public static final int SM3_DIGEST_LENGTH = 32;
 
     /**
-     * 系数a
-     */
-    private static final BigInteger a = new BigInteger("FFFFFFFE" + "FFFFFFFF"
-            + "FFFFFFFF" + "FFFFFFFF" + "FFFFFFFF" + "00000000" + "FFFFFFFF"
-            + "FFFFFFFC", 16);
-
-    /**
-     * 系数b
-     */
-    private static final BigInteger b = new BigInteger("28E9FA9E" + "9D9F5E34"
-            + "4D5A9E4B" + "CF6509A7" + "F39789F5" + "15AB8F92" + "DDBCBD41"
-            + "4D940E93", 16);
-
-    /**
-     * 坐标x
-     */
-    private static final BigInteger xg = new BigInteger("32C4AE2C" + "1F198119"
-            + "5F990446" + "6A39C994" + "8FE30BBF" + "F2660BE1" + "715A4589"
-            + "334C74C7", 16);
-
-    /**
-     * 坐标y
-     */
-    private static final BigInteger yg = new BigInteger("BC3736A2" + "F4F6779C"
-            + "59BDCEE3" + "6B692153" + "D0A9877C" + "C62A4740" + "02DF32E5"
-            + "2139F0A0", 16);
-
-    /**
-     * 基点G, G=(xg,yg),其介记为n
-     */
-    private static final BigInteger n = new BigInteger("FFFFFFFE" + "FFFFFFFF"
-            + "FFFFFFFF" + "FFFFFFFF" + "7203DF6B" + "21C6052B" + "53BBF409"
-            + "39D54123", 16);
-
-    private static SecureRandom random = new SecureRandom();
-    private ECCurve.Fp curve;
-    private ECPoint G;
-
-    public static String printHexString(byte[] b) {
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < b.length; i++) {
-            String hex = Integer.toHexString(b[i] & 0xFF);
-            if (hex.length() == 1) {
-                builder.append('0' + hex);
-                hex = '0' + hex;
-            }
-            builder.append(hex);
-        }
-        return builder.toString();
-    }
-
-    public BigInteger random(BigInteger max) {
-        BigInteger r = new BigInteger(256, random);
-        // int count = 1;
-        while (r.compareTo(max) >= 0) {
-            r = new BigInteger(128, random);
-            // count++;
-        }
-        return r;
-    }
-
-    private boolean allZero(byte[] buffer) {
-        for (int i = 0; i < buffer.length; i++) {
-            if (buffer[i] != 0)
-                return false;
-        }
-        return true;
-    }
-
-    /**
-     * 加密
+     * 生成ECC密钥对
      *
-     * @param input     待加密消息M
-     * @param publicKey 公钥
-     * @return byte[] 加密后的字节数组
+     * @return ECC密钥对
      */
-    public byte[] encrypt(String input, ECPoint publicKey) {
-        byte[] inputBuffer = input.getBytes();
-        printHexString(inputBuffer);
-
-        /* 1 产生随机数k，k属于[1, n-1] */
-        BigInteger k = random(n);
-        printHexString(k.toByteArray());
-
-        /* 2 计算椭圆曲线点C1 = [k]G = (x1, y1) */
-        ECPoint C1 = G.multiply(k);
-        byte[] C1Buffer = C1.getEncoded(false);
-        printHexString(C1Buffer);
-
-        // 3 计算椭圆曲线点 S = [h]Pb * curve没有指定余因子，h为空
-
-        //			 BigInteger h = curve.getCofactor(); System.out.print("h: ");
-        //			 printHexString(h.toByteArray()); if (publicKey != null) { ECPoint
-        //			 result = publicKey.multiply(h); if (!result.isInfinity()) {
-        //			 System.out.println("pass"); } else {
-        //			System.err.println("计算椭圆曲线点 S = [h]Pb失败"); return null; } }
-
-        /* 4 计算 [k]PB = (x2, y2) */
-        ECPoint kpb = publicKey.multiply(k).normalize();
-
-        /* 5 计算 t = KDF(x2||y2, klen) */
-        byte[] kpbBytes = kpb.getEncoded(false);
-        DerivationFunction kdf = new KDF1BytesGenerator(new ShortenedDigest(
-                new SHA256Digest(), 20));
-        byte[] t = new byte[inputBuffer.length];
-        kdf.init(new ISO18033KDFParameters(kpbBytes));
-        kdf.generateBytes(t, 0, t.length);
-
-        if (allZero(t)) {
-            System.err.println("all zero");
-        }
-
-        /* 6 计算C2=M^t */
-        byte[] C2 = new byte[inputBuffer.length];
-        for (int i = 0; i < inputBuffer.length; i++) {
-            C2[i] = (byte) (inputBuffer[i] ^ t[i]);
-        }
-
-        /* 7 计算C3 = Hash(x2 || M || y2) */
-        byte[] C3 = calculateHash(kpb.getXCoord().toBigInteger(), inputBuffer,
-                kpb.getYCoord().toBigInteger());
-
-        /* 8 输出密文 C=C1 || C2 || C3 */
-        byte[] encryptResult = new byte[C1Buffer.length + C2.length + C3.length];
-        System.arraycopy(C1Buffer, 0, encryptResult, 0, C1Buffer.length);
-        System.arraycopy(C2, 0, encryptResult, C1Buffer.length, C2.length);
-        System.arraycopy(C3, 0, encryptResult, C1Buffer.length + C2.length,
-                C3.length);
-
-        printHexString(encryptResult);
-
-        return encryptResult;
+    public static AsymmetricCipherKeyPair generateKeyPair() {
+        SecureRandom random = new SecureRandom();
+        return BCECUtil.generateKeyPair(DOMAIN_PARAMS, random);
     }
 
-    public void decrypt(byte[] encryptData, BigInteger privateKey) {
-        byte[] C1Byte = new byte[65];
-        System.arraycopy(encryptData, 0, C1Byte, 0, C1Byte.length);
-
-        ECPoint C1 = curve.decodePoint(C1Byte).normalize();
-
-        /* 计算[dB]C1 = (x2, y2) */
-        ECPoint dBC1 = C1.multiply(privateKey).normalize();
-
-        /* 计算t = KDF(x2 || y2, klen) */
-        byte[] dBC1Bytes = dBC1.getEncoded(false);
-        DerivationFunction kdf = new KDF1BytesGenerator(new ShortenedDigest(
-                new SHA256Digest(), 20));
-
-        int klen = encryptData.length - 65 - 20;
-        byte[] t = new byte[klen];
-        kdf.init(new ISO18033KDFParameters(dBC1Bytes));
-        kdf.generateBytes(t, 0, t.length);
-
-        if (allZero(t)) {
-            System.err.println("all zero");
-        }
-
-        /* 5 计算M'=C2^t */
-        byte[] M = new byte[klen];
-        for (int i = 0; i < M.length; i++) {
-            M[i] = (byte) (encryptData[C1Byte.length + i] ^ t[i]);
-        }
-
-        /* 6 计算 u = Hash(x2 || M' || y2) 判断 u == C3是否成立 */
-        byte[] C3 = new byte[20];
-        System.arraycopy(encryptData, encryptData.length - 20, C3, 0, 20);
-        byte[] u = calculateHash(dBC1.getXCoord().toBigInteger(), M, dBC1
-                .getYCoord().toBigInteger());
-        if (Arrays.equals(u, C3)) {
-        } else {
-            printHexString(u);
-            printHexString(C3);
-        }
+    public static KeyPair generateBCECKeyPair() throws NoSuchProviderException, NoSuchAlgorithmException,
+            InvalidAlgorithmParameterException {
+        KeyPairGenerator kpg = KeyPairGenerator.getInstance("EC", BouncyCastleProvider.PROVIDER_NAME);
+        SecureRandom random = new SecureRandom();
+        ECParameterSpec parameterSpec = new ECParameterSpec(CURVE, G_POINT, SM2_ECC_N, SM2_ECC_H);
+        kpg.initialize(parameterSpec, random);
+        return kpg.generateKeyPair();
     }
 
-    private byte[] calculateHash(BigInteger x2, byte[] M, BigInteger y2) {
-        ShortenedDigest digest = new ShortenedDigest(new SHA256Digest(), 20);
-        byte[] buf = x2.toByteArray();
-        digest.update(buf, 0, buf.length);
-        digest.update(M, 0, M.length);
-        buf = y2.toByteArray();
-        digest.update(buf, 0, buf.length);
-
-        buf = new byte[20];
-        digest.doFinal(buf, 0);
-        return buf;
+    public static ECPrivateKeyParameters convertPrivateKey(BCECPrivateKey ecPriKey) {
+        ECParameterSpec parameterSpec = ecPriKey.getParameters();
+        ECDomainParameters domainParameters = new ECDomainParameters(parameterSpec.getCurve(), parameterSpec.getG(),
+                parameterSpec.getN(), parameterSpec.getH());
+        return new ECPrivateKeyParameters(ecPriKey.getD(), domainParameters);
     }
 
-    private boolean between(BigInteger param, BigInteger min, BigInteger max) {
-        if (param.compareTo(min) >= 0 && param.compareTo(max) < 0) {
-            return true;
-        } else {
-            return false;
-        }
+    public static ECPublicKeyParameters convertPublicKey(BCECPublicKey ecPubKey) {
+        ECParameterSpec parameterSpec = ecPubKey.getParameters();
+        ECDomainParameters domainParameters = new ECDomainParameters(parameterSpec.getCurve(), parameterSpec.getG(),
+                parameterSpec.getN(), parameterSpec.getH());
+        return new ECPublicKeyParameters(ecPubKey.getQ(), domainParameters);
+    }
+
+    public static BCECPublicKey convertPublicKey(byte[] x509Bytes) throws NoSuchProviderException,
+            NoSuchAlgorithmException, InvalidKeySpecException {
+        return BCECUtil.convertX509ToECPublicKey(x509Bytes);
+    }
+
+    public static BCECPublicKey convertPublicKey(SubjectPublicKeyInfo subPubInfo) throws NoSuchProviderException,
+            NoSuchAlgorithmException, InvalidKeySpecException, IOException {
+        return convertPublicKey(subPubInfo.toASN1Primitive().getEncoded(ASN1Encoding.DER));
+    }
+
+    public static byte[] encrypt(BCECPublicKey pubKey, byte[] srcData) throws InvalidCipherTextException {
+        ECPublicKeyParameters pubKeyParameters = convertPublicKey(pubKey);
+        return encrypt(pubKeyParameters, srcData);
     }
 
     /**
-     * 公钥校验
+     * ECC公钥加密
      *
-     * @param publicKey 公钥
-     * @return boolean true或false
+     * @param pubKeyParameters ECC公钥
+     * @param srcData          源数据
+     * @return SM2密文，实际包含三部分：ECC公钥、真正的密文、公钥和原文的SM3-HASH值
+     * @throws InvalidCipherTextException
      */
-    private boolean checkPublicKey(ECPoint publicKey) {
-        if (!publicKey.isInfinity()) {
-            BigInteger x = publicKey.getXCoord().toBigInteger();
-            BigInteger y = publicKey.getYCoord().toBigInteger();
-            if (between(x, new BigInteger("0"), p) && between(y, new BigInteger("0"), p)) {
-                BigInteger xResult = x.pow(3).add(a.multiply(x)).add(b).mod(p);
-                BigInteger yResult = y.pow(2).mod(p);
-                if (yResult.equals(xResult) && publicKey.multiply(n).isInfinity()) {
-                    return true;
-                }
-            }
-            return false;
-        } else {
-            return false;
-        }
+    public static byte[] encrypt(ECPublicKeyParameters pubKeyParameters, byte[] srcData)
+            throws InvalidCipherTextException {
+        SM2Engine engine = new SM2Engine();
+        ParametersWithRandom pwr = new ParametersWithRandom(pubKeyParameters, new SecureRandom());
+        engine.init(true, pwr);
+        return engine.processBlock(srcData, 0, srcData.length);
+    }
+
+    public static byte[] decrypt(BCECPrivateKey priKey, byte[] sm2Cipher) throws InvalidCipherTextException {
+        ECPrivateKeyParameters priKeyParameters = convertPrivateKey(priKey);
+        return decrypt(priKeyParameters, sm2Cipher);
     }
 
     /**
-     * 获得公私钥对
+     * ECC私钥解密
      *
+     * @param priKeyParameters ECC私钥
+     * @param sm2Cipher        SM2密文，实际包含三部分：ECC公钥、真正的密文、公钥和原文的SM3-HASH值
+     * @return 原文
+     * @throws InvalidCipherTextException
+     */
+    public static byte[] decrypt(ECPrivateKeyParameters priKeyParameters, byte[] sm2Cipher)
+            throws InvalidCipherTextException {
+        SM2Engine engine = new SM2Engine();
+        engine.init(false, priKeyParameters);
+        return engine.processBlock(sm2Cipher, 0, sm2Cipher.length);
+    }
+
+    /**
+     * 分解SM2密文
+     *
+     * @param cipherText SM2密文
      * @return
      */
-    public SM2KeyPair generateKeyPair() {
-        BigInteger d = random(n.subtract(new BigInteger("1")));
-        SM2KeyPair keyPair = new SM2KeyPair(G.multiply(d).normalize(), d);
-        if (checkPublicKey(keyPair.getPublicKey())) {
-            return keyPair;
-        } else {
-            return null;
-        }
+    public static SM2Cipher parseSM2Cipher(byte[] cipherText) {
+        int curveLength = BCECUtil.getCurveLength(DOMAIN_PARAMS);
+        return parseSM2Cipher(curveLength, SM3_DIGEST_LENGTH, cipherText);
     }
 
-    public SM2Util() {
-        curve = new ECCurve.Fp(p, // q
-                a, // a
-                b); // b
-        G = curve.createPoint(xg, yg);
+    /**
+     * 分解SM2密文
+     *
+     * @param curveLength  ECC曲线长度
+     * @param digestLength HASH长度
+     * @param cipherText   SM2密文
+     * @return
+     */
+    public static SM2Cipher parseSM2Cipher(int curveLength, int digestLength,
+                                           byte[] cipherText) {
+        byte[] c1 = new byte[curveLength * 2 + 1];
+        System.arraycopy(cipherText, 0, c1, 0, c1.length);
+        byte[] c2 = new byte[cipherText.length - c1.length - digestLength];
+        System.arraycopy(cipherText, c1.length, c2, 0, c2.length);
+        byte[] c3 = new byte[digestLength];
+        System.arraycopy(cipherText, c1.length + c2.length, c3, 0, c3.length);
+        SM2Cipher result = new SM2Cipher();
+        result.setC1(c1);
+        result.setC2(c2);
+        result.setC3(c3);
+        result.setCipherText(cipherText);
+        return result;
+    }
+
+    /**
+     * DER编码C1C2C3密文（根据《SM2密码算法使用规范》 GM/T 0009-2012）
+     *
+     * @param cipher
+     * @return
+     * @throws IOException
+     */
+    public static byte[] encodeSM2CipherToDER(byte[] cipher) throws IOException {
+        int curveLength = BCECUtil.getCurveLength(DOMAIN_PARAMS);
+        return encodeSM2CipherToDER(curveLength, SM3_DIGEST_LENGTH, cipher);
+    }
+
+    /**
+     * DER编码C1C2C3密文（根据《SM2密码算法使用规范》 GM/T 0009-2012）
+     *
+     * @param curveLength
+     * @param digestLength
+     * @param cipher
+     * @return
+     * @throws IOException
+     */
+    public static byte[] encodeSM2CipherToDER(int curveLength, int digestLength, byte[] cipher)
+            throws IOException {
+        int startPos = 1;
+
+        byte[] c1x = new byte[curveLength];
+        System.arraycopy(cipher, startPos, c1x, 0, c1x.length);
+        startPos += c1x.length;
+
+        byte[] c1y = new byte[curveLength];
+        System.arraycopy(cipher, startPos, c1y, 0, c1y.length);
+        startPos += c1y.length;
+
+        byte[] c2 = new byte[cipher.length - c1x.length - c1y.length - 1 - digestLength];
+        System.arraycopy(cipher, startPos, c2, 0, c2.length);
+        startPos += c2.length;
+
+        byte[] c3 = new byte[digestLength];
+        System.arraycopy(cipher, startPos, c3, 0, c3.length);
+
+        ASN1Encodable[] arr = new ASN1Encodable[4];
+        arr[0] = new ASN1Integer(c1x);
+        arr[1] = new ASN1Integer(c1y);
+        arr[2] = new DEROctetString(c3);
+        arr[3] = new DEROctetString(c2);
+        DERSequence ds = new DERSequence(arr);
+        return ds.getEncoded(ASN1Encoding.DER);
+    }
+
+    /**
+     * 解DER编码密文（根据《SM2密码算法使用规范》 GM/T 0009-2012）
+     *
+     * @param derCipher
+     * @return
+     */
+    public static byte[] decodeDERSM2Cipher(byte[] derCipher) {
+        ASN1Sequence as = DERSequence.getInstance(derCipher);
+        byte[] c1x = ((ASN1Integer) as.getObjectAt(0)).getValue().toByteArray();
+        byte[] c1y = ((ASN1Integer) as.getObjectAt(1)).getValue().toByteArray();
+        byte[] c3 = ((DEROctetString) as.getObjectAt(2)).getOctets();
+        byte[] c2 = ((DEROctetString) as.getObjectAt(3)).getOctets();
+
+        int pos = 0;
+        byte[] cipherText = new byte[1 + c1x.length + c1y.length + c2.length + c3.length];
+
+        final byte uncompressedFlag = 0x04;
+        cipherText[0] = uncompressedFlag;
+        pos += 1;
+
+        System.arraycopy(c1x, 0, cipherText, pos, c1x.length);
+        pos += c1x.length;
+
+        System.arraycopy(c1y, 0, cipherText, pos, c1y.length);
+        pos += c1y.length;
+
+        System.arraycopy(c2, 0, cipherText, pos, c2.length);
+        pos += c2.length;
+
+        System.arraycopy(c3, 0, cipherText, pos, c3.length);
+
+        return cipherText;
+    }
+
+    public static byte[] sign(BCECPrivateKey priKey, byte[] srcData) throws NoSuchAlgorithmException,
+            NoSuchProviderException, CryptoException {
+        ECPrivateKeyParameters priKeyParameters = convertPrivateKey(priKey);
+        return sign(priKeyParameters, null, srcData);
+    }
+
+    /**
+     * ECC私钥签名
+     * 不指定withId，则默认withId为字节数组:"1234567812345678".getBytes()
+     *
+     * @param priKeyParameters ECC私钥
+     * @param srcData          源数据
+     * @return 签名
+     * @throws CryptoException
+     */
+    public static byte[] sign(ECPrivateKeyParameters priKeyParameters, byte[] srcData) throws CryptoException {
+        return sign(priKeyParameters, null, srcData);
+    }
+
+    public static byte[] sign(BCECPrivateKey priKey, byte[] withId, byte[] srcData) throws CryptoException {
+        ECPrivateKeyParameters priKeyParameters = convertPrivateKey(priKey);
+        return sign(priKeyParameters, withId, srcData);
+    }
+
+    /**
+     * ECC私钥签名
+     *
+     * @param priKeyParameters ECC私钥
+     * @param withId           可以为null，若为null，则默认withId为字节数组:"1234567812345678".getBytes()
+     * @param srcData          源数据
+     * @return 签名
+     * @throws CryptoException
+     */
+    public static byte[] sign(ECPrivateKeyParameters priKeyParameters, byte[] withId, byte[] srcData)
+            throws CryptoException {
+        SM2Signer signer = new SM2Signer();
+        CipherParameters param = null;
+        ParametersWithRandom pwr = new ParametersWithRandom(priKeyParameters, new SecureRandom());
+        if (withId != null) {
+            param = new ParametersWithID(pwr, withId);
+        } else {
+            param = pwr;
+        }
+        signer.init(true, param);
+        signer.update(srcData, 0, srcData.length);
+        return signer.generateSignature();
+    }
+
+    /**
+     * 私钥签名
+     *
+     * @param privateKey 私钥
+     * @param content    待签名内容
+     * @return
+     */
+    public static byte[] sign(String privateKey, byte[] userid, byte[] content) throws CryptoException, UnsupportedEncodingException {
+        //待签名内容转为字节数组
+        BigInteger privateKeyD = new BigInteger(privateKey, 16);
+        ECPrivateKeyParameters privateKeyParameters = new ECPrivateKeyParameters(privateKeyD, DOMAIN_PARAMS);
+        return sign(privateKeyParameters, userid, content);
+//        //创建签名实例
+//        SM2Signer sm2Signer = new SM2Signer();
+//
+//        //初始化签名实例,带上ID,国密的要求,ID默认值:1234567812345678
+//        try {
+//            sm2Signer.init(true, new ParametersWithID(new ParametersWithRandom(privateKeyParameters, SecureRandom.getInstance("SHA1PRNG")), ));
+//        } catch (NoSuchAlgorithmException e) {
+//            e.printStackTrace();
+//        }
+//        sm2Signer.generateSignature();
+//        //生成签名,签名分为两部分r和s,分别对应索引0和1的数组
+//        BigInteger[] bigIntegers = sm2Signer.generateSignature(message);
+//
+//        String r = Hex.toHexString(bigIntegers[0].toByteArray());
+//        r = r.substring(r.length() - 64);
+//
+//        String s = Hex.toHexString(bigIntegers[1].toByteArray());
+//        s = s.substring(s.length() - 64);
+//
+//        String sign = CustomStringUtils.append(r, s);
+//
+//        System.out.println("Message signatrue = " + Util.byteToHex(CommonUtils.byteMerger(bigIntegers[0].toByteArray(), bigIntegers[1].toByteArray())));
+//        System.out.println("生成的签名(r+s) : " + sign);
+//        return sign;
+    }
+
+    /**
+     * 将DER编码的SM2签名解析成64字节的纯R+S字节流
+     *
+     * @param derSign
+     * @return
+     */
+    public static byte[] decodeDERSM2Sign(byte[] derSign) {
+        ASN1Sequence as = DERSequence.getInstance(derSign);
+        byte[] rBytes = ((ASN1Integer) as.getObjectAt(0)).getValue().toByteArray();
+        byte[] sBytes = ((ASN1Integer) as.getObjectAt(1)).getValue().toByteArray();
+        //由于大数的补0规则，所以可能会出现33个字节的情况，要修正回32个字节
+        rBytes = fixTo32Bytes(rBytes);
+        sBytes = fixTo32Bytes(sBytes);
+        byte[] rawSign = new byte[rBytes.length + sBytes.length];
+        System.arraycopy(rBytes, 0, rawSign, 0, rBytes.length);
+        System.arraycopy(sBytes, 0, rawSign, rBytes.length, sBytes.length);
+        return rawSign;
+    }
+
+    /**
+     * 把64字节的纯R+S字节流转换成DER编码字节流
+     *
+     * @param rawSign
+     * @return
+     * @throws IOException
+     */
+    public static byte[] encodeSM2SignToDER(byte[] rawSign) throws IOException {
+        //要保证大数是正数
+        BigInteger r = new BigInteger(1, extractBytes(rawSign, 0, 32));
+        BigInteger s = new BigInteger(1, extractBytes(rawSign, 32, 32));
+        ASN1EncodableVector v = new ASN1EncodableVector();
+        v.add(new ASN1Integer(r));
+        v.add(new ASN1Integer(s));
+        return new DERSequence(v).getEncoded(ASN1Encoding.DER);
+    }
+
+    public static boolean verify(BCECPublicKey pubKey, byte[] srcData, byte[] sign) {
+        ECPublicKeyParameters pubKeyParameters = convertPublicKey(pubKey);
+        return verify(pubKeyParameters, null, srcData, sign);
+    }
+
+    /**
+     * ECC公钥验签
+     * 不指定withId，则默认withId为字节数组:"1234567812345678".getBytes()
+     *
+     * @param pubKeyParameters ECC公钥
+     * @param srcData          源数据
+     * @param sign             签名
+     * @return 验签成功返回true，失败返回false
+     */
+    public static boolean verify(ECPublicKeyParameters pubKeyParameters, byte[] srcData, byte[] sign) {
+        return verify(pubKeyParameters, null, srcData, sign);
+    }
+
+    public static boolean verify(BCECPublicKey pubKey, byte[] withId, byte[] srcData, byte[] sign) {
+        ECPublicKeyParameters pubKeyParameters = convertPublicKey(pubKey);
+        return verify(pubKeyParameters, withId, srcData, sign);
+    }
+
+    /**
+     * ECC公钥验签
+     *
+     * @param pubKeyParameters ECC公钥
+     * @param withId           可以为null，若为null，则默认withId为字节数组:"1234567812345678".getBytes()
+     * @param srcData          源数据
+     * @param sign             签名
+     * @return 验签成功返回true，失败返回false
+     */
+    public static boolean verify(ECPublicKeyParameters pubKeyParameters, byte[] withId, byte[] srcData, byte[] sign) {
+        SM2Signer signer = new SM2Signer();
+        CipherParameters param;
+        if (withId != null) {
+            param = new ParametersWithID(pubKeyParameters, withId);
+        } else {
+            param = pubKeyParameters;
+        }
+        signer.init(false, param);
+        signer.update(srcData, 0, srcData.length);
+        return signer.verifySignature(sign);
+    }
+
+    private static byte[] extractBytes(byte[] src, int offset, int length) {
+        byte[] result = new byte[length];
+        System.arraycopy(src, offset, result, 0, result.length);
+        return result;
+    }
+
+    private static byte[] fixTo32Bytes(byte[] src) {
+        final int fixLen = 32;
+        if (src.length == fixLen) {
+            return src;
+        }
+
+        byte[] result = new byte[fixLen];
+        if (src.length > fixLen) {
+            System.arraycopy(src, src.length - result.length, result, 0, result.length);
+        } else {
+            System.arraycopy(src, result.length - src.length, result, 0, src.length);
+        }
+        return result;
+    }
+
+    /**
+     * 验证签名
+     *
+     * @param publicKey 公钥
+     * @param content   待签名内容
+     * @param sign      签名值
+     * @return
+     */
+    public static boolean verify(String publicKey, byte[] userid, byte[] content, byte[] sign) throws UnsupportedEncodingException {
+        //提取公钥点
+        ECPoint pukPoint = CURVE.decodePoint(Util.hexToByte(publicKey));
+        // 公钥前面的02或者03表示是压缩公钥，04表示未压缩公钥, 04的时候，可以去掉前面的04
+        ECPublicKeyParameters publicKeyParameters = new ECPublicKeyParameters(pukPoint, DOMAIN_PARAMS);
+        return verify(publicKeyParameters, userid, content, sign);
+//        //获取签名
+//        BigInteger R = null;
+//        BigInteger S = null;
+//        byte[] rBy = new byte[33];
+//        System.arraycopy(signData, 0, rBy, 1, 32);
+//        rBy[0] = 0x00;
+//        byte[] sBy = new byte[33];
+//        System.arraycopy(signData, 32, sBy, 1, 32);
+//        sBy[0] = 0x00;
+//        R = new BigInteger(rBy);
+//        S = new BigInteger(sBy);
+//
+//        //创建签名实例
+//        SM2Signer sm2Signer = new SM2Signer();
+//        ParametersWithID parametersWithID = new ParametersWithID(publicKeyParameters, Strings.toByteArray("1234567812345678"));
+//        sm2Signer.init(false, parametersWithID);
+//
+//        //验证签名结果
+//        boolean verify = sm2Signer.verifySignature(message, R, S);
+//        return verify;
+    }
+
+    /**
+     * SM2加密算法
+     *
+     * @param publicKey 公钥
+     * @param data      数据
+     * @return
+     */
+    public static String encrypt(String publicKey, String data) throws UnsupportedEncodingException, InvalidCipherTextException {
+        // 获取一条SM2曲线参数
+        //提取公钥点
+        ECPoint pukPoint = CURVE.decodePoint(Util.hexToByte(publicKey));
+        // 公钥前面的02或者03表示是压缩公钥，04表示未压缩公钥, 04的时候，可以去掉前面的04
+        ECPublicKeyParameters publicKeyParameters = new ECPublicKeyParameters(pukPoint, DOMAIN_PARAMS);
+
+        SM2Engine sm2Engine = new SM2Engine();
+        sm2Engine.init(true, new ParametersWithRandom(publicKeyParameters, new SecureRandom()));
+
+        byte[] in = data.getBytes("utf-8");
+        byte[] arrayOfBytes = sm2Engine.processBlock(in, 0, in.length);
+        return Hex.toHexString(arrayOfBytes);
+    }
+
+    /**
+     * SM2加密算法
+     *
+     * @param publicKey 公钥
+     * @param data      明文数据
+     * @return
+     */
+    public static String encrypt(PublicKey publicKey, String data) throws UnsupportedEncodingException, InvalidCipherTextException {
+        ECPublicKeyParameters ecPublicKeyParameters = null;
+        if (publicKey instanceof BCECPublicKey) {
+            BCECPublicKey bcecPublicKey = (BCECPublicKey) publicKey;
+            ecPublicKeyParameters = new ECPublicKeyParameters(bcecPublicKey.getQ(), DOMAIN_PARAMS);
+        }
+        SM2Engine sm2Engine = new SM2Engine();
+        sm2Engine.init(true, new ParametersWithRandom(ecPublicKeyParameters, new SecureRandom()));
+        byte[] in = data.getBytes("utf-8");
+        byte[] arrayOfBytes = sm2Engine.processBlock(in, 0, in.length);
+        return Hex.toHexString(arrayOfBytes);
+    }
+
+    /**
+     * SM2解密算法
+     *
+     * @param privateKey 私钥
+     * @param cipherData 密文数据
+     * @return
+     */
+    public static String decrypt(String privateKey, String cipherData) throws InvalidCipherTextException, UnsupportedEncodingException {
+        byte[] cipherDataByte = Hex.decode(cipherData);
+        BigInteger privateKeyD = new BigInteger(privateKey, 16);
+        ECPrivateKeyParameters privateKeyParameters = new ECPrivateKeyParameters(privateKeyD, DOMAIN_PARAMS);
+        SM2Engine sm2Engine = new SM2Engine();
+        sm2Engine.init(false, privateKeyParameters);
+        byte[] arrayOfBytes = sm2Engine.processBlock(cipherDataByte, 0, cipherDataByte.length);
+        return new String(arrayOfBytes, "utf-8");
+
+    }
+
+    /**
+     * SM2解密算法
+     *
+     * @param privateKey 私钥
+     * @param cipherData 密文数据
+     * @return
+     */
+    public static String decrypt(PrivateKey privateKey, String cipherData) throws UnsupportedEncodingException, InvalidCipherTextException {
+        byte[] cipherDataByte = Hex.decode(cipherData);
+        BCECPrivateKey bcecPrivateKey = (BCECPrivateKey) privateKey;
+        ECPrivateKeyParameters ecPrivateKeyParameters = new ECPrivateKeyParameters(bcecPrivateKey.getD(), DOMAIN_PARAMS);
+        SM2Engine sm2Engine = new SM2Engine();
+        sm2Engine.init(false, ecPrivateKeyParameters);
+        byte[] arrayOfBytes = sm2Engine.processBlock(cipherDataByte, 0, cipherDataByte.length);
+        return new String(arrayOfBytes, "utf-8");
+    }
+
+    public static void main(String[] args) {
+        try {
+            AsymmetricCipherKeyPair keyPair = SM2Util.generateKeyPair();
+            ECPrivateKeyParameters ecpriv = (ECPrivateKeyParameters) keyPair.getPrivate();
+            ECPublicKeyParameters ecpub = (ECPublicKeyParameters) keyPair.getPublic();
+
+            BigInteger privateKey = ecpriv.getD();
+            ECPoint publicKey = ecpub.getQ();
+            String privateKeyStr = Util.byteToHex(privateKey.toByteArray());
+            String publicKeyStr = Util.byteToHex(publicKey.getEncoded());
+            System.out.println("公钥: " + publicKeyStr + "\n私钥: " + privateKeyStr);
+
+            String content = "1";
+            String userId = "1234567812345678";
+
+            BigInteger privateKeyD = new BigInteger(privateKeyStr, 16);
+            ECPrivateKeyParameters privateKeyParameters = new ECPrivateKeyParameters(privateKeyD, DOMAIN_PARAMS);
+
+            byte[] signBytes = SM2Util.sign(privateKeyParameters, (userId.getBytes()), (content.getBytes()));
+            String sign = Util.byteToHex((signBytes));
+            System.out.println(sign);
+
+            // 提取公钥点
+            ECPoint pukPoint = CURVE.decodePoint(Util.hexToByte(publicKeyStr));
+            // 公钥前面的02或者03表示是压缩公钥，04表示未压缩公钥, 04的时候，可以去掉前面的04
+            ECPublicKeyParameters publicKeyParameters = new ECPublicKeyParameters(pukPoint, DOMAIN_PARAMS);
+
+            boolean verify = SM2Util.verify(publicKeyParameters, (userId.getBytes()), (content.getBytes()), Util.hexToByte(sign));
+            System.out.println(verify);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
