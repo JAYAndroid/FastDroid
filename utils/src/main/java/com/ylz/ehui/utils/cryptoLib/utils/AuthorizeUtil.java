@@ -73,8 +73,8 @@ public class AuthorizeUtil {
         return result;
     }
 
-    public static Map<String, Boolean> verifyAuthSM2() throws Exception {
-        Map<String, Boolean> verifyResult = new ArrayMap<>();
+    public static ArrayMap<String, Boolean> verifyAuthSM2() throws Exception {
+        ArrayMap<String, Boolean> verifyResult = new ArrayMap<>();
         StringBuilder keySB = new StringBuilder();
 
         if (TextUtils.isEmpty(authFileContent)) {
