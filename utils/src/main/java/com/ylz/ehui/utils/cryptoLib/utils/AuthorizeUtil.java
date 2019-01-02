@@ -20,8 +20,6 @@ import com.ylz.ehui.utils.cryptoLib.sm4.SM4Utils;
 
 import org.bouncycastle.util.encoders.Base64;
 
-import java.util.Map;
-
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -73,7 +71,7 @@ public class AuthorizeUtil {
         return result;
     }
 
-    public static ArrayMap<String, Boolean> verifyAuthSM2() throws Exception {
+    public static ArrayMap<String, Boolean> verifyAuthSM2() {
         ArrayMap<String, Boolean> verifyResult = new ArrayMap<>();
         StringBuilder keySB = new StringBuilder();
 
@@ -88,7 +86,12 @@ public class AuthorizeUtil {
          * 解析授权文件
          */
         keySB.append("SM2授权文件内容开始解码=>:").append("\n");
-        String data = new String(Base64.decode(authFileContent), "utf-8");
+        String data = "";
+        try {
+            data = new String(Base64.decode(authFileContent), "utf-8");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         keySB.append(data).append("\n");
 
         JSONObject dataJSON = JSONObject.parseObject(data);
