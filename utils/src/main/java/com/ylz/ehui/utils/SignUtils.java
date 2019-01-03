@@ -61,7 +61,7 @@ public class SignUtils {
             map.put("version", String.valueOf(params.get("version")));
             params.remove("version");
         } else {
-            map.put("version", AppUtils.getVersionCode());
+            map.put("version", String.valueOf(AppUtils.getVersionCode()));
         }
 
         map.put("deviceId", AppUtils.getUUid());
