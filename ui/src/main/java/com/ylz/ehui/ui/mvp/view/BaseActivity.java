@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 
 import com.ylz.ehui.base_ui.R;
 import com.ylz.ehui.ui.dialog.BaseDialogFragment;
@@ -87,6 +88,10 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
         setRequestedOrientation(initOrientation());
+        if (openScreen()) {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+        }
+
         setContentView(getLayoutResource());
 
         if (isShowStatusBar()) {
@@ -124,6 +129,14 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
      * 网络数据刷新
      */
     protected void onLoadRefresh() {
+    }
+
+    /**
+     * 开启屏幕防止截屏
+     * @return
+     */
+    protected boolean openScreen(){
+        return false;
     }
 
     protected boolean isShowStatusBar() {

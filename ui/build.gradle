@@ -53,7 +53,7 @@ dependencies {
     api project(path: ':image')
     //下拉刷新，加载更多
     api 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-14'
-    implementation 'com.jakewharton:butterknife:8.8.1'
+    api 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 //    implementation project(':autolayout')
 //    适配方案

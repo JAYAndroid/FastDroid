@@ -121,8 +121,8 @@ public class AuthorizeUtil {
                 ApplicationInfo applicationInfo = packageManager.getApplicationInfo(
                         context.getPackageName(), PackageManager.GET_META_DATA);
                 if (applicationInfo != null && applicationInfo.metaData != null) {
-                    if (applicationInfo.metaData.containsKey("sm4_auth_file")) {
-                        authFileContent = String.valueOf(applicationInfo.metaData.get("sm4_auth_file"));
+                    if (applicationInfo.metaData.containsKey("sm2_auth_file")) {
+                        authFileContent = String.valueOf(applicationInfo.metaData.get("sm2_auth_file"));
                     }
                 }
             }
