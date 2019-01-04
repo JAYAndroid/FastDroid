@@ -133,9 +133,10 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
 
     /**
      * 开启屏幕防止截屏
+     *
      * @return
      */
-    protected boolean openScreenSecure(){
+    protected boolean openScreenSecure() {
         return false;
     }
 
@@ -245,7 +246,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
 
         if (mSubscribers != null && mSubscribers.size() > 0) {
             for (Disposable subscriber : mSubscribers) {
-                if (!subscriber.isDisposed()) {
+                if (subscriber != null && !subscriber.isDisposed()) {
                     subscriber.dispose();
                 }
             }
