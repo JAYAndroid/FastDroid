@@ -88,7 +88,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
         setRequestedOrientation(initOrientation());
-        if (openScreen()) {
+        if (openScreenSecure()) {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         }
 
@@ -135,7 +135,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
      * 开启屏幕防止截屏
      * @return
      */
-    protected boolean openScreen(){
+    protected boolean openScreenSecure(){
         return false;
     }
 

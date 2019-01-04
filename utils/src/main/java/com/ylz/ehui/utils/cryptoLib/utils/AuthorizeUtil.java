@@ -101,14 +101,14 @@ public class AuthorizeUtil {
 
         // SM2（AppId，App 名称，APP 签名证书指纹，SDK 名称）
         String signContent = SignUtils.APP_ID + innerAppName + AppUtils.getSignMd5Str() + innerMethod;
-        keySB.append("授权串 SM2验签前=>:")
-                .append("appId=").append(SignUtils.APP_ID).append("\n")
-                .append("appName=").append(innerAppName).append("\n")
-                .append("APP指纹=").append(AppUtils.getSignMd5Str()).append("\n");
+        keySB.append("开始获取应用信息=>:")
+                .append("当前appId=").append(SignUtils.APP_ID).append("\n")
+                .append("当前appName=").append(innerAppName).append("\n")
+                .append("当前APP指纹=").append(AppUtils.getSignMd5Str()).append("\n");
 
+        keySB.append("对应用信息SM2加密结果:").append(innerSign);
         boolean result = ApiSignUtils.verify(authPub, signContent, innerSign);
-        System.out.println("授权码 SM2验签结果 : " + result);
-        keySB.append("授权码 SM2验签结果=>:").append(result ? "验证成功" : "验证失败").append("\n");
+        keySB.append("授权文件SM2验签结果=>:").append(result ? "验证成功" : "验证失败").append("\n");
         verifyResult.put(keySB.toString(), result);
         return verifyResult;
     }
