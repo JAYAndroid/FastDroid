@@ -30,13 +30,6 @@ public class SignUtils {
         ignoreSign.add("pageParam");
     }
 
-    public static void setIgnoreSigns(String ignoreParam) {
-        if (!ignoreSign.contains(ignoreParam)) {
-            ignoreSign.add(ignoreParam);
-        }
-    }
-
-
     public static String DEFAULT_APP_SECRET = "SKnYwGwnwh3LI56mMwJgDw==";
 
     public static String APP_SECRET = DEFAULT_APP_SECRET;
@@ -83,6 +76,11 @@ public class SignUtils {
         if (!StringUtils.isEmpty(String.valueOf(params.get("token")))) {
             map.put("token", params.get("token"));
             params.remove("token");
+        }
+
+        if (!StringUtils.isEmpty(String.valueOf(params.get("ignoreSigns")))) {
+            map.put("ignoreSigns", params.get("ignoreSigns"));
+            params.remove("ignoreSigns");
         }
 
         map.put("deviceId", AppUtils.getUUid());
@@ -140,8 +138,14 @@ public class SignUtils {
             map.remove("param");
         } else {
             map.put("isEncrypt", 0);
+
+            if (map.containsKey("ignoreSigns")) {
+                map.remove("ignoreSigns");
+            }
+
             map.put("param", params);
         }
+
 
         return map;
     }
@@ -179,8 +183,16 @@ public class SignUtils {
         if (map == null)
             return "";
 
-        Map<String, Object> signParams = new TreeMap<>(map);
+        if (map.containsKey("ignoreSigns")) {
+            String ignoreParam = String.valueOf(map.get("ignoreSigns"));
+            if (!ignoreSign.contains(ignoreParam)) {
+                ignoreSign.add(ignoreParam);
+            }
 
+            map.remove("ignoreSigns");
+        }
+
+        Map<String, Object> signParams = new TreeMap<>(map);
         for (String ignoreParam : ignoreSign) {
             signParams.remove(ignoreParam);
         }
