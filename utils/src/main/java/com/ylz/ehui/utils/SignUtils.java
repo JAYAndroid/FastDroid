@@ -21,6 +21,22 @@ import java.util.TreeMap;
  * 注释：访问网络时，签名
  ********************/
 public class SignUtils {
+    private static List<String> ignoreSign = new ArrayList<>();
+
+    static {
+        ignoreSign.add("sign");
+        ignoreSign.add("encryptData");
+        ignoreSign.add("extenalMap");
+        ignoreSign.add("pageParam");
+    }
+
+    public static void setIgnoreSigns(String ignoreParam) {
+        if (!ignoreSign.contains(ignoreParam)) {
+            ignoreSign.add(ignoreParam);
+        }
+    }
+
+
     public static String DEFAULT_APP_SECRET = "SKnYwGwnwh3LI56mMwJgDw==";
 
     public static String APP_SECRET = DEFAULT_APP_SECRET;
@@ -74,28 +90,6 @@ public class SignUtils {
         map.put("sessionId", CommonUserInfos.getInstance().getSessionId());
         params.remove("serviceId");
 
-        if (ENTRY) {
-            params = filterNullParams(params);
-            Gson gson = new Gson();
-            map.put("isEncrypt", 1);
-            //明文
-            map.put("param", gson.toJson(params));            //加密，签名
-//            map.put("param", gson.toJson(params).replace("\\", ""));            //加密，签名
-
-
-            map.put("sign", getSign(map, APP_SECRET));
-            try {
-                map.put("encryptData", SecurityUtils.encryptByType(String.valueOf(map.get("param")), ENCRYPT_TYPE));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            //删除明文
-            map.remove("param");
-        } else {
-            map.put("isEncrypt", 0);
-            map.put("param", params);
-        }
         //分页
         Map<String, Object> pageMap = new TreeMap<>();
         if (!TextUtils.isEmpty((String) params.get("pageNo")) || !TextUtils.isEmpty((String) params.get("pageSize"))
@@ -127,6 +121,28 @@ public class SignUtils {
             params.remove("count");
             map.put("pageParam", pageMap);
         }
+
+        if (ENTRY) {
+            params = filterNullParams(params);
+            Gson gson = new Gson();
+            map.put("isEncrypt", 1);
+            //明文
+            map.put("param", gson.toJson(params));            //加密，签名
+
+            map.put("sign", getSign(map, APP_SECRET));
+            try {
+                map.put("encryptData", SecurityUtils.encryptByType(String.valueOf(map.get("param")), ENCRYPT_TYPE));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            //删除明文
+            map.remove("param");
+        } else {
+            map.put("isEncrypt", 0);
+            map.put("param", params);
+        }
+
         return map;
     }
 
@@ -163,9 +179,15 @@ public class SignUtils {
         if (map == null)
             return "";
 
+        Map<String, Object> signParams = new TreeMap<>(map);
+
+        for (String ignoreParam : ignoreSign) {
+            signParams.remove(ignoreParam);
+        }
+
         ArrayList<String> list = new ArrayList<String>();
 
-        for (Map.Entry<String, Object> entry : map.entrySet()) {
+        for (Map.Entry<String, Object> entry : signParams.entrySet()) {
             //  getObjString(entry.getValue()))
             if (!StringUtils.isEmpty(SignatureUtils.getValue(entry.getValue()))) {
                 list.add(entry.getKey() + "=" + entry.getValue() + "&");
@@ -181,7 +203,7 @@ public class SignUtils {
         }
         String result = sb.toString();
         result += "key=" + key;
-        String signType = (String) map.get("signType");
+        String signType = (String) signParams.get("signType");
         if (StringUtils.isEmpty(signType) || "MD5".equals(signType)) {
             result = MD5Utils.getMD5String(result).toUpperCase();
         } else if ("SM3".equals(signType)) {

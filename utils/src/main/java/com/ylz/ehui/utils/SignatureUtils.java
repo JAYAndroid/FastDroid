@@ -11,16 +11,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class SignatureUtils {
-    private static List<String> ignoreSign = new ArrayList<String>();
-
-    static {
-        ignoreSign.add("sign");
-        ignoreSign.add("encryptData");
-        ignoreSign.add("extenalMap");
-        ignoreSign.add("pageParam");
-    }
-
-
     /**
      * 取值
      *
