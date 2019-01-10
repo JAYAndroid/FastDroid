@@ -64,6 +64,11 @@ public class SignUtils {
             map.put("version", String.valueOf(AppUtils.getVersionCode()));
         }
 
+        if (!StringUtils.isEmpty(String.valueOf(params.get("token")))) {
+            map.put("token", params.get("token"));
+            params.remove("token");
+        }
+
         map.put("deviceId", AppUtils.getUUid());
         map.put("appId", APP_ID);
         map.put("sessionId", CommonUserInfos.getInstance().getSessionId());
@@ -93,11 +98,14 @@ public class SignUtils {
         }
         //分页
         Map<String, Object> pageMap = new TreeMap<>();
-        if (!TextUtils.isEmpty((String) params.get("pageNo")) && !TextUtils.isEmpty((String) params.get("pageSize"))) {
+        if (!TextUtils.isEmpty((String) params.get("pageNo")) || !TextUtils.isEmpty((String) params.get("pageSize"))
+                || !TextUtils.isEmpty((String) params.get("rows"))) {
             pageMap.put("pageNo", params.get("pageNo"));
             pageMap.put("pageSize", params.get("pageSize"));
+            pageMap.put("rows", params.get("rows"));
             params.remove("pageNo");
             params.remove("pageSize");
+            params.remove("rows");
             if (!TextUtils.isEmpty((String) params.get("pageDate_c"))) {
                 pageMap.put("pageDate_c", params.get("pageDate_c"));
             }
