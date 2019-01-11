@@ -73,9 +73,9 @@ public class SignUtils {
             map.put("version", String.valueOf(AppUtils.getVersionCode()));
         }
 
-        if (!StringUtils.isEmpty(String.valueOf(params.get("token")))) {
-            map.put("token", params.get("token"));
-            params.remove("token");
+        if (!StringUtils.isEmpty(String.valueOf(params.get("ext_token")))) {
+            map.put("token", params.get("ext_token"));
+            params.remove("ext_token");
         }
 
         if (!StringUtils.isEmpty(String.valueOf(params.get("ignoreSigns")))) {
