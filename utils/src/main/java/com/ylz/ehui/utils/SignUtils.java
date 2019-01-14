@@ -169,6 +169,11 @@ public class SignUtils {
             }
         }
 
+        if (!(params instanceof TreeMap)) {
+            TreeMap<String, Object> transMap = new TreeMap<>(params);
+            return transMap;
+        }
+
         return params;
     }
 
