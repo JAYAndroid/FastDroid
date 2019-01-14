@@ -62,7 +62,7 @@ public class SignUtils {
         Map<String, Object> map = new TreeMap<>();
 
         map.put("serviceId", service);
-        map.put("timestamp", new DateFormat().format("yyyyMMddHHmmssSSS", System.currentTimeMillis()));
+        map.put("timestamp", new DateFormat().format("yyyyMMddHHmmss", System.currentTimeMillis()));
         map.put("signType", SIGN_TYPE);
         map.put("encryptType", ENCRYPT_TYPE);
 
