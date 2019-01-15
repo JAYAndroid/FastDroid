@@ -144,13 +144,18 @@ public class AppUtils {
     }
 
     public static String getAppName() {
+        PackageInfo packageInfo = null;
         try {
             PackageManager packageManager = Utils.getApp().getPackageManager();
-            PackageInfo packageInfo = packageManager.getPackageInfo(
+            packageInfo = packageManager.getPackageInfo(
                     Utils.getApp().getPackageName(), 0);
-            int labelRes = packageInfo.applicationInfo.labelRes;
-            return Utils.getApp().getResources().getString(labelRes);
+            return String.valueOf(packageInfo.applicationInfo.loadLabel(packageManager));
         } catch (Exception e) {
+            if (packageInfo != null) {
+                int labelRes = packageInfo.applicationInfo.labelRes;
+                return Utils.getApp().getResources().getString(labelRes);
+            }
+
             return "";
         }
     }
