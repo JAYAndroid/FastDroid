@@ -68,7 +68,7 @@ public class RetrofitBaseUrlManager {
     private static final boolean DEPENDENCY_OKHTTP;
     private static final String BASE_URL = "baseUrl";
     private static final String APP_ID = "appId";
-    private static final String SECRET = "secret";
+    private static final String SECRET = "appSecret";
     private static final String SESSION_ID = "sessionId";
 
     private static final String BASE_RUL_KEY = "globalBaseUrl";
@@ -193,26 +193,21 @@ public class RetrofitBaseUrlManager {
         }
 
         if (!TextUtils.isEmpty(appIdName) && mAppIdHub.containsKey(appIdName)) {
-            if (newMap.containsKey("appId")) {
-                newMap.put("appId", mAppIdHub.get(appIdName));
-            }
+            newMap.put(APP_ID, mAppIdHub.get(appIdName));
             newBuilder.removeHeader(APP_ID);
+            mAppIdHub.remove(appIdName);
         }
 
         if (!TextUtils.isEmpty(secretName) && mSecretHub.containsKey(secretName)) {
-            if (newMap.containsKey("appSecret")) {
-                newMap.put("appSecret", mSecretHub.get(secretName));
-            }
-
+            newMap.put(SECRET, mSecretHub.get(secretName));
             newBuilder.removeHeader(SECRET);
+            mSecretHub.remove(secretName);
         }
 
         if (!TextUtils.isEmpty(sessionIdName) && mSessionIdHub.containsKey(sessionIdName)) {
-            if (newMap.containsKey("sessionId")) {
-                newMap.put("sessionId", mSessionIdHub.get(sessionIdName));
-            }
-
+            newMap.put(SESSION_ID, mSessionIdHub.get(sessionIdName));
             newBuilder.removeHeader(SESSION_ID);
+            mSessionIdHub.remove(sessionIdName);
         }
 
         /***************************************/
