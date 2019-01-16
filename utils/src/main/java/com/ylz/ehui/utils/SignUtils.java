@@ -23,7 +23,7 @@ import java.util.TreeMap;
  ********************/
 public class SignUtils {
     private static List<String> ignoreSign = new ArrayList<>();
-    private static Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+    private static Gson gson = new Gson();
 
     static {
         ignoreSign.add("sign");
