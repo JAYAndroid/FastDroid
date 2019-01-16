@@ -21,9 +21,6 @@ import java.io.Writer;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.nio.charset.Charset;
-import java.util.Collection;
-import java.util.Map;
-import java.util.TreeMap;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -56,19 +53,8 @@ public class DefaultInterceptBuild extends Converter.Factory {
 
     @Override
     public Converter<?, RequestBody> requestBodyConverter(Type type, Annotation[] parameterAnnotations, Annotation[] methodAnnotations, Retrofit retrofit) {
-        //进行条件判断，如果传进来的Type不是class，则匹配失败
-        if (!(type instanceof Class<?>)) {
-            return null;
-        }
-        //进行条件判断，如果传进来的Type不是Map的实现类，则也匹配失败
-        if (!Map.class.isAssignableFrom((Class<?>) type)) {
-            return null;
-        }
-
-        return super.requestBodyConverter(type, parameterAnnotations, methodAnnotations, retrofit);
-
-//        TypeAdapter<?> adapter = gson.getAdapter(TypeToken.get(type));
-//        return new GsonRequestBodyConverter<>(gson, adapter); //请求
+        TypeAdapter<?> adapter = gson.getAdapter(TypeToken.get(type));
+        return new GsonRequestBodyConverter<>(gson, adapter);
     }
 
 
@@ -129,6 +115,67 @@ public class DefaultInterceptBuild extends Converter.Factory {
      *
      * @param <T>
      */
+//    class GsonRequestBodyConverter<T> implements Converter<T, RequestBody> {
+//        private final MediaType MEDIA_TYPE = MediaType.parse("application/json; charset=UTF-8");
+//        private final Charset UTF_8 = Charset.forName("UTF-8");
+//
+//        private final Gson gson;
+//        private final TypeAdapter<T> adapter;
+//
+//        GsonRequestBodyConverter(Gson gson, TypeAdapter<T> adapter) {
+//            this.gson = gson;
+//            this.adapter = adapter;
+//        }
+//
+//        @Override
+//        public RequestBody convert(T value) throws IOException {
+//            Map<String, Object> rawRequestParams = (Map) value;
+//            if (rawRequestParams.get("rawConvert") != null && ((boolean) rawRequestParams.get("rawConvert"))) {
+//                rawRequestParams.remove("rawConvert");
+//                Buffer buffer = new Buffer();
+//                Writer writer = new OutputStreamWriter(buffer.outputStream(), UTF_8);
+//                JsonWriter jsonWriter = gson.newJsonWriter(writer);
+//                adapter.write(jsonWriter, (T) rawRequestParams);
+//                jsonWriter.close();
+//                return RequestBody.create(MEDIA_TYPE, buffer.readByteString());
+//            }
+//
+//            if (SignUtils.ENTRY) {
+//                TreeMap<String, Object> treeMap = new TreeMap<>();
+//                for (Map.Entry<String, Object> entry : rawRequestParams.entrySet()) {
+//                    Object tempValue = entry.getValue();
+//
+//                    if (tempValue == null || "".equals(tempValue)) {
+//                        continue;
+//                    }
+//
+//                    try {
+//                        if (!(tempValue instanceof Collection)) {
+//                            treeMap.put(entry.getKey(), String.valueOf(tempValue));
+//                        } else {
+//                            treeMap.put(entry.getKey(), tempValue);
+//                        }
+//                    } catch (Exception e) {
+//                        treeMap.put(entry.getKey(), tempValue);
+//                    }
+//                }
+//
+//                rawRequestParams.clear();
+//                rawRequestParams = treeMap;
+//            }
+//
+//
+//            Map resultRequestParams = SignUtils.getRequest(rawRequestParams, String.valueOf(rawRequestParams.get("serviceId")));
+//
+//            Buffer buffer = new Buffer();
+//            Writer writer = new OutputStreamWriter(buffer.outputStream(), UTF_8);
+//            JsonWriter jsonWriter = gson.newJsonWriter(writer);
+//            adapter.write(jsonWriter, (T) resultRequestParams);
+//            jsonWriter.close();
+//            return RequestBody.create(MEDIA_TYPE, buffer.readByteString());
+//        }
+//    }
+
     class GsonRequestBodyConverter<T> implements Converter<T, RequestBody> {
         private final MediaType MEDIA_TYPE = MediaType.parse("application/json; charset=UTF-8");
         private final Charset UTF_8 = Charset.forName("UTF-8");
@@ -143,48 +190,10 @@ public class DefaultInterceptBuild extends Converter.Factory {
 
         @Override
         public RequestBody convert(T value) throws IOException {
-            Map<String, Object> rawRequestParams = (Map) value;
-            if (rawRequestParams.get("rawConvert") != null && ((boolean) rawRequestParams.get("rawConvert"))) {
-                rawRequestParams.remove("rawConvert");
-                Buffer buffer = new Buffer();
-                Writer writer = new OutputStreamWriter(buffer.outputStream(), UTF_8);
-                JsonWriter jsonWriter = gson.newJsonWriter(writer);
-                adapter.write(jsonWriter, (T) rawRequestParams);
-                jsonWriter.close();
-                return RequestBody.create(MEDIA_TYPE, buffer.readByteString());
-            }
-
-            if (SignUtils.ENTRY) {
-                TreeMap<String, Object> treeMap = new TreeMap<>();
-                for (Map.Entry<String, Object> entry : rawRequestParams.entrySet()) {
-                    Object tempValue = entry.getValue();
-
-                    if (tempValue == null || "".equals(tempValue)) {
-                        continue;
-                    }
-
-                    try {
-                        if (!(tempValue instanceof Collection)) {
-                            treeMap.put(entry.getKey(), String.valueOf(tempValue));
-                        } else {
-                            treeMap.put(entry.getKey(), tempValue);
-                        }
-                    } catch (Exception e) {
-                        treeMap.put(entry.getKey(), tempValue);
-                    }
-                }
-
-                rawRequestParams.clear();
-                rawRequestParams = treeMap;
-            }
-
-
-            Map resultRequestParams = SignUtils.getRequest(rawRequestParams, String.valueOf(rawRequestParams.get("serviceId")));
-
             Buffer buffer = new Buffer();
             Writer writer = new OutputStreamWriter(buffer.outputStream(), UTF_8);
             JsonWriter jsonWriter = gson.newJsonWriter(writer);
-            adapter.write(jsonWriter, (T) resultRequestParams);
+            adapter.write(jsonWriter, value);
             jsonWriter.close();
             return RequestBody.create(MEDIA_TYPE, buffer.readByteString());
         }
