@@ -68,7 +68,7 @@ public class RetrofitBaseUrlManager {
     private static final boolean DEPENDENCY_OKHTTP;
     private static final String BASE_URL = "baseUrl";
     private static final String APP_ID = "appId";
-    private static final String SECRET = "appSecret";
+    private static final String SECRET = "secret";
     private static final String SESSION_ID = "sessionId";
 
     private static final String BASE_RUL_KEY = "globalBaseUrl";
