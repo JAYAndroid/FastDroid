@@ -4,6 +4,7 @@ import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.ArrayMap;
 
+import com.alibaba.fastjson.JSON;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.ylz.ehui.common.bean.CommonUserInfos;
@@ -23,7 +24,6 @@ import java.util.TreeMap;
  ********************/
 public class SignUtils {
     private static List<String> ignoreSign = new ArrayList<>();
-    private static Gson gson = new Gson();
 
     static {
         ignoreSign.add("sign");
@@ -127,7 +127,7 @@ public class SignUtils {
 
             map.put("isEncrypt", 1);
             //明文
-            map.put("param", gson.toJson(params));            //加密，签名
+            map.put("param", JSON.toJSON(params));//加密，签名
 
             map.put("sign", getSign(map, APP_SECRET));
             try {
