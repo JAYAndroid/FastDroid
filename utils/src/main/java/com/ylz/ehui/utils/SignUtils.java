@@ -93,9 +93,9 @@ public class SignUtils {
             APP_ID = DEFAULT_APP_ID;
         }
 
-        if (tempParams.containsKey("appSecret")) {
-            APP_SECRET = String.valueOf(tempParams.get("appSecret"));
-            tempParams.remove("appSecret");
+        if (tempParams.containsKey("secret")) {
+            APP_SECRET = String.valueOf(tempParams.get("secret"));
+            tempParams.remove("secret");
         } else {
             APP_SECRET = DEFAULT_APP_SECRET;
         }
