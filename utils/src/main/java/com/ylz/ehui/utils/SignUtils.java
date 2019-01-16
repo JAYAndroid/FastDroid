@@ -31,9 +31,10 @@ public class SignUtils {
     }
 
     public static String DEFAULT_APP_SECRET = "SKnYwGwnwh3LI56mMwJgDw==";
+    public static String DEFAULT_APP_ID = "Android";
 
     public static String APP_SECRET = DEFAULT_APP_SECRET;
-    public static String APP_ID = "Android";
+    public static String APP_ID = DEFAULT_APP_ID;
 
     public static String SIGN_TYPE = "MD5";
     public static String ENCRYPT_TYPE = "AES";
@@ -65,6 +66,7 @@ public class SignUtils {
         resultRequestMap.put("timestamp", new DateFormat().format("yyyyMMddHHmmss", System.currentTimeMillis()));
         resultRequestMap.put("signType", SIGN_TYPE);
         resultRequestMap.put("encryptType", ENCRYPT_TYPE);
+        tempParams.remove("serviceId");
 
         if (!StringUtils.isEmpty(String.valueOf(tempParams.get("version")))) {
             resultRequestMap.put("version", String.valueOf(tempParams.get("version")));
@@ -83,13 +85,12 @@ public class SignUtils {
             tempParams.remove("ignoreSigns");
         }
 
-        resultRequestMap.put("deviceId", AppUtils.getUUid());
 
         if (tempParams.containsKey("appId")) {
-            resultRequestMap.put("appId", tempParams.get("appId"));
+            APP_ID = String.valueOf(tempParams.get("appId"));
             tempParams.remove("appId");
         } else {
-            resultRequestMap.put("appId", APP_ID);
+            APP_ID = DEFAULT_APP_ID;
         }
 
         if (tempParams.containsKey("appSecret")) {
@@ -105,6 +106,9 @@ public class SignUtils {
         } else {
             resultRequestMap.put("sessionId", CommonUserInfos.getInstance().getSessionId());
         }
+
+        resultRequestMap.put("deviceId", AppUtils.getUUid());
+        resultRequestMap.put("appId", APP_ID);
 
         //分页
         Map<String, Object> pageMap = new TreeMap<>();

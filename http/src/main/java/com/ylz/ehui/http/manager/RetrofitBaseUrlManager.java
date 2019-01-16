@@ -195,19 +195,16 @@ public class RetrofitBaseUrlManager {
         if (!TextUtils.isEmpty(appIdName) && mAppIdHub.containsKey(appIdName)) {
             newMap.put(APP_ID, mAppIdHub.get(appIdName));
             newBuilder.removeHeader(APP_ID);
-            mAppIdHub.remove(appIdName);
         }
 
         if (!TextUtils.isEmpty(secretName) && mSecretHub.containsKey(secretName)) {
             newMap.put(SECRET, mSecretHub.get(secretName));
             newBuilder.removeHeader(SECRET);
-            mSecretHub.remove(secretName);
         }
 
         if (!TextUtils.isEmpty(sessionIdName) && mSessionIdHub.containsKey(sessionIdName)) {
             newMap.put(SESSION_ID, mSessionIdHub.get(sessionIdName));
             newBuilder.removeHeader(SESSION_ID);
-            mSessionIdHub.remove(sessionIdName);
         }
 
         /***************************************/
@@ -377,21 +374,15 @@ public class RetrofitBaseUrlManager {
      * @param domainUrl
      */
     public void putBaseUrl(String domainName, String domainUrl) {
-        if (!mBaseUrlHub.containsKey(domainName)) {
-            mBaseUrlHub.put(domainName, checkUrl(domainUrl));
-        }
+        mBaseUrlHub.put(domainName, checkUrl(domainUrl));
     }
 
     public void putAppId(String appIdName, String appIdValue) {
-        if (!mAppIdHub.containsKey(appIdName)) {
-            mAppIdHub.put(appIdName, appIdValue);
-        }
+        mAppIdHub.put(appIdName, appIdValue);
     }
 
     public void putSecret(String secretName, String secretValue) {
-        if (!mSecretHub.containsKey(secretName)) {
-            mSecretHub.put(secretName, secretValue);
-        }
+        mSecretHub.put(secretName, secretValue);
     }
 
     public void putSessionId(String sessionIdName, String sessionIdValue) {
