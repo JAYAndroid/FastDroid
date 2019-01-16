@@ -4,9 +4,7 @@ import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.ArrayMap;
 
-import com.alibaba.fastjson.JSON;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.ylz.ehui.common.bean.CommonUserInfos;
 import com.ylz.ehui.utils.cryptoLib.sm3.SM3Utils;
 
@@ -23,13 +21,13 @@ import java.util.TreeMap;
  * 注释：访问网络时，签名
  ********************/
 public class SignUtils {
-    private static List<String> ignoreSign = new ArrayList<>();
+    private static List<String> fixIgnoreSign = new ArrayList<>();
 
     static {
-        ignoreSign.add("sign");
-        ignoreSign.add("encryptData");
-        ignoreSign.add("extenalMap");
-        ignoreSign.add("pageParam");
+        fixIgnoreSign.add("sign");
+        fixIgnoreSign.add("encryptData");
+        fixIgnoreSign.add("extenalMap");
+        fixIgnoreSign.add("pageParam");
     }
 
     public static String DEFAULT_APP_SECRET = "SKnYwGwnwh3LI56mMwJgDw==";
@@ -188,21 +186,24 @@ public class SignUtils {
      * @return
      */
     public static String getSign(Map<String, Object> map, String key) {
-        if (map == null)
+        if (map == null){
             return "";
+        }
+
+        String tempIgnoreParam = "";
 
         if (map.containsKey("ignoreSigns")) {
-            String ignoreParam = String.valueOf(map.get("ignoreSigns"));
-            if (!ignoreSign.contains(ignoreParam)) {
-                ignoreSign.add(ignoreParam);
-            }
-
+            tempIgnoreParam = String.valueOf(map.get("ignoreSigns"));
             map.remove("ignoreSigns");
         }
 
         Map<String, Object> signParams = new TreeMap<>(map);
-        for (String ignoreParam : ignoreSign) {
+        for (String ignoreParam : fixIgnoreSign) {
             signParams.remove(ignoreParam);
+        }
+
+        if(!StringUtils.isEmpty(tempIgnoreParam)){
+            signParams.remove(tempIgnoreParam);
         }
 
         ArrayList<String> list = new ArrayList<String>();
