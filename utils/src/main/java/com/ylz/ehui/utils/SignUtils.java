@@ -127,7 +127,7 @@ public class SignUtils {
 
             map.put("isEncrypt", 1);
             //明文
-            map.put("param", JSON.toJSON(params));//加密，签名
+            map.put("param", JSON.toJSONString(params));//加密，签名
 
             map.put("sign", getSign(map, APP_SECRET));
             try {
