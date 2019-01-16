@@ -65,8 +65,10 @@ public class DefaultInterceptBuild extends Converter.Factory {
             return null;
         }
 
-        TypeAdapter<?> adapter = gson.getAdapter(TypeToken.get(type));
-        return new GsonRequestBodyConverter<>(gson, adapter); //请求
+        return super.requestBodyConverter(type, parameterAnnotations, methodAnnotations, retrofit);
+
+//        TypeAdapter<?> adapter = gson.getAdapter(TypeToken.get(type));
+//        return new GsonRequestBodyConverter<>(gson, adapter); //请求
     }
 
 

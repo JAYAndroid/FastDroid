@@ -23,10 +23,12 @@ import com.google.gson.reflect.TypeToken;
 import com.ylz.ehui.http.OnUrlChangeListener;
 import com.ylz.ehui.http.parser.DefaultUrlParser;
 import com.ylz.ehui.http.parser.UrlParser;
+import com.ylz.ehui.utils.SignUtils;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -102,6 +104,7 @@ public class RetrofitBaseUrlManager {
 
     private RetrofitBaseUrlManager() {
         mGson = new Gson();
+        UTF8 = Charset.forName("UTF-8");
         if (!DEPENDENCY_OKHTTP) { //使用本管理器必须依赖 Okhttp
             throw new IllegalStateException("Must be dependency Okhttp");
         }
@@ -111,7 +114,7 @@ public class RetrofitBaseUrlManager {
             public Response intercept(Chain chain) throws IOException {
                 if (!isRun()) // 可以在 App 运行时, 随时通过 setRun(false) 来结束本管理器的运行
                     return chain.proceed(chain.request());
-                return chain.proceed(processRequest(chain.request()));
+                return chain.proceed(processRequestBefore(chain.request()));
             }
         };
     }
@@ -140,7 +143,7 @@ public class RetrofitBaseUrlManager {
      * @param request {@link Request}
      * @return {@link Request}
      */
-    public Request processRequest(Request request) {
+    private Request processRequestBefore(Request request) {
         MediaType contentType = request.body().contentType();
         TreeMap<String, Object> newMap = new TreeMap<>();
         newMap.clear();
@@ -197,8 +200,8 @@ public class RetrofitBaseUrlManager {
         }
 
         if (!TextUtils.isEmpty(secretName) && mSecretHub.containsKey(secretName)) {
-            if (newMap.containsKey("sign")) {
-                newMap.put("sign", mSecretHub.get(secretName));
+            if (newMap.containsKey("appSecret")) {
+                newMap.put("appSecret", mSecretHub.get(secretName));
             }
 
             newBuilder.removeHeader(SECRET);
@@ -212,6 +215,41 @@ public class RetrofitBaseUrlManager {
             newBuilder.removeHeader(SESSION_ID);
         }
 
+        /***************************************/
+
+        if (newMap.get("rawConvert") != null && ((boolean) newMap.get("rawConvert"))) {
+            newMap.remove("rawConvert");
+        }
+
+        if (SignUtils.ENTRY) {
+            TreeMap<String, Object> treeMap = new TreeMap<>();
+            for (Map.Entry<String, Object> entry : newMap.entrySet()) {
+                Object tempValue = entry.getValue();
+
+                if (tempValue == null || "".equals(tempValue)) {
+                    continue;
+                }
+
+                try {
+                    if (!(tempValue instanceof Collection)) {
+                        treeMap.put(entry.getKey(), String.valueOf(tempValue));
+                    } else {
+                        treeMap.put(entry.getKey(), tempValue);
+                    }
+                } catch (Exception e) {
+                    treeMap.put(entry.getKey(), tempValue);
+                }
+            }
+
+            newMap.clear();
+            newMap = treeMap;
+        }
+
+
+        Map resultRequestParams = SignUtils.getRequest(newMap, String.valueOf(newMap.get("serviceId")));
+
+        /***************************************/
+
         if (null != httpUrl) {
             HttpUrl newUrl = mUrlParser.parseUrl(httpUrl, request.url());
             if (debug)
@@ -224,12 +262,12 @@ public class RetrofitBaseUrlManager {
             }
             return newBuilder
                     .url(newUrl)
-                    .post(RequestBody.create(contentType, mGson.toJson(newMap)))
+                    .post(RequestBody.create(contentType, mGson.toJson(resultRequestParams)))
                     .build();
         }
 
         return newBuilder
-                .post(RequestBody.create(contentType, mGson.toJson(newMap)))
+                .post(RequestBody.create(contentType, mGson.toJson(resultRequestParams)))
                 .build();
 
     }
