@@ -177,7 +177,7 @@ public class SignUtils {
         List<String> removeSummary = null;
         for (Map.Entry<String, Object> entry : params.entrySet()) {
             Object value = entry.getValue();
-            if (value == null || value == "") {
+            if (value == null || "".equals(value)) {
                 if (removeSummary == null) {
                     removeSummary = new ArrayList<>();
                 }
