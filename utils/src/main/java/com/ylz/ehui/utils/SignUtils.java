@@ -173,7 +173,7 @@ public class SignUtils {
         return resultRequestMap;
     }
 
-    private static Map<String, Object> filterNullParams(Map<String, Object> params) {
+    public static Map<String, Object> filterNullParams(Map<String, Object> params) {
         List<String> removeSummary = null;
         for (Map.Entry<String, Object> entry : params.entrySet()) {
             Object value = entry.getValue();
