@@ -144,7 +144,13 @@ public class RetrofitBaseUrlManager {
      * @return {@link Request}
      */
     private Request processRequestBefore(Request request) {
+        Request.Builder newBuilder = request.newBuilder();
         MediaType contentType = request.body().contentType();
+        if ("form-data".equals(contentType.subtype())
+                || "multipart/form-data".equals(contentType.subtype())) {
+            return newBuilder.build();
+        }
+
         TreeMap<String, Object> newMap = new TreeMap<>();
         newMap.clear();
         try {
@@ -164,8 +170,6 @@ public class RetrofitBaseUrlManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        Request.Builder newBuilder = request.newBuilder();
 
         String url = request.url().toString();
         //如果 Url 地址中包含 IDENTIFICATION_IGNORE 标识符, 管理器将不会对此 Url 进行任何切换 BaseUrl 的操作
