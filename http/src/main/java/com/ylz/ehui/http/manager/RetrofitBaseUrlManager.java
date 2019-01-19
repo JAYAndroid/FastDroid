@@ -171,6 +171,13 @@ public class RetrofitBaseUrlManager {
             e.printStackTrace();
         }
 
+        if (newMap.get("rawConvert") != null && ((boolean) newMap.get("rawConvert"))) {
+            newMap.remove("rawConvert");
+            return newBuilder
+                    .post(RequestBody.create(contentType, mGson.toJson(newMap)))
+                    .build();
+        }
+
         String url = request.url().toString();
         //如果 Url 地址中包含 IDENTIFICATION_IGNORE 标识符, 管理器将不会对此 Url 进行任何切换 BaseUrl 的操作
         if (url.contains(IDENTIFICATION_IGNORE)) {
@@ -212,10 +219,6 @@ public class RetrofitBaseUrlManager {
         }
 
         /***************************************/
-
-        if (newMap.get("rawConvert") != null && ((boolean) newMap.get("rawConvert"))) {
-            newMap.remove("rawConvert");
-        }
 
         if (SignUtils.ENTRY) {
             TreeMap<String, Object> treeMap = new TreeMap<>();
