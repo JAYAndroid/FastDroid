@@ -7,6 +7,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
@@ -25,6 +26,8 @@ import java.util.UUID;
  * 注释：
  ********************/
 public class AppUtils {
+    private static int globalStatusBarColor = Color.parseColor("#196FFA");
+
     public static int getScreenWidth() {
         Resources resources = Utils.getApp().getResources();
         DisplayMetrics dm = resources.getDisplayMetrics();
@@ -175,6 +178,14 @@ public class AppUtils {
         }
 
         return "";
+    }
+
+    public static int getGlobalStatusBarColor() {
+        return globalStatusBarColor;
+    }
+
+    public static void setGlobalStatusBarColor(int statusBarColor) {
+        globalStatusBarColor = statusBarColor;
     }
 
 

@@ -21,6 +21,7 @@ import com.ylz.ehui.ui.manager.AppManager;
 import com.ylz.ehui.ui.manager.StatusBarManager;
 import com.ylz.ehui.ui.mvp.presenter.BasePresenter;
 import com.ylz.ehui.ui.proxy.LogicProxy;
+import com.ylz.ehui.utils.AppUtils;
 import com.ylz.ehui.utils.ToastUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -260,7 +261,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
     }
 
     protected int initStatusBarColor() {
-        return Color.parseColor("#196FFA");
+        return AppUtils.getGlobalStatusBarColor();
     }
 
     protected boolean isIgnoreRegister() {
