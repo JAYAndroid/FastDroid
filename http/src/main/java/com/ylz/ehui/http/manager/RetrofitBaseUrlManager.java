@@ -146,6 +146,38 @@ public class RetrofitBaseUrlManager {
     private Request processRequestBefore(Request request) {
         Request.Builder newBuilder = request.newBuilder();
         MediaType contentType = request.body().contentType();
+        String domainName = obtainBaseUrlFromHeaders(request);
+        HttpUrl httpUrl;
+        Object[] listeners = listenersToArray();
+        // 如果有 header,获取 header 中 domainName 所映射的 url,若没有,则检查全局的 BaseUrl,未找到则为null
+        if (!TextUtils.isEmpty(domainName)) {
+            notifyListener(request, domainName, listeners);
+            httpUrl = fetchBaseUrl(domainName);
+            newBuilder.removeHeader(BASE_URL);
+        } else {
+            notifyListener(request, BASE_RUL_KEY, listeners);
+            httpUrl = getGlobalBaseUrl();
+        }
+
+        if (null != httpUrl) {
+            HttpUrl newUrl = mUrlParser.parseUrl(httpUrl, request.url());
+            if (debug)
+                Log.d(RetrofitBaseUrlManager.TAG, "The new url is { " + newUrl.toString() + " }, old url is { " + request.url().toString() + " }");
+
+            if (listeners != null) {
+                for (int i = 0; i < listeners.length; i++) {
+                    ((OnUrlChangeListener) listeners[i]).onUrlChanged(newUrl, request.url()); // 通知监听器此 Url 的 BaseUrl 已被切换
+                }
+            }
+        }
+        if ("form-data".equals(contentType.subtype())
+                || "multipart/form-data".equals(contentType.subtype())) {
+            return newBuilder
+                    .url(mUrlParser.parseUrl(httpUrl, request.url()))
+                    .build();
+        }
+
+
         TreeMap<String, Object> newMap = new TreeMap<>();
         newMap.clear();
         try {
@@ -172,24 +204,10 @@ public class RetrofitBaseUrlManager {
             return pruneIdentification(newBuilder, url);
         }
 
-        String domainName = obtainBaseUrlFromHeaders(request);
         String appIdName = obtainAppIdFromHeaders(request);
         String secretName = obtainAppSecretromHeaders(request);
         String sessionIdName = obtainSessionIdFromHeaders(request);
 
-        HttpUrl httpUrl;
-
-        Object[] listeners = listenersToArray();
-
-        // 如果有 header,获取 header 中 domainName 所映射的 url,若没有,则检查全局的 BaseUrl,未找到则为null
-        if (!TextUtils.isEmpty(domainName)) {
-            notifyListener(request, domainName, listeners);
-            httpUrl = fetchBaseUrl(domainName);
-            newBuilder.removeHeader(BASE_URL);
-        } else {
-            notifyListener(request, BASE_RUL_KEY, listeners);
-            httpUrl = getGlobalBaseUrl();
-        }
 
         if (!TextUtils.isEmpty(appIdName) && mAppIdHub.containsKey(appIdName)) {
             newMap.put(APP_ID, mAppIdHub.get(appIdName));
@@ -213,10 +231,7 @@ public class RetrofitBaseUrlManager {
                     .build();
         }
 
-        if ("form-data".equals(contentType.subtype())
-                || "multipart/form-data".equals(contentType.subtype())) {
-            return newBuilder.build();
-        }
+
         /***************************************/
 
         if (SignUtils.ENTRY) {
@@ -247,19 +262,9 @@ public class RetrofitBaseUrlManager {
         Map resultRequestParams = SignUtils.getRequest(newMap, String.valueOf(newMap.get("serviceId")));
 
         /***************************************/
-
         if (null != httpUrl) {
-            HttpUrl newUrl = mUrlParser.parseUrl(httpUrl, request.url());
-            if (debug)
-                Log.d(RetrofitBaseUrlManager.TAG, "The new url is { " + newUrl.toString() + " }, old url is { " + request.url().toString() + " }");
-
-            if (listeners != null) {
-                for (int i = 0; i < listeners.length; i++) {
-                    ((OnUrlChangeListener) listeners[i]).onUrlChanged(newUrl, request.url()); // 通知监听器此 Url 的 BaseUrl 已被切换
-                }
-            }
             return newBuilder
-                    .url(newUrl)
+                    .url(mUrlParser.parseUrl(httpUrl, request.url()))
                     .post(RequestBody.create(contentType, mGson.toJson(resultRequestParams)))
                     .build();
         }
