@@ -146,11 +146,6 @@ public class RetrofitBaseUrlManager {
     private Request processRequestBefore(Request request) {
         Request.Builder newBuilder = request.newBuilder();
         MediaType contentType = request.body().contentType();
-        if ("form-data".equals(contentType.subtype())
-                || "multipart/form-data".equals(contentType.subtype())) {
-            return newBuilder.build();
-        }
-
         TreeMap<String, Object> newMap = new TreeMap<>();
         newMap.clear();
         try {
@@ -218,6 +213,10 @@ public class RetrofitBaseUrlManager {
                     .build();
         }
 
+        if ("form-data".equals(contentType.subtype())
+                || "multipart/form-data".equals(contentType.subtype())) {
+            return newBuilder.build();
+        }
         /***************************************/
 
         if (SignUtils.ENTRY) {
