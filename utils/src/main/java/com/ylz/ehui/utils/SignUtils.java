@@ -3,6 +3,7 @@ package com.ylz.ehui.utils;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.ArrayMap;
+import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.ylz.ehui.common.bean.CommonUserInfos;
@@ -169,7 +170,9 @@ public class SignUtils {
             resultRequestMap.put("param", tempParams);
         }
 
-
+        if (Utils.isDebug()) {
+            Log.d("before request",  JSON.toJSONString(resultRequestMap));
+        }
         return resultRequestMap;
     }
 
