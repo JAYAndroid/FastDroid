@@ -505,7 +505,7 @@ public final class LogUtils {
     }
 
     public static class Config {
-        private Config() {
+        public Config() {
             if (sDefaultDir != null) return;
             if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
                     && Utils.getApp().getExternalCacheDir() != null)
