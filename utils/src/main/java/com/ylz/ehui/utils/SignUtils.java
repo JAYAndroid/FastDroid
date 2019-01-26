@@ -170,7 +170,7 @@ public class SignUtils {
         }
 
         if (Utils.isDebug()) {
-            LogUtils.d(JSON.toJSONString(resultRequestMap));
+            LogUtils.json(JSON.toJSONString(resultRequestMap));
         }
         return resultRequestMap;
     }
