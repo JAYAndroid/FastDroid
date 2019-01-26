@@ -160,23 +160,23 @@ final public class RetrofitManager {
             }
         }
 
-        if (provider.configLogEnable()) {
-            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
-                @Override
-                public void log(String message) {
-                    //打印retrofit日志
-                    Log.d("RetrofitLog = %s", message);
-                }
-            });
-
-            HttpLoggingInterceptor.Level level = provider.configLogLevel();
-            if (level == null) {
-                level = HttpLoggingInterceptor.Level.BODY;
-            }
-
-            loggingInterceptor.setLevel(level);
-            builder.addInterceptor(loggingInterceptor);
-        }
+//        if (provider.configLogEnable()) {
+//            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
+//                @Override
+//                public void log(String message) {
+//                    //打印retrofit日志
+//                    Log.d("RetrofitLog = %s", message);
+//                }
+//            });
+//
+//            HttpLoggingInterceptor.Level level = provider.configLogLevel();
+//            if (level == null) {
+//                level = HttpLoggingInterceptor.Level.BODY;
+//            }
+//
+//            loggingInterceptor.setLevel(level);
+//            builder.addInterceptor(loggingInterceptor);
+//        }
 
         mOkHttpClient = RetrofitBaseUrlManager.getInstance().with(builder).build();
         return mOkHttpClient;

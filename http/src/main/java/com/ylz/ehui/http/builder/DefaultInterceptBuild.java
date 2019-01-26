@@ -9,10 +9,12 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonWriter;
 import com.ylz.ehui.common.bean.CommonUserInfos;
 import com.ylz.ehui.http.base.BaseEntity;
+import com.ylz.ehui.utils.LogUtils;
 import com.ylz.ehui.utils.SecurityUtils;
 import com.ylz.ehui.utils.SignUtils;
 import com.ylz.ehui.utils.StringUtils;
 import com.ylz.ehui.utils.ToastUtils;
+import com.ylz.ehui.utils.Utils;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -78,6 +80,10 @@ public class DefaultInterceptBuild extends Converter.Factory {
             BaseEntity baseEntity = gson.fromJson(response, BaseEntity.class);
 
             if (baseEntity == null || StringUtils.isEmpty(baseEntity.getRespCode()) && StringUtils.isEmpty(baseEntity.getRespMsg())) {
+                if (Utils.isDebug()) {
+                    LogUtils.json(response);
+                }
+
                 return adapter.read(gson.newJsonReader(new StringReader(response)));
             }
 
@@ -99,7 +105,12 @@ public class DefaultInterceptBuild extends Converter.Factory {
                     String data = SecurityUtils.decryptByType(baseEntity.getEncryptType(), baseEntity.getEncryptData());
                     baseEntity.setParam(JSONObject.parse(data));
                 }
-                return adapter.read(gson.newJsonReader(new StringReader(JSON.toJSONString(baseEntity))));
+
+                String result = JSON.toJSONString(baseEntity);
+                if (Utils.isDebug()) {
+                    LogUtils.json(result);
+                }
+                return adapter.read(gson.newJsonReader(new StringReader(result)));
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
