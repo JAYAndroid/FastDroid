@@ -227,6 +227,7 @@ public class RetrofitBaseUrlManager {
         if (newMap.get("rawConvert") != null && ((boolean) newMap.get("rawConvert"))) {
             newMap.remove("rawConvert");
             return newBuilder
+                    .url(mUrlParser.parseUrl(httpUrl, request.url()))
                     .post(RequestBody.create(contentType, mGson.toJson(newMap)))
                     .build();
         }
@@ -257,22 +258,12 @@ public class RetrofitBaseUrlManager {
             newMap.clear();
             newMap = treeMap;
         }
-
-
         Map resultRequestParams = SignUtils.getRequest(newMap, String.valueOf(newMap.get("serviceId")));
-
         /***************************************/
-        if (null != httpUrl) {
-            return newBuilder
-                    .url(mUrlParser.parseUrl(httpUrl, request.url()))
-                    .post(RequestBody.create(contentType, mGson.toJson(resultRequestParams)))
-                    .build();
-        }
-
         return newBuilder
+                .url(mUrlParser.parseUrl(httpUrl, request.url()))
                 .post(RequestBody.create(contentType, mGson.toJson(resultRequestParams)))
                 .build();
-
     }
 
     /**
