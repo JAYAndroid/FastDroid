@@ -145,7 +145,11 @@ public class RetrofitBaseUrlManager {
      */
     private Request processRequestBefore(Request request) {
         Request.Builder newBuilder = request.newBuilder();
-        MediaType contentType = request.body().contentType();
+        MediaType contentType = null;
+        if (request.body() != null) {
+            contentType = request.body().contentType();
+
+        }
         String domainName = obtainBaseUrlFromHeaders(request);
         HttpUrl httpUrl;
         Object[] listeners = listenersToArray();
@@ -170,7 +174,7 @@ public class RetrofitBaseUrlManager {
                 }
             }
         }
-        if ("form-data".equals(contentType.subtype())
+        if (contentType == null || "form-data".equals(contentType.subtype())
                 || "multipart/form-data".equals(contentType.subtype())) {
             return newBuilder
                     .url(mUrlParser.parseUrl(httpUrl, request.url()))
@@ -183,10 +187,7 @@ public class RetrofitBaseUrlManager {
         try {
             Buffer buffer = new Buffer();
             request.body().writeTo(buffer);
-            Charset charset = UTF8;
-            if (contentType != null) {
-                charset = contentType.charset(UTF8);
-            }
+            Charset charset = contentType.charset(UTF8);
 
             String originalRequestParams = buffer.readString(charset);
 
