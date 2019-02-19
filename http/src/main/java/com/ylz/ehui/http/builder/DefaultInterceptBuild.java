@@ -38,6 +38,7 @@ import retrofit2.Retrofit;
  ********************/
 public class DefaultInterceptBuild extends Converter.Factory {
     private final static String errorCodeLogoff = "050073";//被迫下线
+    private final static String errorCodeLoginExpire = "110002";//没有登录或登录过期，重新登录
     private final Gson gson;
 
 
@@ -88,15 +89,17 @@ public class DefaultInterceptBuild extends Converter.Factory {
             }
 
             try {
-                if (errorCodeLogoff.equals(baseEntity.getRespCode())) {
+                if (errorCodeLogoff.equals(baseEntity.getRespCode())
+                        || errorCodeLoginExpire.equals(baseEntity.getRespCode())) {
                     CommonUserInfos.getInstance().release();
                     ARouter.getInstance()
                             .build(CommonUserInfos.getInstance().getGroupPrefix() + "LoginActivity")
                             .withBoolean("reLogin", true)
                             .navigation();
-                    ToastUtils.showWarn("账户已经在其他地方登录,请重新登录。");
-                    throw new RuntimeException("账户已经在其他地方登录,请重新登录。");
+                    ToastUtils.showWarn(baseEntity.getRespMsg());
+                    throw new RuntimeException(baseEntity.getRespMsg());
                 }
+
 
                 if (SignUtils.ENTRY) {
                     if (baseEntity.getEncryptData() == null) {
