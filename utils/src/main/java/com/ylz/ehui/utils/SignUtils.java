@@ -66,6 +66,12 @@ public class SignUtils {
         resultRequestMap.put("timestamp", new DateFormat().format("yyyyMMddHHmmss", System.currentTimeMillis()));
         resultRequestMap.put("signType", SIGN_TYPE);
         resultRequestMap.put("encryptType", ENCRYPT_TYPE);
+
+        if(tempParams.containsKey("termType")){
+            resultRequestMap.put("termType", tempParams.get("termType"));
+            tempParams.remove("termType");
+        }
+
         tempParams.remove("serviceId");
 
         if (!StringUtils.isEmpty(String.valueOf(tempParams.get("version")))) {
