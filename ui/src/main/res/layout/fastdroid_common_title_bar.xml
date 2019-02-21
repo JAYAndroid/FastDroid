@@ -15,25 +15,25 @@
 
         <ImageView
             android:id="@+id/iv_title_left"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="14dp"
-            tool:padding="4dp" />
+            android:padding="6dp" />
 
 
         <ImageView
             android:id="@+id/iv_title_close"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_alignTop="@id/iv_title_left"
             android:layout_centerVertical="true"
             android:layout_marginLeft="5dp"
             android:layout_toEndOf="@id/iv_title_left"
             android:layout_toRightOf="@id/iv_title_left"
             android:visibility="gone"
-            tool:padding="4dp"
+            android:padding="6dp"
             tool:visibility="visible" />
 
         <FrameLayout

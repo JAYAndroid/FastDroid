@@ -185,9 +185,9 @@ public class CommonTitleBarManager implements View.OnAttachStateChangeListener, 
             rlMiddleView.addView(middlerView);
         }
 
-        int padding = SizeUtils.dp2px(4);
-        ivLeftView.setPadding(padding, padding, padding, padding);
-        ivCloseView.setPadding(padding, padding, padding, padding);
+//        int padding = SizeUtils.dp2px(4);
+//        ivLeftView.setPadding(padding, padding, padding, padding);
+//        ivCloseView.setPadding(padding, padding, padding, padding);
 
         ivLeftView.setImageDrawable(mContext.getResources().getDrawable(leftResId > 0 ? leftResId : R.drawable.fast_droid_arrow_white_left));
         ivRightView.setImageDrawable(mContext.getResources().getDrawable(rightResId > 0 ? rightResId : R.drawable.fast_droid_search));
