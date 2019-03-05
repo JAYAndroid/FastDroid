@@ -16,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nineoldandroids.view.ViewHelper;
+import com.scwang.smartrefresh.layout.constant.RefreshState;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.ylz.ehui.base_ui.R;
@@ -559,5 +560,15 @@ public class CommonFlexibleSpaceTitleManager implements View.OnAttachStateChange
 
     public interface SubHeadLayoutOnOffsetChangedListener {
         void onOffsetChanged(float topOffset, float botomOffset);
+    }
+
+    public void doFinish() {
+        if (smartRefreshLayout.getState() == RefreshState.Loading) {
+            smartRefreshLayout.finishLoadMore();
+        }
+
+        if (smartRefreshLayout.getState() == RefreshState.Refreshing) {
+            smartRefreshLayout.finishRefresh();
+        }
     }
 }
