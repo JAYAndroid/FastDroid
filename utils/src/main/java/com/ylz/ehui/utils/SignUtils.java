@@ -73,12 +73,12 @@ public class SignUtils {
         }
 
         if (tempParams.containsKey("pageSizeInner")) {
-            resultRequestMap.put("pageSize", tempParams.get("pageSizeInner"));
+            tempParams.put("pageSize", tempParams.get("pageSizeInner"));
             tempParams.remove("pageSizeInner");
         }
 
         if (tempParams.containsKey("pageNoInner")) {
-            resultRequestMap.put("pageNo", tempParams.get("pageNoInner"));
+            tempParams.put("pageNo", tempParams.get("pageNoInner"));
             tempParams.remove("pageNoInner");
         }
 
