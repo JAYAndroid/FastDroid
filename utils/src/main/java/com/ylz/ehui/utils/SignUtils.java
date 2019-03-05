@@ -72,16 +72,6 @@ public class SignUtils {
             tempParams.remove("termType");
         }
 
-        if (tempParams.containsKey("pageSizeInner")) {
-            tempParams.put("pageSize", tempParams.get("pageSizeInner"));
-            tempParams.remove("pageSizeInner");
-        }
-
-        if (tempParams.containsKey("pageNoInner")) {
-            tempParams.put("pageNo", tempParams.get("pageNoInner"));
-            tempParams.remove("pageNoInner");
-        }
-
         tempParams.remove("serviceId");
 
         if (!StringUtils.isEmpty(String.valueOf(tempParams.get("version")))) {
@@ -156,6 +146,16 @@ public class SignUtils {
             tempParams.remove("start");
             tempParams.remove("count");
             resultRequestMap.put("pageParam", pageMap);
+        }
+
+        if (tempParams.containsKey("pageSizeInner")) {
+            tempParams.put("pageSize", tempParams.get("pageSizeInner"));
+            tempParams.remove("pageSizeInner");
+        }
+
+        if (tempParams.containsKey("pageNoInner")) {
+            tempParams.put("pageNo", tempParams.get("pageNoInner"));
+            tempParams.remove("pageNoInner");
         }
 
         if (ENTRY) {
