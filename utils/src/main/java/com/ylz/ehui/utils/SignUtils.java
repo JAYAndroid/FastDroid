@@ -67,9 +67,19 @@ public class SignUtils {
         resultRequestMap.put("signType", SIGN_TYPE);
         resultRequestMap.put("encryptType", ENCRYPT_TYPE);
 
-        if(tempParams.containsKey("termType")){
+        if (tempParams.containsKey("termType")) {
             resultRequestMap.put("termType", tempParams.get("termType"));
             tempParams.remove("termType");
+        }
+
+        if (tempParams.containsKey("pageSizeInner")) {
+            resultRequestMap.put("pageSize", tempParams.get("pageSizeInner"));
+            tempParams.remove("pageSizeInner");
+        }
+
+        if (tempParams.containsKey("pageNoInner")) {
+            resultRequestMap.put("pageNo", tempParams.get("pageNoInner"));
+            tempParams.remove("pageNoInner");
         }
 
         tempParams.remove("serviceId");

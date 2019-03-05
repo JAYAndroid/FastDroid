@@ -44,7 +44,6 @@ public class DefaultInterceptBuild extends Converter.Factory {
 
     public DefaultInterceptBuild() {
         gson = new Gson();
-//        gson = new GsonBuilder().disableHtmlEscaping().create();
     }
 
     @Override
