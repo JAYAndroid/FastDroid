@@ -72,6 +72,11 @@ public class SignUtils {
             tempParams.remove("termType");
         }
 
+        if (tempParams.containsKey("termTypeInner")) {
+            tempParams.put("termType", tempParams.get("termTypeInner"));
+            tempParams.remove("termTypeInner");
+        }
+
         tempParams.remove("serviceId");
 
         if (!StringUtils.isEmpty(String.valueOf(tempParams.get("version")))) {
