@@ -381,4 +381,10 @@ public class CommonTitleBarManager implements View.OnAttachStateChangeListener, 
         }
     }
 
+    public void setBackgroundColor(int color) {
+        if (color > 0) {
+            contentView.setBackgroundColor(mContext.getResources().getColor(color));
+        }
+    }
+
 }
