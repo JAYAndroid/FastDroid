@@ -13,6 +13,7 @@ import com.ylz.ehui.http.handler.IRequestHandler;
 import com.ylz.ehui.http.interceptor.HttpLoggingInterceptor;
 import com.ylz.ehui.http.interceptor.NetInterceptor;
 import com.ylz.ehui.utils.NetworkUtils;
+import com.ylz.ehui.utils.ToastUtils;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -142,7 +143,7 @@ final public class RetrofitManager {
             @Override
             public Response intercept(Chain chain) throws IOException {
                 if (!NetworkUtils.isConnected()) {
-                    throw new RuntimeException("网络连接不可用");
+                    ToastUtils.showWarn("网络连接不可用");
                 }
                 return chain.proceed(chain.request());
             }
