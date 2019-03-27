@@ -140,7 +140,7 @@ public abstract class BaseFragment<T extends BasePresenter> extends RxFragment i
     @Override
     public void dismissDialog() {
         if (mDialog != null) {
-            mDialog.dismiss();
+            mDialog.dismiss(getActivity());
         }
     }
 
