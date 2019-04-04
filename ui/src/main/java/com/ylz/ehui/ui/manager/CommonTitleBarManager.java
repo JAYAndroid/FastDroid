@@ -387,4 +387,8 @@ public class CommonTitleBarManager implements View.OnAttachStateChangeListener, 
         }
     }
 
+    public void hidenContentView(){
+        contentView.setVisibility(View.GONE);
+    }
+
 }
