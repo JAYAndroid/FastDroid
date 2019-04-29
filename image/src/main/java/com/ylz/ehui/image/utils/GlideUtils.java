@@ -71,6 +71,14 @@ public class GlideUtils {
                 .into(targetImageView);
     }
 
+    public void loadRoundCorners(ImageView targetImageView, int res, int radius) {
+        RequestOptions options = createRoundCornersOptions(radius);
+        Glide.with(targetImageView.getContext())
+                .load(res)
+                .apply(options)
+                .into(targetImageView);
+    }
+
     public void loadRoundCornersNoCache(ImageView targetImageView, String url, int radius, int... defaultResId) {
         RequestOptions options = createRoundCornersOptionsNoCache(radius);
 

@@ -103,6 +103,12 @@ public class ViewHolder extends RecyclerView.ViewHolder {
         return this;
     }
 
+    public ViewHolder setImageViewRoundCorner(int viewId, int res, int radius) {
+        ImageView iv = getView(viewId);
+        GlideUtils.getInstance().loadRoundCorners(iv, res, radius);
+        return this;
+    }
+
     public ViewHolder setImageBitmap(int viewId, Bitmap bitmap) {
         ImageView view = getView(viewId);
         view.setImageBitmap(bitmap);
