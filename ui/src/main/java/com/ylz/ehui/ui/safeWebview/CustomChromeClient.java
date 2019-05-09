@@ -14,6 +14,9 @@ public class CustomChromeClient extends InjectedChromeClient {
     private OnWebChromeListener mOnProgressChangedListener;
     private OnReceivedTitleListener mOnReceivedTitleListener;
 
+    public CustomChromeClient() {
+    }
+
     public CustomChromeClient(String injectedName, Class injectedCls) {
         super(injectedName, injectedCls);
     }
@@ -31,7 +34,7 @@ public class CustomChromeClient extends InjectedChromeClient {
                 mOnProgressChangedListener.onProgressChanged(view, newProgress);
             }
         } catch (Exception e) {
-           e.printStackTrace();
+            e.printStackTrace();
         }
 
     }
