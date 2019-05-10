@@ -23,7 +23,9 @@ import com.google.gson.reflect.TypeToken;
 import com.ylz.ehui.http.OnUrlChangeListener;
 import com.ylz.ehui.http.parser.DefaultUrlParser;
 import com.ylz.ehui.http.parser.UrlParser;
+import com.ylz.ehui.utils.LogUtils;
 import com.ylz.ehui.utils.SignUtils;
+import com.ylz.ehui.utils.Utils;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -174,6 +176,11 @@ public class RetrofitBaseUrlManager {
                 }
             }
         }
+
+        if (Utils.isDebug()) {
+            LogUtils.d(mUrlParser.parseUrl(httpUrl, request.url()).toString());
+        }
+
         if (contentType == null || "form-data".equals(contentType.subtype())
                 || "multipart/form-data".equals(contentType.subtype())) {
             return newBuilder
