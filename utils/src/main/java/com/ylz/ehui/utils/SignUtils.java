@@ -280,7 +280,7 @@ public class SignUtils {
             return;
         }
 
-        APP_ID = DEFAULT_APP_ID;
+        APP_ID = appId;
     }
 
 
@@ -288,7 +288,7 @@ public class SignUtils {
         if (StringUtils.isEmpty(appSecret)) {
             return;
         }
-        APP_SECRET = DEFAULT_APP_SECRET;
+        APP_SECRET = appSecret;
     }
 
     public static void setSignType(String signType) {
