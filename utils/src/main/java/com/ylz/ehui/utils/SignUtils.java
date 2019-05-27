@@ -30,16 +30,13 @@ public class SignUtils {
         fixIgnoreSign.add("pageParam");
     }
 
-    public static String DEFAULT_APP_SECRET = "SKnYwGwnwh3LI56mMwJgDw==";
-    public static String DEFAULT_APP_ID = "Android";
+    private static String DEFAULT_APP_SECRET = "SKnYwGwnwh3LI56mMwJgDw==";
+    private static String DEFAULT_APP_ID = "Android";
 
-    public static String APP_SECRET = DEFAULT_APP_SECRET;
-    public static String APP_ID = DEFAULT_APP_ID;
-
-    public static String SIGN_TYPE = "MD5";
-    public static String ENCRYPT_TYPE = "AES";
-
-    public static String IV = "0102030405060708";
+    private static String APP_SECRET = DEFAULT_APP_SECRET;
+    private static String APP_ID = DEFAULT_APP_ID;
+    private static String SIGN_TYPE = "MD5";
+    private static String ENCRYPT_TYPE = "AES";
 
     public static boolean ENTRY = !Utils.isDebug();
 
@@ -100,15 +97,11 @@ public class SignUtils {
         if (tempParams.containsKey("appId")) {
             APP_ID = String.valueOf(tempParams.get("appId"));
             tempParams.remove("appId");
-        } else {
-            APP_ID = DEFAULT_APP_ID;
         }
 
         if (tempParams.containsKey("secret")) {
             APP_SECRET = String.valueOf(tempParams.get("secret"));
             tempParams.remove("secret");
-        } else {
-            APP_SECRET = DEFAULT_APP_SECRET;
         }
 
         if (tempParams.containsKey("sessionId")) {
@@ -281,14 +274,33 @@ public class SignUtils {
     }
 
 
-    /**
-     * 对象转换为字符串
-     *
-     * @param object
-     * @return
-     */
-    public static String getObjString(Object object) {
-        return (object == null ? "" : (String) object);
+    public static void setAppId(String appId) {
+        if (StringUtils.isEmpty(appId)) {
+            return;
+        }
+
+        APP_ID = DEFAULT_APP_ID;
     }
 
+
+    public static void setAppSecret(String appSecret) {
+        if (StringUtils.isEmpty(appSecret)) {
+            return;
+        }
+        APP_SECRET = DEFAULT_APP_SECRET;
+    }
+
+    public static void setSignType(String signType) {
+        if (StringUtils.isEmpty(signType)) {
+            return;
+        }
+        SIGN_TYPE = signType;
+    }
+
+    public static void setEncryptType(String encryptType) {
+        if (StringUtils.isEmpty(encryptType)) {
+            return;
+        }
+        ENCRYPT_TYPE = encryptType;
+    }
 }
