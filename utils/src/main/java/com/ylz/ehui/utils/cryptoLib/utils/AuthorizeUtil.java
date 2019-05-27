@@ -47,19 +47,19 @@ public class AuthorizeUtil {
         }
 
         Log.i("AuthorizeUtil", "开始校验授权文件。。。");
-        SM4Utils sm4 = new SM4Utils(SignUtils.APP_ID, SignUtils.IV);
-        String sm4Key = StringUtils.rightPad(sm4.encryptData_CBC(SignUtils.APP_SECRET), 16, "0");
+        SM4Utils sm4 = new SM4Utils(SignUtils.getAppId(), SignUtils.getIV());
+        String sm4Key = StringUtils.rightPad(sm4.encryptData_CBC(SignUtils.getAppSecret()), 16, "0");
         sm4.setSecretKey(sm4Key);
         String data = sm4.decryptData_CBC(authFileContent);
         JSONObject authJSON = JSON.parseObject(data);// 授权文件内容
         String authCode = authJSON.getString("auth_code");
 
         StringBuilder sm3Sb = new StringBuilder();
-        sm3Sb.append(SignUtils.APP_ID)
+        sm3Sb.append(SignUtils.getAppId())
                 .append(AppUtils.getAppName())
                 .append(Utils.getApp().getPackageName())
                 .append(AppUtils.getVersionName())
-                .append(SignUtils.APP_SECRET);
+                .append(SignUtils.getAppSecret());
 
         String appAuthCode = SM3Utils.encrypt(sm3Sb.toString());
         boolean result = authCode.equals(appAuthCode);
@@ -100,9 +100,9 @@ public class AuthorizeUtil {
         String innerSign = dataJSON.getString("sign");
 
         // SM2（AppId，App 名称，APP 签名证书指纹，SDK 名称）
-        String signContent = SignUtils.APP_ID + innerAppName + AppUtils.getSignMd5Str() + innerMethod;
+        String signContent = SignUtils.getAppId() + innerAppName + AppUtils.getSignMd5Str() + innerMethod;
         keySB.append("开始获取应用信息=>:")
-                .append("当前appId=").append(SignUtils.APP_ID).append("\n")
+                .append("当前appId=").append(SignUtils.getAppId()).append("\n")
                 .append("当前appName=").append(innerAppName).append("\n")
                 .append("当前APP指纹=").append(AppUtils.getSignMd5Str()).append("\n");
 
