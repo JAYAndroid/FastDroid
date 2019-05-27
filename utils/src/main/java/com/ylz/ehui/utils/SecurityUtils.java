@@ -100,10 +100,10 @@ public class SecurityUtils {
 
     public static String encryptByType(String rawData, String encryptType) throws Exception {
         if ("AES".equals(encryptType)) {
-            return encryptByAES(rawData, SignUtils.APP_SECRET, SignUtils.APP_ID);
+            return encryptByAES(rawData, SignUtils.getAppSecret(), SignUtils.getAppId());
         } else if ("SM4".equals(encryptType)) {
-            SM4Utils sm4Utils = new SM4Utils(SignUtils.APP_ID, SignUtils.IV);
-            String sm4Key = StringUtils.rightPad(sm4Utils.encryptData_CBC(SignUtils.APP_SECRET), 16, "0");
+            SM4Utils sm4Utils = new SM4Utils(SignUtils.getAppId(), SignUtils.getIV());
+            String sm4Key = StringUtils.rightPad(sm4Utils.encryptData_CBC(SignUtils.getAppSecret()), 16, "0");
             sm4Utils.setSecretKey(sm4Key);
             return sm4Utils.encryptData_CBC(rawData);
         } else {
@@ -215,10 +215,10 @@ public class SecurityUtils {
 
     public static String decryptByType(String encryptType, String encryptData) throws Exception {
         if ("AES".equals(encryptType)) {
-            return decryptByAES(encryptData, SignUtils.APP_SECRET, SignUtils.APP_ID);
+            return decryptByAES(encryptData, SignUtils.getAppSecret(), SignUtils.getAppId());
         } else if ("SM4".equals(encryptType)) {
-            SM4Utils sm4Utils = new SM4Utils(SignUtils.APP_ID, SignUtils.IV);
-            String sm4Key = StringUtils.rightPad(sm4Utils.encryptData_CBC(SignUtils.APP_SECRET), 16, "0");
+            SM4Utils sm4Utils = new SM4Utils(SignUtils.getAppId(), SignUtils.getIV());
+            String sm4Key = StringUtils.rightPad(sm4Utils.encryptData_CBC(SignUtils.getAppSecret()), 16, "0");
             sm4Utils.setSecretKey(sm4Key);
             return sm4Utils.decryptData_CBC(encryptData);
         } else {

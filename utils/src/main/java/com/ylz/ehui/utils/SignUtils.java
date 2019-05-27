@@ -37,6 +37,7 @@ public class SignUtils {
     private static String APP_ID = DEFAULT_APP_ID;
     private static String SIGN_TYPE = "MD5";
     private static String ENCRYPT_TYPE = "AES";
+    private static String IV = "0102030405060708";
 
     public static boolean ENTRY = !Utils.isDebug();
 
@@ -302,5 +303,21 @@ public class SignUtils {
             return;
         }
         ENCRYPT_TYPE = encryptType;
+    }
+
+    public static String getAppSecret() {
+        return APP_SECRET;
+    }
+
+    public static String getAppId() {
+        return APP_ID;
+    }
+
+    public static String getIV() {
+        return IV;
+    }
+
+    public static void setIV(String iv) {
+        IV = iv;
     }
 }
