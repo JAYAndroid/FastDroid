@@ -53,146 +53,146 @@ public class SignUtils {
     /**
      * 获取请求
      *
-     * @param tempParams
+     * @param innerParams
      * @param service
      * @return
      */
-    private static Map<String, Object> getRequestMap(Map<String, Object> tempParams, String service) {
-        Map<String, Object> resultRequestMap = new TreeMap<>();
+    private static Map<String, Object> getRequestMap(Map<String, Object> innerParams, String service) {
+        Map<String, Object> outParams = new TreeMap<>();
 
-        resultRequestMap.put("serviceId", service);
-        resultRequestMap.put("timestamp", new DateFormat().format("yyyyMMddHHmmss", System.currentTimeMillis()));
-        resultRequestMap.put("signType", SIGN_TYPE);
-        resultRequestMap.put("encryptType", ENCRYPT_TYPE);
+        outParams.put("serviceId", service);
+        outParams.put("timestamp", new DateFormat().format("yyyyMMddHHmmss", System.currentTimeMillis()));
+        outParams.put("signType", SIGN_TYPE);
+        outParams.put("encryptType", ENCRYPT_TYPE);
 
-        if (tempParams.containsKey("termType")) {
-            resultRequestMap.put("termType", tempParams.get("termType"));
-            tempParams.remove("termType");
+        if (innerParams.containsKey("termType")) {
+            outParams.put("termType", innerParams.get("termType"));
+            innerParams.remove("termType");
         }
 
-        if (tempParams.containsKey("termTypeInner")) {
-            tempParams.put("termType", tempParams.get("termTypeInner"));
-            tempParams.remove("termTypeInner");
+        if (innerParams.containsKey("termTypeInner")) {
+            innerParams.put("termType", innerParams.get("termTypeInner"));
+            innerParams.remove("termTypeInner");
         }
 
-        if (tempParams.containsKey("versionInner")) {
-            tempParams.put("version", tempParams.get("versionInner"));
-            tempParams.remove("versionInner");
-        }
+        innerParams.remove("serviceId");
 
-        tempParams.remove("serviceId");
-
-        if (!StringUtils.isEmpty(String.valueOf(tempParams.get("version")))) {
-            resultRequestMap.put("version", String.valueOf(tempParams.get("version")));
-            tempParams.remove("version");
+        if (!StringUtils.isEmpty(String.valueOf(innerParams.get("version")))) {
+            outParams.put("version", String.valueOf(innerParams.get("version")));
+            innerParams.remove("version");
         } else {
-            resultRequestMap.put("version", String.valueOf(AppUtils.getVersionCode()));
+            outParams.put("version", String.valueOf(AppUtils.getVersionCode()));
         }
 
-        if (!StringUtils.isEmpty(String.valueOf(tempParams.get("ext_token")))) {
-            resultRequestMap.put("token", tempParams.get("ext_token"));
-            tempParams.remove("ext_token");
+        if (innerParams.containsKey("versionInner")) {
+            innerParams.put("version", innerParams.get("versionInner"));
+            innerParams.remove("versionInner");
         }
 
-        if (!StringUtils.isEmpty(String.valueOf(tempParams.get("ignoreSigns")))) {
-            resultRequestMap.put("ignoreSigns", tempParams.get("ignoreSigns"));
-            tempParams.remove("ignoreSigns");
+        if (!StringUtils.isEmpty(String.valueOf(innerParams.get("ext_token")))) {
+            outParams.put("token", innerParams.get("ext_token"));
+            innerParams.remove("ext_token");
+        }
+
+        if (!StringUtils.isEmpty(String.valueOf(innerParams.get("ignoreSigns")))) {
+            outParams.put("ignoreSigns", innerParams.get("ignoreSigns"));
+            innerParams.remove("ignoreSigns");
         }
 
 
-        if (tempParams.containsKey("appId")) {
-            APP_ID = String.valueOf(tempParams.get("appId"));
-            tempParams.remove("appId");
+        if (innerParams.containsKey("appId")) {
+            APP_ID = String.valueOf(innerParams.get("appId"));
+            innerParams.remove("appId");
         }
 
-        if (tempParams.containsKey("secret")) {
-            APP_SECRET = String.valueOf(tempParams.get("secret"));
-            tempParams.remove("secret");
+        if (innerParams.containsKey("secret")) {
+            APP_SECRET = String.valueOf(innerParams.get("secret"));
+            innerParams.remove("secret");
         }
 
-        if (tempParams.containsKey("sessionId")) {
-            resultRequestMap.put("sessionId", tempParams.get("sessionId"));
-            tempParams.remove("sessionId");
+        if (innerParams.containsKey("sessionId")) {
+            outParams.put("sessionId", innerParams.get("sessionId"));
+            innerParams.remove("sessionId");
         } else {
-            resultRequestMap.put("sessionId", CommonUserInfos.getInstance().getSessionId());
+            outParams.put("sessionId", CommonUserInfos.getInstance().getSessionId());
         }
 
-        resultRequestMap.put("deviceId", AppUtils.getUUid());
-        resultRequestMap.put("appId", APP_ID);
+        outParams.put("deviceId", AppUtils.getUUid());
+        outParams.put("appId", APP_ID);
 
         //分页
         Map<String, Object> pageMap = new TreeMap<>();
-        if (!TextUtils.isEmpty((String) tempParams.get("pageNo")) || !TextUtils.isEmpty((String) tempParams.get("pageSize"))
-                || !TextUtils.isEmpty((String) tempParams.get("rows"))) {
-            pageMap.put("pageNo", tempParams.get("pageNo"));
-            pageMap.put("pageSize", tempParams.get("pageSize"));
-            pageMap.put("rows", tempParams.get("rows"));
-            tempParams.remove("pageNo");
-            tempParams.remove("pageSize");
-            tempParams.remove("rows");
-            if (!TextUtils.isEmpty((String) tempParams.get("pageDate_c"))) {
-                pageMap.put("pageDate_c", tempParams.get("pageDate_c"));
+        if (!TextUtils.isEmpty((String) innerParams.get("pageNo")) || !TextUtils.isEmpty((String) innerParams.get("pageSize"))
+                || !TextUtils.isEmpty((String) innerParams.get("rows"))) {
+            pageMap.put("pageNo", innerParams.get("pageNo"));
+            pageMap.put("pageSize", innerParams.get("pageSize"));
+            pageMap.put("rows", innerParams.get("rows"));
+            innerParams.remove("pageNo");
+            innerParams.remove("pageSize");
+            innerParams.remove("rows");
+            if (!TextUtils.isEmpty((String) innerParams.get("pageDate_c"))) {
+                pageMap.put("pageDate_c", innerParams.get("pageDate_c"));
             }
-            if (!TextUtils.isEmpty((String) tempParams.get("pageTime_c"))) {
-                pageMap.put("pageTime_c", tempParams.get("pageTime_c"));
+            if (!TextUtils.isEmpty((String) innerParams.get("pageTime_c"))) {
+                pageMap.put("pageTime_c", innerParams.get("pageTime_c"));
             }
-            if (!TextUtils.isEmpty((String) tempParams.get("pageDate_f"))) {
-                pageMap.put("pageDate_f", tempParams.get("pageDate_f"));
+            if (!TextUtils.isEmpty((String) innerParams.get("pageDate_f"))) {
+                pageMap.put("pageDate_f", innerParams.get("pageDate_f"));
             }
-            if (!TextUtils.isEmpty((String) tempParams.get("pageTime_f"))) {
-                pageMap.put("pageTime_f", tempParams.get("pageTime_f"));
+            if (!TextUtils.isEmpty((String) innerParams.get("pageTime_f"))) {
+                pageMap.put("pageTime_f", innerParams.get("pageTime_f"));
             }
-            resultRequestMap.put("pageParam", pageMap);
+            outParams.put("pageParam", pageMap);
         }
-        if (!TextUtils.isEmpty((String) tempParams.get("start")) && !TextUtils.isEmpty((String) tempParams.get("count"))) {
-            pageMap.put("start", tempParams.get("start"));
-            pageMap.put("count", tempParams.get("count"));
-            tempParams.remove("start");
-            tempParams.remove("count");
-            resultRequestMap.put("pageParam", pageMap);
-        }
-
-        if (tempParams.containsKey("pageSizeInner")) {
-            tempParams.put("pageSize", tempParams.get("pageSizeInner"));
-            tempParams.remove("pageSizeInner");
+        if (!TextUtils.isEmpty((String) innerParams.get("start")) && !TextUtils.isEmpty((String) innerParams.get("count"))) {
+            pageMap.put("start", innerParams.get("start"));
+            pageMap.put("count", innerParams.get("count"));
+            innerParams.remove("start");
+            innerParams.remove("count");
+            outParams.put("pageParam", pageMap);
         }
 
-        if (tempParams.containsKey("pageNoInner")) {
-            tempParams.put("pageNo", tempParams.get("pageNoInner"));
-            tempParams.remove("pageNoInner");
+        if (innerParams.containsKey("pageSizeInner")) {
+            innerParams.put("pageSize", innerParams.get("pageSizeInner"));
+            innerParams.remove("pageSizeInner");
+        }
+
+        if (innerParams.containsKey("pageNoInner")) {
+            innerParams.put("pageNo", innerParams.get("pageNoInner"));
+            innerParams.remove("pageNoInner");
         }
 
         if (ENTRY) {
-            tempParams = filterNullParams(tempParams);
+            innerParams = filterNullParams(innerParams);
 
-            resultRequestMap.put("isEncrypt", 1);
+            outParams.put("isEncrypt", 1);
             //明文
-//            resultRequestMap.put("param", new Gson().toJson(tempParams));//加密，签名
-            resultRequestMap.put("param", JSON.toJSONString(tempParams));//加密，签名
+//            outParams.put("param", new Gson().toJson(innerParams));//加密，签名
+            outParams.put("param", JSON.toJSONString(innerParams));//加密，签名
 
-            resultRequestMap.put("sign", getSign(resultRequestMap, APP_SECRET));
+            outParams.put("sign", getSign(outParams, APP_SECRET));
             try {
-                resultRequestMap.put("encryptData", SecurityUtils.encryptByType(String.valueOf(resultRequestMap.get("param")), ENCRYPT_TYPE));
+                outParams.put("encryptData", SecurityUtils.encryptByType(String.valueOf(outParams.get("param")), ENCRYPT_TYPE));
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
             //删除明文
-            resultRequestMap.remove("param");
+            outParams.remove("param");
         } else {
-            resultRequestMap.put("isEncrypt", 0);
+            outParams.put("isEncrypt", 0);
 
-            if (resultRequestMap.containsKey("ignoreSigns")) {
-                resultRequestMap.remove("ignoreSigns");
+            if (outParams.containsKey("ignoreSigns")) {
+                outParams.remove("ignoreSigns");
             }
 
-            resultRequestMap.put("param", tempParams);
+            outParams.put("param", innerParams);
         }
 
         if (Utils.isDebug()) {
-            LogUtils.json(JSON.toJSONString(resultRequestMap));
+            LogUtils.json(JSON.toJSONString(outParams));
         }
-        return resultRequestMap;
+        return outParams;
     }
 
     public static Map<String, Object> filterNullParams(Map<String, Object> params) {
