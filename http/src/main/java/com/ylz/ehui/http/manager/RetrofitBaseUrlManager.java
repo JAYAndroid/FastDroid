@@ -220,11 +220,15 @@ public class RetrofitBaseUrlManager {
         if (!TextUtils.isEmpty(appIdName) && mAppIdHub.containsKey(appIdName)) {
             newMap.put(APP_ID, mAppIdHub.get(appIdName));
             newBuilder.removeHeader(APP_ID);
+        } else {
+            SignUtils.resetAppId();
         }
 
         if (!TextUtils.isEmpty(secretName) && mSecretHub.containsKey(secretName)) {
             newMap.put(SECRET, mSecretHub.get(secretName));
             newBuilder.removeHeader(SECRET);
+        } else {
+            SignUtils.resetSecret();
         }
 
         if (!TextUtils.isEmpty(sessionIdName) && mSessionIdHub.containsKey(sessionIdName)) {

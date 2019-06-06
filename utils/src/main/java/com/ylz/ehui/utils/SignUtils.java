@@ -285,7 +285,12 @@ public class SignUtils {
             return;
         }
 
+        DEFAULT_APP_ID = appId;
         APP_ID = appId;
+    }
+
+    public static void resetAppId(){
+        APP_ID = DEFAULT_APP_ID;
     }
 
 
@@ -293,6 +298,7 @@ public class SignUtils {
         if (StringUtils.isEmpty(appSecret)) {
             return;
         }
+        DEFAULT_APP_SECRET = appSecret;
         APP_SECRET = appSecret;
     }
 
@@ -324,5 +330,9 @@ public class SignUtils {
 
     public static void setIV(String iv) {
         IV = iv;
+    }
+
+    public static void resetSecret() {
+        APP_SECRET = DEFAULT_APP_SECRET;
     }
 }
