@@ -39,7 +39,7 @@ android {
 }
 dependencies {
     api fileTree(include: ['*.jar'], dir: 'libs')
-    api "com.github.bumptech.glide:glide:4.2.0"
+    implementation "com.github.bumptech.glide:glide:4.2.0"
     api project(':common')
     api project(path: ':utils')
 }
