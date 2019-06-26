@@ -15,7 +15,6 @@ import com.bumptech.glide.request.RequestOptions;
 public class GlideUtils {
 
     private GlideUtils() {
-
     }
 
     public static GlideUtils getInstance() {
